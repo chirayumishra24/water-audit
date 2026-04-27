@@ -1,0 +1,87 @@
+---
+title: Meter Data and Interpretation
+summary: Read meter information critically so that the audit distinguishes useful evidence from noisy or misleading numbers.
+moduleSlug: measurement
+order: 2
+readingTime: 9 min
+objectives:
+  - Read water meter data in an audit context.
+  - Compare billing, line, and process meters without mixing their meaning.
+  - Spot suspicious patterns that suggest leaks, demand drift, or measurement error.
+practicalTitle: Meter review checklist
+practicalItems:
+  - Confirm which meter is billing-critical and which are process-supporting.
+  - Check the logging interval used for each meter.
+  - Look for unexplained nighttime or idle-period flow.
+keyTakeaways:
+  - Meter data is evidence, but only when the auditor understands what each meter actually represents.
+  - Stable baseline flow during idle periods often reveals hidden consumption or leakage.
+  - Inconsistent timestamps and units can distort the audit more than missing data alone.
+relatedSlugs:
+  - building-a-water-balance
+  - site-walkthrough-and-loss-points
+---
+
+## Not all meters tell the same story
+
+A common mistake is to treat every meter reading as interchangeable. In practice, each meter sits at a different point in the system and answers a different question.
+
+Examples:
+
+- the billing meter tells you what the utility sees
+- the line meter tells you what passes into a branch
+- the process meter tells you what one operation consumes
+
+The audit needs all three perspectives, but it should never confuse them.
+
+## First checks before analysis
+
+Before interpreting a trend, confirm:
+
+- unit of measure
+- reading interval
+- reset behavior
+- calibration status if known
+- whether the value is cumulative or interval-based
+
+Without those checks, trend comparisons can become misleading very quickly.
+
+## Patterns worth noticing
+
+### Elevated base flow
+
+If demand remains high during shutdown or non-production hours, the system may have continuous leakage, uncontrolled make-up flow, or cleaning practices outside planned hours.
+
+### Step changes
+
+Sudden level shifts may indicate process changes, a broken valve, a new connection, or a meter issue.
+
+### Repeating spikes
+
+Recurring spikes often correspond to cleaning cycles, batch production, irrigation events, or automatic control behavior.
+
+## Meter hierarchy
+
+Use the meter network like a hierarchy:
+
+1. compare total supply meter against sum of sub-meters
+2. identify where the largest unexplained difference appears
+3. focus field observation on that branch or subsystem
+
+This sequence makes later walkthrough work faster and more targeted.
+
+## When data quality is poor
+
+Sometimes the meters do not support a clean numerical answer. That does not stop the audit; it changes the confidence level.
+
+The report should then distinguish:
+
+- measured values
+- estimated values
+- inferred values
+
+That distinction helps decision-makers know where to invest in better metering and where action can already begin.
+
+## Bridge to field inspection
+
+Meter interpretation is strongest when paired with direct observation. If the data suggests continuous flow during idle periods, the next move is not to guess. The next move is to inspect the physical system, which is the focus of [the site walkthrough chapter](/modules/measurement/site-walkthrough-and-loss-points/).
