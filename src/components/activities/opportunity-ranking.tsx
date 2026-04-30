@@ -1,319 +1,283 @@
 "use client";
 
-import React, { useState, Suspense } from "react";
-import { Canvas } from "@react-three/fiber";
+import React, { useState, useMemo, useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import {
   OrbitControls,
   PerspectiveCamera,
   Environment,
   ContactShadows,
-  Html,
-  useCursor,
-  Grid,
   Float,
+  RoundedBox,
+  MeshTransmissionMaterial,
+  Sparkles,
+  Edges
 } from "@react-three/drei";
 import { 
-  BarChart3, 
   Target, 
   CheckCircle2, 
   RotateCcw, 
   Zap,
-  TrendingUp,
   Clock,
   ArrowRight,
-  Plus,
-  Coins,
-  Droplets
+  TrendingUp,
+  AlertTriangle,
+  Droplets,
+  Layers
 } from "lucide-react";
+import * as THREE from "three";
 
-// --- 3D Components ---
-
-function BoardroomScene({ 
-  placedFindings, 
-  onZoneClick 
-}: { 
-  placedFindings: any[], 
-  onZoneClick: (zone: string) => void 
-}) {
-  const [hovered, setHovered] = useState<string | null>(null);
-  useCursor(!!hovered);
-
-  const zones = [
-    { id: 'quick-wins', pos: [-1.5, 1.5, 0], color: "#22c55e", label: "Quick Wins", quadrant: "High Impact / Low Effort" },
-    { id: 'major-projects', pos: [1.5, 1.5, 0], color: "#3b82f6", label: "Major Projects", quadrant: "High Impact / High Effort" },
-    { id: 'fill-ins', pos: [-1.5, -1.5, 0], color: "#eab308", label: "Fill-ins", quadrant: "Low Impact / Low Effort" },
-    { id: 'thankless', pos: [1.5, -1.5, 0], color: "#ef4444", label: "Thankless Tasks", quadrant: "Low Impact / High Effort" },
-  ];
+// --- 3D Visualization: The Abstract Facility ---
+function AbstractFacility({ placedIds }: { placedIds: number[] }) {
+  const facilityRef = useRef<THREE.Group>(null);
+  
+  useFrame((state) => {
+    if (facilityRef.current) {
+      facilityRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
+    }
+  });
 
   return (
-    <group>
-      {/* 3D Matrix Wall */}
-      <mesh position={[0, 0, -0.1]}>
-        <planeGeometry args={[6.2, 6.2]} />
-        <meshStandardMaterial color="#f1f5f9" />
-      </mesh>
+    <group ref={facilityRef} position={[0, -1, 0]}>
+      {/* Base Platform */}
+      <RoundedBox args={[6, 0.4, 6]} radius={0.1} position={[0, -0.2, 0]}>
+        <meshStandardMaterial color="#f1f5f9" roughness={0.2} metalness={0.8} />
+        <Edges color="#cbd5e1" />
+      </RoundedBox>
+
+      {/* Main Building */}
+      <RoundedBox args={[2.5, 3, 2.5]} radius={0.1} position={[-1, 1.5, -1]}>
+        <MeshTransmissionMaterial 
+          backside 
+          thickness={0.5} 
+          roughness={0.1} 
+          transmission={1} 
+          ior={1.5} 
+          color="#bae6fd" 
+        />
+        <Edges color="#38bdf8" />
+      </RoundedBox>
+
+      {/* Dynamic Elements based on placed findings */}
       
-      {/* Grid Lines */}
-      <group position={[0, 0, 0]}>
-        <mesh position={[0, 0, 0]}>
-          <boxGeometry args={[6.2, 0.05, 0.05]} />
-          <meshStandardMaterial color="#94a3b8" />
-        </mesh>
-        <mesh position={[0, 0, 0]}>
-          <boxGeometry args={[0.05, 6.2, 0.05]} />
-          <meshStandardMaterial color="#94a3b8" />
-        </mesh>
+      {/* 1. Fix Restroom Leaks -> Water Particles inside building stop leaking */}
+      {placedIds.includes(1) ? (
+        <Sparkles count={50} scale={[2, 2, 2]} position={[-1, 1.5, -1]} color="#38bdf8" speed={0.5} size={2} />
+      ) : (
+        <Sparkles count={100} scale={[2, 0.5, 2]} position={[-1, 0, -1]} color="#ef4444" speed={2} size={4} />
+      )}
+
+      {/* 2. Install Sub-meters -> Glowing Rings around the pipes */}
+      <group position={[1.5, 0.5, 1.5]}>
+        <cylinderGeometry args={[0.2, 0.2, 2]} />
+        <meshStandardMaterial color="#94a3b8" />
+        {placedIds.includes(2) && (
+          <Float speed={5} rotationIntensity={2}>
+            <mesh position={[0, 0, 0]}>
+              <torusGeometry args={[0.4, 0.05, 16, 32]} />
+              <meshStandardMaterial color="#f59e0b" emissive="#f59e0b" emissiveIntensity={2} />
+            </mesh>
+          </Float>
+        )}
       </group>
 
-      {/* Quadrant Zones */}
-      {zones.map((z) => (
-        <group 
-          key={z.id} 
-          position={z.pos as any}
-          onPointerOver={() => setHovered(z.id)}
-          onPointerOut={() => setHovered(null)}
-          onClick={() => onZoneClick(z.id)}
-        >
-          <mesh>
-            <planeGeometry args={[2.8, 2.8]} />
-            <meshStandardMaterial 
-              color={z.color} 
-              transparent 
-              opacity={hovered === z.id ? 0.2 : 0.05} 
-            />
+      {/* 3. Greywater Reuse -> New Storage Tank Appears */}
+      <Float speed={2} floatIntensity={placedIds.includes(3) ? 1 : 0}>
+        <RoundedBox args={[1.5, 2, 1.5]} radius={0.1} position={[1.5, placedIds.includes(3) ? 1 : -2, -1.5]}>
+          <meshStandardMaterial color="#10b981" roughness={0.3} metalness={0.5} transparent opacity={placedIds.includes(3) ? 1 : 0} />
+          <Edges color="#059669" />
+        </RoundedBox>
+      </Float>
+
+      {/* 4. Flow Aerators -> Blue cones on top */}
+      {placedIds.includes(4) && (
+        <group position={[-1, 3.2, -1]}>
+          <mesh rotation={[Math.PI, 0, 0]}>
+            <coneGeometry args={[0.5, 1, 16]} />
+            <meshStandardMaterial color="#0ea5e9" emissive="#0ea5e9" emissiveIntensity={1} />
           </mesh>
-          <Html position={[0, 1.1, 0]} center distanceFactor={6}>
-            <div className={`px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-tighter whitespace-nowrap transition-all duration-300 ${
-              hovered === z.id 
-                ? 'bg-slate-900 border-slate-900 text-white scale-110 shadow-xl' 
-                : 'bg-white/80 border-slate-200 text-slate-400'
-            }`}>
-              {z.label}
-            </div>
-          </Html>
         </group>
-      ))}
+      )}
 
-      {/* Axis Labels */}
-      <Html position={[0, 3.4, 0]} center>
-        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-          <TrendingUp className="w-3 h-3" /> Impact (Low → High)
-        </div>
-      </Html>
-      <Html position={[3.6, 0, 0]} center rotation={[0, 0, -Math.PI / 2]}>
-        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-          <Clock className="w-3 h-3" /> Effort (Low → High)
-        </div>
-      </Html>
+      {/* 6. Borewell Recharge -> Ground glowing pulse */}
+      {placedIds.includes(6) && (
+        <mesh position={[0, 0.01, 0]} rotation={[-Math.PI/2, 0, 0]}>
+          <ringGeometry args={[1, 2.5, 32]} />
+          <meshBasicMaterial color="#3b82f6" transparent opacity={0.3} side={THREE.DoubleSide} />
+        </mesh>
+      )}
 
-      {/* Placed Findings as 3D Cards */}
-      {placedFindings.map((f, i) => (
-        <Float key={f.id} speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
-          <mesh 
-            position={[
-              f.zone === 'quick-wins' || f.zone === 'fill-ins' ? -1.5 : 1.5,
-              f.zone === 'quick-wins' || f.zone === 'major-projects' ? 1.5 : -1.5,
-              0.1 + (i * 0.05)
-            ]}
-          >
-            <boxGeometry args={[1.2, 0.8, 0.05]} />
-            <meshStandardMaterial color="white" metalness={0.1} roughness={0.1} />
-            <Html center distanceFactor={4}>
-              <div className="bg-white/90 backdrop-blur-sm p-1 rounded border border-blue-100 shadow-lg text-[6px] font-bold text-slate-900 w-16 text-center leading-tight">
-                {f.title}
-              </div>
-            </Html>
-          </mesh>
-        </Float>
-      ))}
     </group>
   );
 }
 
-// --- Main Activity ---
+// --- Main UI Component ---
+
+const FINDINGS = [
+  { id: 1, title: "Fix Restroom Leaks", impact: "High", effort: "Low", category: "Maintenance", desc: "Repair all dripping taps and leaking flushes." },
+  { id: 2, title: "Install Sub-meters", impact: "High", effort: "High", category: "Measurement", desc: "Add smart meters to cooling towers and blocks." },
+  { id: 3, title: "Greywater Reuse", impact: "High", effort: "High", category: "Capital", desc: "Route sink water to flush toilets." },
+  { id: 4, title: "Flow Aerators", impact: "Moderate", effort: "Low", category: "Quick Win", desc: "Install 3LPM aerators on all washbasin taps." },
+  { id: 5, title: "Garden Timer", impact: "Low", effort: "Low", category: "Quick Win", desc: "Automate sprinklers to run only at night." },
+  { id: 6, title: "Borewell Recharge", impact: "High", effort: "Moderate", category: "Capital", desc: "Build recharge pits for rainwater." },
+];
 
 export function OpportunityRanking() {
-  const [placedFindings, setPlacedFindings] = useState<any[]>([]);
-  const [selectedFinding, setSelectedFinding] = useState<any | null>(null);
-  
-  const findings = [
-    { id: 1, title: "Fix Restroom Leaks", impact: "High", effort: "Low", cost: "₹2,000", savings: "1,200L/day" },
-    { id: 2, title: "Install Sub-meters", impact: "High", effort: "High", cost: "₹45,000", savings: "Data Clarity" },
-    { id: 3, title: "Greywater Reuse", impact: "High", effort: "High", cost: "₹80,000", savings: "3,500L/day" },
-    { id: 4, title: "Flow Aerators", impact: "Moderate", effort: "Low", cost: "₹5,000", savings: "800L/day" },
-    { id: 5, title: "Garden Timer", impact: "Low", effort: "Low", cost: "₹1,500", savings: "200L/day" },
-    { id: 6, title: "Borewell Recharge", impact: "High", effort: "Moderate", cost: "₹12,000", savings: "Groundwater" },
+  const [placedItems, setPlacedItems] = useState<Record<number, string>>({});
+  const [activeItem, setActiveItem] = useState<number | null>(null);
+
+  const quadrants = [
+    { id: "quick-wins", title: "Quick Wins", color: "bg-emerald-500", border: "border-emerald-500", text: "text-emerald-700", icon: Zap, label: "High Impact, Low Effort" },
+    { id: "major-projects", title: "Major Projects", color: "bg-blue-500", border: "border-blue-500", text: "text-blue-700", icon: TrendingUp, label: "High Impact, High Effort" },
+    { id: "fill-ins", title: "Fill-ins", color: "bg-amber-500", border: "border-amber-500", text: "text-amber-700", icon: Clock, label: "Low Impact, Low Effort" },
+    { id: "thankless", title: "Thankless Tasks", color: "bg-rose-500", border: "border-rose-500", text: "text-rose-700", icon: AlertTriangle, label: "Low Impact, High Effort" },
   ];
 
-  const handleZoneClick = (zone: string) => {
-    if (selectedFinding && !placedFindings.find(f => f.id === selectedFinding.id)) {
-      setPlacedFindings([...placedFindings, { ...selectedFinding, zone }]);
-      setSelectedFinding(null);
+  const handlePlace = (quadrantId: string) => {
+    if (activeItem !== null) {
+      setPlacedItems(prev => ({ ...prev, [activeItem]: quadrantId }));
+      setActiveItem(null);
     }
   };
 
-  const totalSavings = placedFindings.reduce((acc, f) => {
-    const val = parseInt(f.savings?.replace(/[^0-9]/g, '') || '0');
-    return acc + val;
-  }, 0);
-
-  const reset = () => {
-    setPlacedFindings([]);
-    setSelectedFinding(null);
-  };
+  const placedCount = Object.keys(placedItems).length;
+  const isComplete = placedCount === FINDINGS.length;
+  const placedIds = Object.keys(placedItems).map(Number);
 
   return (
-    <div className="relative w-full h-[600px] bg-slate-50 rounded-3xl overflow-hidden border border-slate-200 shadow-inner">
-      <Canvas shadows className="w-full h-full">
-        <PerspectiveCamera makeDefault position={[0, 0, 8]} fov={50} />
-        <OrbitControls 
-          enableRotate={false}
-          enablePan={true} 
-          minDistance={4} 
-          maxDistance={12}
-        />
-        
-        <ambientLight intensity={1} />
-        <spotLight position={[5, 5, 5]} intensity={100} castShadow />
-        
-        <Suspense fallback={null}>
-          <BoardroomScene 
-            placedFindings={placedFindings} 
-            onZoneClick={handleZoneClick} 
-          />
-          <Environment preset="studio" />
-        </Suspense>
-      </Canvas>
-
-      {/* TOP HUD: DETAILS */}
-      <div className="absolute top-6 left-6 right-6 flex items-start justify-between pointer-events-none">
-        <div className="bg-white/80 backdrop-blur-xl p-6 rounded-2xl border border-white shadow-2xl pointer-events-auto max-w-sm">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
-              <BarChart3 className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tighter">Strategic Opportunity Ranking</h2>
-              <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full uppercase">
-                Impact-Effort Matrix
-              </span>
-            </div>
+    <div className="w-full min-h-[800px] flex flex-col xl:flex-row gap-8 bg-slate-50/50 p-6 md:p-10 rounded-[3rem] border border-slate-200">
+      
+      {/* LEFT: 2D Interactive Matrix */}
+      <div className="flex-1 flex flex-col gap-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-3xl font-black text-slate-900 tracking-tight">Triage Matrix</h3>
+            <p className="text-slate-500 font-medium mt-1">Classify the findings to build your action plan.</p>
           </div>
-          
-          {selectedFinding ? (
-            <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
-              <div>
-                <h3 className="text-lg font-bold text-slate-900">{selectedFinding.title}</h3>
-                <div className="flex gap-2 mt-1">
-                  <span className="text-[10px] font-bold px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md">Cost: {selectedFinding.cost}</span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 bg-green-50 text-green-600 rounded-md">Est. {selectedFinding.savings}</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-100">
-                <Target className="w-4 h-4" />
-                <p className="text-xs font-bold">Select a quadrant on the grid to place this finding.</p>
-              </div>
-            </div>
-          ) : (
-            <div className="p-4 border-2 border-dashed border-slate-200 rounded-xl text-center">
-              <p className="text-xs font-medium text-slate-400 italic">Select a finding from the deck below to analyze and prioritize it.</p>
-            </div>
-          )}
-        </div>
-
-        <div className="bg-white/80 backdrop-blur-xl p-6 rounded-2xl border border-white shadow-2xl pointer-events-auto w-56">
-          <span className="text-[10px] font-bold text-slate-400 uppercase block mb-3">Strategy ROI</span>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Droplets className="w-3 h-3 text-blue-600" />
-                <span className="text-[10px] font-bold text-slate-600 uppercase">Savings</span>
-              </div>
-              <span className="text-sm font-black text-slate-900">{totalSavings} L/d</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Coins className="w-3 h-3 text-amber-600" />
-                <span className="text-[10px] font-bold text-slate-600 uppercase">Items</span>
-              </div>
-              <span className="text-sm font-black text-slate-900">{placedFindings.length} / {findings.length}</span>
-            </div>
-            <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-blue-600 transition-all duration-500" 
-                style={{ width: `${(placedFindings.length / findings.length) * 100}%` }} 
-              />
-            </div>
+          <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-slate-200">
+            <span className="text-blue-600 font-black">{placedCount}</span>
+            <span className="text-slate-400 font-bold">/ {FINDINGS.length} Placed</span>
           </div>
         </div>
-      </div>
 
-      {/* BOTTOM HUD: DECK */}
-      <div className="absolute bottom-6 left-6 right-6 pointer-events-none">
-        <div className="bg-white/80 backdrop-blur-xl p-4 rounded-3xl border border-white shadow-2xl pointer-events-auto overflow-x-auto no-scrollbar">
-          <div className="flex gap-4">
-            {findings.map((f) => {
-              const isPlaced = placedFindings.find(p => p.id === f.id);
-              return (
-                <button
-                  key={f.id}
-                  onClick={() => !isPlaced && setSelectedFinding(f)}
-                  disabled={isPlaced}
-                  className={`min-w-[160px] p-4 rounded-2xl border-2 transition-all text-left flex flex-col justify-between h-32 ${
-                    isPlaced 
-                      ? "bg-slate-50 border-slate-100 opacity-40" 
-                      : selectedFinding?.id === f.id
-                        ? "bg-blue-600 border-blue-600 text-white shadow-xl -translate-y-2"
-                        : "bg-white border-white hover:border-blue-200 shadow-sm"
-                  }`}
-                >
+        {/* Matrix Grid */}
+        <div className="grid grid-cols-2 grid-rows-2 gap-4 flex-1 min-h-[400px]">
+          {quadrants.map(q => {
+            const itemsInQuadrant = FINDINGS.filter(f => placedItems[f.id] === q.id);
+            const isTarget = activeItem !== null;
+            
+            return (
+              <button
+                key={q.id}
+                onClick={() => handlePlace(q.id)}
+                disabled={activeItem === null}
+                className={`relative p-6 rounded-[2rem] border-2 transition-all flex flex-col text-left overflow-hidden
+                  ${isTarget ? `hover:scale-[1.02] hover:shadow-xl ${q.border} bg-white shadow-md cursor-pointer animate-pulse` : 'bg-white/50 border-slate-200'}
+                `}
+              >
+                {/* Background Decor */}
+                <div className={`absolute -right-8 -top-8 w-32 h-32 rounded-full ${q.color} opacity-10 blur-2xl`} />
+                
+                <div className="flex items-center gap-3 mb-2">
+                  <div className={`p-2 rounded-xl ${q.color} text-white`}>
+                    <q.icon size={20} />
+                  </div>
                   <div>
-                    <h4 className="text-xs font-black uppercase leading-tight">{f.title}</h4>
-                    <p className={`text-[10px] font-bold mt-1 ${selectedFinding?.id === f.id ? 'text-blue-100' : 'text-slate-400'}`}>
-                      {f.impact} Impact
-                    </p>
+                    <h4 className="font-bold text-slate-900">{q.title}</h4>
+                    <p className={`text-[10px] font-black uppercase tracking-widest ${q.text}`}>{q.label}</p>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${selectedFinding?.id === f.id ? 'bg-white/20' : 'bg-slate-50'}`}>
-                      {isPlaced ? <CheckCircle2 className="w-3 h-3 text-green-500" /> : <Plus className="w-3 h-3" />}
+                </div>
+
+                <div className="mt-4 flex flex-col gap-2 flex-1">
+                  {itemsInQuadrant.map(f => (
+                    <div key={f.id} className="bg-slate-50 border border-slate-200 p-3 rounded-xl flex items-center justify-between shadow-sm animate-in zoom-in duration-300">
+                      <span className="text-xs font-bold text-slate-800">{f.title}</span>
+                      <CheckCircle2 size={16} className={q.text} />
                     </div>
-                    <Zap className={`w-3 h-3 ${selectedFinding?.id === f.id ? 'text-blue-100' : 'text-slate-300'}`} />
-                  </div>
+                  ))}
+                  {itemsInQuadrant.length === 0 && !isTarget && (
+                    <div className="flex-1 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-xl">
+                      <span className="text-xs font-bold text-slate-400">Empty</span>
+                    </div>
+                  )}
+                  {itemsInQuadrant.length === 0 && isTarget && (
+                    <div className="flex-1 flex items-center justify-center border-2 border-dashed border-blue-400 bg-blue-50/50 rounded-xl">
+                      <span className="text-xs font-bold text-blue-600 animate-bounce">Click to place here</span>
+                    </div>
+                  )}
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* RIGHT: 3D Visualization & Inbox */}
+      <div className="w-full xl:w-[500px] flex flex-col gap-6">
+        {/* 3D View */}
+        <div className="h-[400px] bg-white rounded-[2rem] border border-slate-200 shadow-lg relative overflow-hidden">
+          <Canvas camera={{ position: [5, 4, 5], fov: 45 }}>
+            <color attach="background" args={["#f8fafc"]} />
+            <ambientLight intensity={1.5} />
+            <directionalLight position={[10, 10, 5]} intensity={2} castShadow />
+            <AbstractFacility placedIds={placedIds} />
+            <Environment preset="city" />
+            <ContactShadows position={[0, -1.2, 0]} opacity={0.5} scale={10} blur={2} />
+            <OrbitControls enableZoom={false} autoRotate={placedCount === FINDINGS.length} autoRotateSpeed={2} />
+          </Canvas>
+          <div className="absolute top-4 left-4 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full border border-slate-200 text-xs font-bold text-slate-600 shadow-sm flex items-center gap-2">
+            <Layers size={16} className="text-blue-600" />
+            Facility Digital Twin
+          </div>
+        </div>
+
+        {/* Inbox / Deck */}
+        <div className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm flex-1 flex flex-col">
+          <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">Unclassified Findings</h3>
+          
+          <div className="flex flex-col gap-3 flex-1 overflow-y-auto no-scrollbar">
+            {FINDINGS.filter(f => !placedItems[f.id]).map(f => (
+              <button
+                key={f.id}
+                onClick={() => setActiveItem(activeItem === f.id ? null : f.id)}
+                className={`text-left p-4 rounded-2xl border-2 transition-all ${
+                  activeItem === f.id 
+                    ? 'border-blue-500 bg-blue-50 shadow-md scale-[1.02]' 
+                    : 'border-slate-100 bg-slate-50 hover:border-blue-200 hover:bg-white'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-bold text-slate-900">{f.title}</h4>
+                  <span className="text-[10px] font-black uppercase tracking-widest bg-white px-2 py-1 rounded-full text-slate-500 border border-slate-200">
+                    {f.category}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 mb-3">{f.desc}</p>
+                <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest">
+                  <span className="text-blue-600">Impact: {f.impact}</span>
+                  <span className="text-amber-600">Effort: {f.effort}</span>
+                </div>
+              </button>
+            ))}
+
+            {isComplete && (
+              <div className="flex flex-col items-center justify-center flex-1 text-center animate-in fade-in zoom-in">
+                <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-4">
+                  <CheckCircle2 size={32} />
+                </div>
+                <h4 className="text-xl font-black text-slate-900 mb-2">Plan Optimized</h4>
+                <p className="text-sm text-slate-500 font-medium mb-6">All findings have been classified.</p>
+                <button 
+                  onClick={() => { setPlacedItems({}); setActiveItem(null); }}
+                  className="flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-slate-900 transition-colors uppercase tracking-widest"
+                >
+                  <RotateCcw size={14} /> Reset Activity
                 </button>
-              );
-            })}
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      <div className="absolute top-1/2 right-10 -translate-y-1/2 pointer-events-none flex flex-col items-center gap-1 opacity-20">
-        <div className="w-1 h-20 bg-slate-400 rounded-full" />
-        <div className="w-2 h-2 bg-slate-400 rounded-full" />
-        <div className="w-1 h-20 bg-slate-400 rounded-full" />
-      </div>
-
-      {placedFindings.length === findings.length && (
-        <div className="absolute inset-0 bg-blue-600/90 backdrop-blur-xl flex flex-col items-center justify-center p-12 text-center animate-in fade-in zoom-in">
-          <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-2xl mb-8">
-            <CheckCircle2 className="w-12 h-12 text-blue-600" />
-          </div>
-          <h2 className="text-4xl font-black text-white mb-4 tracking-tighter">Strategy Optimized</h2>
-          <p className="text-blue-50 text-lg max-w-md mb-8">
-            You've successfully prioritized all findings. Your implementation plan focuses on high-impact wins first.
-          </p>
-          <div className="flex gap-4">
-            <button 
-              onClick={reset}
-              className="px-8 py-4 bg-white text-blue-600 rounded-2xl font-bold hover:bg-blue-50 transition-all active:scale-95 shadow-xl"
-            >
-              Review Board
-            </button>
-            <button className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all active:scale-95 shadow-xl flex items-center gap-2">
-              Next Step <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

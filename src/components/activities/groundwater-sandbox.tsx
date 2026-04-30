@@ -1,17 +1,20 @@
-"use client";
+'use client';
 
-import React, { useState, Suspense, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import {
-  OrbitControls,
-  PerspectiveCamera,
-  Environment,
-  ContactShadows,
-  Html,
-  useCursor,
-  Grid,
+import React, { useState, Suspense, useRef, useMemo } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { 
+  OrbitControls, 
+  PerspectiveCamera, 
+  Environment, 
+  ContactShadows, 
+  Html, 
+  Grid, 
   Float,
-} from "@react-three/drei";
+  RoundedBox,
+  Box,
+  Cylinder
+} from '@react-three/drei';
+import * as THREE from 'three';
 import { 
   CloudRain, 
   Droplets, 
@@ -23,9 +26,15 @@ import {
   Wind,
   Trees,
   Mountain,
-  Zap
-} from "lucide-react";
-import * as THREE from "three";
+  Zap,
+  Waves,
+  ArrowRight,
+  ShieldCheck,
+  Activity,
+  ChevronRight,
+  TrendingUp,
+  MapPin
+} from 'lucide-react';
 
 // --- 3D Components ---
 
@@ -59,7 +68,7 @@ function TerrainModel({
   });
 
   return (
-    <group position={[0, -1, 0]}>
+    <group position={[0, -1.5, 0]}>
       {/* Terrain Base - Cross Section */}
       <mesh castShadow receiveShadow position={[0, 0.5, 0]}>
         <boxGeometry args={[10, 1, 6]} />
@@ -78,31 +87,25 @@ function TerrainModel({
         <meshStandardMaterial color="#3b82f6" transparent opacity={0.6} />
       </mesh>
 
-      {/* Grid for context */}
-      <Grid
-        position={[0, 1.1, 0]}
-        infiniteGrid
-        fadeDistance={20}
-        fadeStrength={5}
-        cellSize={1}
-        sectionSize={5}
-        sectionThickness={1.5}
-        sectionColor="#2563eb"
-        cellColor="#94a3b8"
-      />
-
-      {/* Render Structures */}
+      {/* Structures */}
       {structures.includes("Check Dam") && (
         <group position={[2, 1.1, 0]}>
           <mesh castShadow>
             <boxGeometry args={[0.2, 0.4, 4]} />
             <meshStandardMaterial color="#64748b" />
           </mesh>
-          <Html distanceFactor={5} position={[0, 0.5, 0]}>
-            <div className="bg-white/90 backdrop-blur-md px-2 py-1 rounded border border-slate-200 text-[10px] font-bold text-slate-600 uppercase shadow-xl whitespace-nowrap">
-              Check Dam
-            </div>
-          </Html>
+        </group>
+      )}
+
+      {structures.includes("Recharge Well") && (
+        <group position={[-2, 1.1, 0]}>
+          <Cylinder args={[0.2, 0.2, 3]} position={[0, -1, 0]}>
+            <meshStandardMaterial color="#94a3b8" transparent opacity={0.8} />
+          </Cylinder>
+          <mesh position={[0, -0.1, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <torusGeometry args={[0.3, 0.05, 16, 32]} />
+            <meshStandardMaterial color="#334155" />
+          </mesh>
         </group>
       )}
 
@@ -117,16 +120,6 @@ function TerrainModel({
           ))}
         </group>
       )}
-
-      {/* Environmental Props */}
-      <group position={[-3, 1.1, -1]}>
-        <Float speed={2} floatIntensity={0.5}>
-          <mesh castShadow>
-            <coneGeometry args={[0.4, 1.2, 8]} />
-            <meshStandardMaterial color="#166534" />
-          </mesh>
-        </Float>
-      </group>
     </group>
   );
 }
@@ -137,165 +130,220 @@ export function GroundwaterSandbox() {
   const [structures, setStructures] = useState<string[]>([]);
   const [isRaining, setIsRaining] = useState(false);
   const [intensity, setIntensity] = useState(1);
-  const [rechargeVolume, setRechargeVolume] = useState(0);
-
+  
   const availableStructures = [
-    { name: "Check Dam", icon: <Mountain className="w-4 h-4" />, desc: "Slows runoff in streams" },
-    { name: "Percolation Tank", icon: <Droplets className="w-4 h-4" />, desc: "Stores runoff for soaking" },
-    { name: "Contour Bund", icon: <Zap className="w-4 h-4" />, desc: "Breaks slope flow" },
-    { name: "Recharge Well", icon: <ArrowDown className="w-4 h-4" />, desc: "Direct path to aquifer" }
+    { name: "Check Dam", icon: Mountain, desc: "Slows runoff in streams" },
+    { name: "Percolation Tank", icon: Droplets, desc: "Stores runoff for soaking" },
+    { name: "Contour Bund", icon: Zap, desc: "Breaks slope flow" },
+    { name: "Recharge Well", icon: ArrowDown, desc: "Direct path to aquifer" }
   ];
 
-  const addStructure = (name: string) => {
-    if (!structures.includes(name)) {
-      setStructures([...structures, name]);
-    } else {
-      setStructures(structures.filter(s => s !== name));
-    }
+  const toggleStructure = (name: string) => {
+    setStructures(prev => prev.includes(name) ? prev.filter(s => s !== name) : [...prev, name]);
   };
 
   const reset = () => {
     setStructures([]);
     setIsRaining(false);
     setIntensity(1);
-    setRechargeVolume(0);
   };
 
-  return (
-    <div className="relative w-full h-[600px] bg-[#f8fafc] rounded-3xl overflow-hidden border border-slate-200 shadow-inner">
-      <Canvas shadows className="w-full h-full">
-        <PerspectiveCamera makeDefault position={[8, 8, 8]} fov={50} />
-        <OrbitControls 
-          enablePan={false} 
-          minDistance={5} 
-          maxDistance={15}
-          maxPolarAngle={Math.PI / 2.1}
-        />
-        
-        <ambientLight intensity={1.5} />
-        <spotLight position={[10, 15, 10]} angle={0.3} penumbra={1} intensity={250} castShadow />
-        <pointLight position={[-5, 5, -5]} intensity={100} color="#3b82f6" />
-        
-        <Suspense fallback={null}>
-          <TerrainModel 
-            structures={structures} 
-            isRaining={isRaining} 
-            rainIntensity={intensity} 
-          />
-          <Environment preset="park" />
-          <ContactShadows position={[0, -1, 0]} opacity={0.4} scale={20} blur={2.5} far={4.5} />
-        </Suspense>
-      </Canvas>
+  const rechargeRate = isRaining ? (intensity * (structures.length + 1) * 150) : 0;
+  const progress = (rechargeRate / 2250) * 100; // Max rate with 4 structures + Torrential
 
-      {/* TOP HUD: STRUCTURES */}
-      <div className="absolute top-6 left-6 right-6 flex items-start justify-between pointer-events-none">
-        <div className="bg-white/80 backdrop-blur-xl p-6 rounded-2xl border border-white shadow-2xl pointer-events-auto max-w-sm">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-200">
-              <Layers className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tighter">Groundwater Recharge</h2>
-              <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full uppercase">
-                Architecture Mode
-              </span>
+  return (
+    <div className="flex flex-col lg:flex-row w-full min-h-[750px] bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+      {/* LEFT: 3D SIMULATION PANEL */}
+      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[450px]">
+        <Canvas shadows className="w-full h-full">
+          <PerspectiveCamera makeDefault position={[12, 12, 12]} fov={35} />
+          <OrbitControls 
+            enablePan={false}
+            minDistance={8}
+            maxDistance={25}
+            maxPolarAngle={Math.PI / 2.1}
+          />
+          
+          <ambientLight intensity={1.5} />
+          <spotLight position={[20, 30, 10]} intensity={800} castShadow />
+          
+          <Suspense fallback={null}>
+            <Grid
+              infiniteGrid
+              fadeDistance={40}
+              fadeStrength={5}
+              cellSize={1}
+              sectionSize={5}
+              sectionThickness={1}
+              sectionColor="#3b82f6"
+              cellColor="#e2e8f0"
+            />
+            
+            <TerrainModel 
+              structures={structures} 
+              isRaining={isRaining} 
+              rainIntensity={intensity} 
+            />
+            
+            <Environment preset="park" />
+            <ContactShadows position={[0, -1, 0]} opacity={0.4} scale={25} blur={2.5} far={10} color="#000000" />
+          </Suspense>
+        </Canvas>
+
+        {/* HUD Elements */}
+        <div className="absolute top-10 left-10 pointer-events-none">
+          <div className="bg-slate-900/80 backdrop-blur-xl p-6 rounded-[2.5rem] border border-white/10 shadow-2xl">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <Waves className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">Aquifer Simulation</span>
+                <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Groundwater Recharge</h2>
+              </div>
             </div>
           </div>
-          
-          <div className="space-y-2">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Available Structures</span>
-            <div className="grid grid-cols-2 gap-2">
+        </div>
+
+        <div className="absolute bottom-10 left-10 pointer-events-none">
+          <div className="bg-blue-600/10 backdrop-blur-md px-6 py-3 rounded-full border border-blue-500/20 text-blue-500 flex items-center gap-3">
+            <Activity className="w-4 h-4 animate-pulse" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">
+              {isRaining ? 'Monsoon Active' : 'System Idle - Awaiting Rain'}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* RIGHT: CONTROL PANEL */}
+      <div className="w-full lg:w-[450px] bg-white flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar">
+        <div className="space-y-10">
+          <div className="flex items-center justify-between">
+            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Interventions</h3>
+            <div className="p-3 bg-slate-50 rounded-2xl text-blue-600">
+              <Layers size={20} />
+            </div>
+          </div>
+
+          {/* Structure Selection */}
+          <div className="space-y-4">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Augmentation Units</span>
+            <div className="grid grid-cols-2 gap-3">
               {availableStructures.map((s) => (
                 <button
                   key={s.name}
-                  onClick={() => addStructure(s.name)}
-                  className={`flex flex-col items-center gap-2 p-3 rounded-xl border transition-all text-left ${
+                  onClick={() => toggleStructure(s.name)}
+                  className={`flex flex-col p-5 rounded-[2rem] border transition-all text-left gap-3 group ${
                     structures.includes(s.name) 
-                      ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-100" 
-                      : "bg-slate-50 border-slate-200 text-slate-600 hover:border-blue-400"
+                      ? "bg-blue-600 border-blue-600 text-white shadow-xl shadow-blue-200 scale-105" 
+                      : "bg-slate-50 border-slate-100 text-slate-600 hover:bg-white hover:border-blue-200 hover:shadow-lg"
                   }`}
                 >
-                  <div className={`p-2 rounded-lg ${structures.includes(s.name) ? "bg-white/20" : "bg-white border border-slate-200"}`}>
-                    {s.icon}
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                    structures.includes(s.name) ? "bg-white/20" : "bg-white shadow-sm group-hover:scale-110 transition-transform"
+                  }`}>
+                    <s.icon className={structures.includes(s.name) ? "text-white" : "text-blue-600"} size={20} />
                   </div>
-                  <span className="text-[10px] font-bold leading-tight">{s.name}</span>
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-tight block">{s.name}</span>
+                    <p className={`text-[8px] font-bold mt-1 leading-tight ${structures.includes(s.name) ? "text-blue-100" : "text-slate-400"}`}>
+                      {s.desc}
+                    </p>
+                  </div>
                 </button>
               ))}
             </div>
           </div>
-        </div>
 
-        <div className="bg-white/80 backdrop-blur-xl p-6 rounded-2xl border border-white shadow-2xl pointer-events-auto w-48 text-center">
-          <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Aquifer Recharge</span>
-          <div className="text-3xl font-black text-blue-600">
-            {isRaining ? (Math.random() * 500).toFixed(0) : "0"}
-            <span className="text-xs ml-1 font-bold text-slate-400">m³</span>
-          </div>
-          <div className="mt-2 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-blue-600 transition-all duration-1000" 
-              style={{ width: isRaining ? '60%' : '20%' }} 
+          {/* Intensity Control */}
+          <div className="bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <CloudRain className="w-4 h-4 text-blue-600" />
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Monsoon Intensity</span>
+              </div>
+              <span className={`text-[8px] font-black px-2 py-1 rounded-md uppercase ${
+                intensity === 1 ? 'bg-blue-100 text-blue-600' :
+                intensity === 2 ? 'bg-amber-100 text-amber-600' :
+                'bg-rose-100 text-rose-600'
+              }`}>
+                {intensity === 1 ? 'Light' : intensity === 2 ? 'Moderate' : 'Torrential'}
+              </span>
+            </div>
+            <input 
+              type="range" 
+              min="1" 
+              max="3" 
+              step="1"
+              value={intensity}
+              onChange={(e) => setIntensity(Number(e.target.value))}
+              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
             />
+            <div className="flex justify-between mt-4">
+              <span className="text-[8px] font-black text-slate-300 uppercase">Mist</span>
+              <span className="text-[8px] font-black text-slate-300 uppercase">Downpour</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* BOTTOM HUD: SIMULATION CONTROLS */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-white/80 backdrop-blur-xl px-8 py-6 rounded-[2.5rem] border border-white shadow-2xl flex items-center gap-12 w-full max-w-2xl">
-        <div className="flex-1">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] font-bold text-slate-400 uppercase">Monsoon Intensity</span>
-            <span className="text-[10px] font-bold text-blue-600 uppercase bg-blue-50 px-2 py-0.5 rounded-full">
-              {intensity === 1 ? "Light" : intensity === 2 ? "Moderate" : "Torrential"}
-            </span>
+        {/* Results/Telemetry */}
+        <div className="mt-auto space-y-6">
+          <div className="p-8 bg-slate-900 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
+            <div className="relative z-10">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Recharge Velocity</p>
+                  <p className="text-3xl font-black text-blue-400 tracking-tighter">
+                    {rechargeRate.toLocaleString()} <span className="text-xs text-slate-500">L/hr</span>
+                  </p>
+                </div>
+                <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                  <TrendingUp className={isRaining ? "text-emerald-400 animate-pulse" : "text-slate-600"} size={24} />
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <span>Aquifer Saturation</span>
+                  <span>{Math.round(progress)}%</span>
+                </div>
+                <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-blue-600 transition-all duration-1000 ease-out" 
+                    style={{ width: `${progress}%` }} 
+                  />
+                </div>
+              </div>
+
+              <div className="mt-8 flex gap-4">
+                <button 
+                  onClick={() => setIsRaining(!isRaining)}
+                  className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${
+                    isRaining ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-blue-600 text-white hover:bg-blue-500'
+                  }`}
+                >
+                  {isRaining ? 'Halt Simulation' : 'Initialize Monsoon'}
+                </button>
+                <button 
+                  onClick={reset}
+                  className="p-4 bg-white/5 text-slate-400 rounded-2xl hover:bg-white/10 transition-all"
+                >
+                  <RotateCcw size={18} />
+                </button>
+              </div>
+            </div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
           </div>
-          <input 
-            type="range" 
-            min="1" 
-            max="3" 
-            step="1"
-            value={intensity}
-            onChange={(e) => setIntensity(Number(e.target.value))}
-            className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-          />
-        </div>
 
-        <div className="flex items-center gap-4 shrink-0">
-          <button 
-            onClick={() => setIsRaining(!isRaining)}
-            className={`flex items-center gap-3 px-8 py-4 rounded-2xl font-bold transition-all shadow-xl ${
-              isRaining 
-                ? "bg-slate-900 text-white hover:bg-slate-800" 
-                : "bg-blue-600 text-white hover:bg-blue-700 hover:scale-105 active:scale-95"
-            }`}
-          >
-            {isRaining ? (
-              <>
-                <Wind className="w-5 h-5 animate-bounce" />
-                Stop Rain
-              </>
-            ) : (
-              <>
-                <CloudRain className="w-5 h-5" />
-                Initialize Monsoon
-              </>
-            )}
-          </button>
-          
-          <button 
-            onClick={reset}
-            className="p-4 bg-white border border-slate-200 text-slate-400 rounded-2xl hover:bg-slate-50 transition-all active:scale-95"
-          >
-            <RotateCcw className="w-5 h-5" />
-          </button>
+          <div className="flex items-start gap-4 p-6 bg-slate-50 rounded-3xl border border-slate-100">
+            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+              <Info className="w-5 h-5 text-blue-600" />
+            </div>
+            <p className="text-xs font-bold text-slate-500 leading-relaxed">
+              Structures like Check Dams capture surface runoff, allowing it to seep into the aquifer over time.
+            </p>
+          </div>
         </div>
-      </div>
-
-      <div className="absolute bottom-32 left-1/2 -translate-x-1/2 flex items-center gap-3 p-3 bg-white/60 backdrop-blur-md rounded-xl border border-white/40 shadow-sm pointer-events-none">
-        <Info className="w-3 h-3 text-slate-500" />
-        <p className="text-[10px] font-medium text-slate-600 italic">
-          Tip: Structures like Check Dams capture surface runoff, allowing it to seep into the aquifer over time.
-        </p>
       </div>
     </div>
   );

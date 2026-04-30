@@ -1,14 +1,13 @@
 "use client";
 
-import React, { useState, Suspense, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import React, { useState, Suspense, useMemo } from "react";
+import { Canvas } from "@react-three/fiber";
 import {
   OrbitControls,
   PerspectiveCamera,
   Environment,
   ContactShadows,
   Html,
-  useCursor,
   Grid,
   Float,
 } from "@react-three/drei";
@@ -24,7 +23,11 @@ import {
   BarChart,
   ArrowRight,
   TrendingUp,
-  Award
+  Award,
+  ChevronRight,
+  Info,
+  Sparkles,
+  Target
 } from "lucide-react";
 import * as THREE from "three";
 
@@ -37,15 +40,15 @@ function AudienceMember({ position, reaction }: { position: [number, number, num
     <group position={position}>
       <mesh castShadow position={[0, 0.4, 0]}>
         <cylinderGeometry args={[0.2, 0.25, 0.8, 16]} />
-        <meshStandardMaterial color="#cbd5e1" />
+        <meshStandardMaterial color="#cbd5e1" roughness={0.8} />
       </mesh>
       <mesh castShadow position={[0, 1, 0]}>
         <sphereGeometry args={[0.2, 16, 16]} />
-        <meshStandardMaterial color="#f1f5f9" />
+        <meshStandardMaterial color="#f1f5f9" roughness={0.4} />
       </mesh>
-      <Float speed={5} floatIntensity={0.2} rotationIntensity={0.1}>
+      <Float speed={4} floatIntensity={0.2} rotationIntensity={0.1}>
         <mesh position={[0, 1.4, 0]}>
-          <sphereGeometry args={[0.05, 16, 16]} />
+          <sphereGeometry args={[0.06, 16, 16]} />
           <meshBasicMaterial color={color} />
         </mesh>
       </Float>
@@ -53,65 +56,16 @@ function AudienceMember({ position, reaction }: { position: [number, number, num
   );
 }
 
-function TownHallScene({ engagement, currentSlide }: { engagement: number, currentSlide: any }) {
+function StageScene({ engagement, currentSlide }: { engagement: number, currentSlide: any }) {
   const reaction = engagement > 70 ? 'happy' : engagement < 40 ? 'unhappy' : 'neutral';
   
   return (
-    <group position={[0, -1, 0]}>
-      {/* Hall Floor */}
+    <group position={[0, -1.5, 0]}>
+      {/* Floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
-        <planeGeometry args={[20, 20]} />
-        <meshStandardMaterial color="#f8fafc" roughness={0.1} metalness={0.1} />
+        <planeGeometry args={[25, 25]} />
+        <meshStandardMaterial color="#f1f5f9" roughness={1} />
       </mesh>
-      
-      {/* Podium */}
-      <mesh castShadow position={[0, 0.5, 4]}>
-        <boxGeometry args={[1.5, 1, 0.8]} />
-        <meshStandardMaterial color="#475569" />
-      </mesh>
-
-      {/* Presentation Screen */}
-      <group position={[0, 3, 6]}>
-        <mesh castShadow>
-          <planeGeometry args={[8, 4.5]} />
-          <meshStandardMaterial color="#1e293b" emissive="#1e293b" emissiveIntensity={0.2} />
-        </mesh>
-        <Html transform distanceFactor={5} position={[0, 0, 0.01]}>
-          <div className="w-[800px] h-[450px] bg-white p-12 flex flex-col items-center justify-center text-center">
-            {currentSlide ? (
-              <div className="animate-in fade-in zoom-in duration-500">
-                <h1 className="text-6xl font-black text-slate-900 mb-8 tracking-tighter uppercase">{currentSlide.title}</h1>
-                <div className="w-24 h-2 bg-blue-600 mb-12" />
-                <p className="text-3xl font-bold text-slate-500 leading-relaxed max-w-2xl">{currentSlide.content}</p>
-                <div className="mt-16 flex gap-12">
-                  <div className="flex flex-col items-center">
-                    <div className="text-5xl font-black text-blue-600 mb-2">{currentSlide.metric}</div>
-                    <div className="text-xl font-bold text-slate-400 uppercase tracking-widest">{currentSlide.label}</div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center">
-                <Presentation className="w-32 h-32 text-slate-200 mb-8" />
-                <h1 className="text-4xl font-black text-slate-300 uppercase tracking-widest">Awaiting Slide...</h1>
-              </div>
-            )}
-          </div>
-        </Html>
-      </group>
-
-      {/* Audience Rows */}
-      {Array.from({ length: 15 }).map((_, i) => (
-        <AudienceMember 
-          key={i} 
-          position={[
-            ((i % 5) - 2) * 2,
-            0,
-            -Math.floor(i / 5) * 2
-          ]} 
-          reaction={reaction}
-        />
-      ))}
 
       <Grid
         infiniteGrid
@@ -119,192 +73,300 @@ function TownHallScene({ engagement, currentSlide }: { engagement: number, curre
         fadeStrength={5}
         cellSize={1}
         sectionSize={5}
-        sectionThickness={1.5}
-        sectionColor="#2563eb"
-        cellColor="#94a3b8"
+        sectionThickness={1}
+        sectionColor="#3b82f6"
+        cellColor="#e2e8f0"
       />
+      
+      {/* Podium */}
+      <mesh castShadow position={[0, 0.6, 5]}>
+        <boxGeometry args={[1.6, 1.2, 0.8]} />
+        <meshStandardMaterial color="#1e293b" metalness={0.5} roughness={0.2} />
+      </mesh>
+
+      {/* Screen */}
+      <group position={[0, 4.5, 8]}>
+        <mesh castShadow>
+          <boxGeometry args={[10, 5.6, 0.2]} />
+          <meshStandardMaterial color="#0f172a" metalness={0.8} roughness={0.1} />
+        </mesh>
+        <Html transform distanceFactor={6} position={[0, 0, 0.15]}>
+          <div className="w-[1000px] h-[560px] bg-white p-20 flex flex-col items-center justify-center text-center rounded-[2rem] border-[10px] border-slate-900 overflow-hidden shadow-2xl">
+            {currentSlide ? (
+              <div className="animate-in fade-in zoom-in duration-500 w-full">
+                <div className="flex items-center justify-center gap-6 mb-12">
+                  <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center">
+                    {currentSlide.type === 'logic' ? <Brain className="w-10 h-10 text-white" /> : currentSlide.type === 'emotion' ? <Heart className="w-10 h-10 text-white" /> : <Coins className="w-10 h-10 text-white" />}
+                  </div>
+                  <h1 className="text-7xl font-black text-slate-900 tracking-tighter uppercase leading-none">{currentSlide.title}</h1>
+                </div>
+                <p className="text-4xl font-bold text-slate-500 leading-tight max-w-4xl mx-auto mb-16">{currentSlide.content}</p>
+                <div className="flex items-center justify-center gap-20">
+                  <div className="text-center">
+                    <div className="text-8xl font-black text-blue-600 mb-4">{currentSlide.metric}</div>
+                    <div className="text-2xl font-black text-slate-400 uppercase tracking-[0.3em]">{currentSlide.label}</div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-8 opacity-20">
+                <Presentation className="w-48 h-48 text-slate-400" />
+                <h1 className="text-5xl font-black text-slate-400 uppercase tracking-widest">System Ready</h1>
+              </div>
+            )}
+          </div>
+        </Html>
+      </group>
+
+      {/* Audience */}
+      {Array.from({ length: 20 }).map((_, i) => (
+        <AudienceMember 
+          key={i} 
+          position={[
+            ((i % 5) - 2) * 2.5,
+            0,
+            -Math.floor(i / 5) * 2.5 + 2
+          ]} 
+          reaction={reaction}
+        />
+      ))}
     </group>
   );
 }
 
 // --- Main Activity ---
 
+const SLIDES = [
+  { id: 1, title: "Waste Analysis", content: "Our facility is currently losing 15,000L of filtered water every 24 hours.", metric: "15k L", label: "Daily Loss", type: 'logic', impact: { logic: 25, emotion: 5, budget: -5 } },
+  { id: 2, title: "Smart Solution", content: "AI-driven sensors can detect micro-leaks and reduce waste by 65%.", metric: "65%", label: "Reduction", type: 'budget', impact: { logic: 10, emotion: 10, budget: 15 } },
+  { id: 3, title: "Future Legacy", content: "Saving water today ensures a sustainable campus for the next generation.", metric: "2050", label: "Vision", type: 'emotion', impact: { logic: 5, emotion: 30, budget: 0 } },
+  { id: 4, title: "Financial ROI", content: "The $12k investment will be fully recouped within 8 months of operation.", metric: "8 mo", label: "Payback", type: 'budget', impact: { logic: 15, emotion: 0, budget: 30 } }
+];
+
 export function TownHallSim() {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [selectedSlides, setSelectedSlides] = useState<any[]>([]);
-  const [engagement, setEngagement] = useState(50);
-  const [logic, setLogic] = useState(50);
-  const [emotion, setEmotion] = useState(50);
-  const [budget, setBudget] = useState(50);
+  const [selectedSlideIds, setSelectedSlideIds] = useState<number[]>([]);
+  const [logic, setLogic] = useState(40);
+  const [emotion, setEmotion] = useState(40);
+  const [budget, setBudget] = useState(40);
 
-  const availableSlides = [
-    { id: 1, title: "Data Audit", content: "Our school wastes 12,000L of water every single day due to hidden leaks.", metric: "12k L", label: "Daily Waste", type: 'logic', impact: { logic: 20, emotion: 5, budget: -5 } },
-    { id: 2, title: "The Solution", content: "By installing smart meters and aerators, we can recover 40% of this loss.", metric: "40%", label: "Recovery", type: 'budget', impact: { logic: 10, emotion: 10, budget: 15 } },
-    { id: 3, title: "Our Community", content: "Safe water isn't just about plumbing; it's about our students' health.", metric: "1,200", label: "Students", type: 'emotion', impact: { logic: 5, emotion: 25, budget: 0 } },
-    { id: 4, title: "Cost Efficiency", content: "The system pays for itself in 6 months through reduced water bills.", metric: "6 mo", label: "ROI", type: 'budget', impact: { logic: 15, emotion: 0, budget: 25 } }
-  ];
+  const engagement = useMemo(() => {
+    return Math.min((logic + emotion + budget) / 1.8, 100);
+  }, [logic, emotion, budget]);
 
-  const handleSlideSelect = (slide: any) => {
-    if (selectedSlides.length < 3 && !selectedSlides.find(s => s.id === slide.id)) {
-      setSelectedSlides([...selectedSlides, slide]);
+  const handleSelect = (id: number) => {
+    if (selectedSlideIds.includes(id)) return;
+    if (selectedSlideIds.length >= 3) return;
+
+    const slide = SLIDES.find(s => s.id === id);
+    if (slide) {
+      setSelectedSlideIds([...selectedSlideIds, id]);
       setLogic(prev => Math.min(prev + slide.impact.logic, 100));
       setEmotion(prev => Math.min(prev + slide.impact.emotion, 100));
       setBudget(prev => Math.min(prev + slide.impact.budget, 100));
-      setEngagement(prev => Math.min((logic + emotion + budget) / 1.5, 100));
     }
   };
 
   const reset = () => {
-    setCurrentStep(0);
-    setSelectedSlides([]);
-    setEngagement(50);
-    setLogic(50);
-    setEmotion(50);
-    setBudget(50);
+    setSelectedSlideIds([]);
+    setLogic(40);
+    setEmotion(40);
+    setBudget(40);
   };
 
-  return (
-    <div className="relative w-full h-[600px] bg-slate-50 rounded-3xl overflow-hidden border border-slate-200 shadow-inner">
-      <Canvas shadows className="w-full h-full">
-        <PerspectiveCamera makeDefault position={[0, 5, 12]} fov={50} />
-        <OrbitControls 
-          enablePan={false} 
-          minDistance={8} 
-          maxDistance={18}
-          maxPolarAngle={Math.PI / 2.1}
-        />
-        
-        <ambientLight intensity={1.5} />
-        <spotLight position={[0, 10, 10]} intensity={200} castShadow />
-        
-        <Suspense fallback={null}>
-          <TownHallScene 
-            engagement={engagement} 
-            currentSlide={selectedSlides[selectedSlides.length - 1]} 
-          />
-          <Environment preset="city" />
-          <ContactShadows position={[0, -1, 0]} opacity={0.4} scale={20} blur={2.5} far={4.5} />
-        </Suspense>
-      </Canvas>
+  const activeSlide = useMemo(() => 
+    SLIDES.find(s => s.id === selectedSlideIds[selectedSlideIds.length - 1]), 
+    [selectedSlideIds]
+  );
 
-      {/* TOP HUD: GAUGES */}
-      <div className="absolute top-6 left-6 right-6 flex items-start justify-between pointer-events-none">
-        <div className="bg-white/80 backdrop-blur-xl p-6 rounded-2xl border border-white shadow-2xl pointer-events-auto max-w-xs">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
-              <Presentation className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tighter">Town Hall Presentation</h2>
-              <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full uppercase">
-                Advocacy Mode
-              </span>
+  const isSuccess = selectedSlideIds.length === 3 && engagement > 75;
+
+  return (
+    <div className="flex flex-col lg:flex-row w-full min-h-[750px] bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+      {/* LEFT: 3D STAGE PANEL */}
+      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[450px]">
+        <Canvas shadows className="w-full h-full">
+          <PerspectiveCamera makeDefault position={[0, 8, 18]} fov={40} />
+          <OrbitControls 
+            enablePan={false} 
+            minDistance={10} 
+            maxDistance={25}
+            maxPolarAngle={Math.PI / 2.2}
+          />
+          
+          <ambientLight intensity={1.5} />
+          <spotLight position={[0, 15, 10]} intensity={500} castShadow />
+          <pointLight position={[0, 5, 10]} intensity={100} color="#3b82f6" />
+          
+          <Suspense fallback={null}>
+            <StageScene engagement={engagement} currentSlide={activeSlide} />
+            <Environment preset="city" />
+            <ContactShadows position={[0, -1.5, 0]} opacity={0.4} scale={25} blur={2.5} far={10} color="#000000" />
+          </Suspense>
+        </Canvas>
+
+        {/* HUD Overlay */}
+        <div className="absolute top-10 left-10 pointer-events-none">
+          <div className="bg-slate-900/80 backdrop-blur-xl p-6 rounded-[2.5rem] border border-white/10 shadow-2xl">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <Presentation className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">Advocacy Simulation</span>
+                <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Town Hall Presentation</h2>
+              </div>
             </div>
           </div>
-          
-          <div className="space-y-4">
+        </div>
+
+        <div className="absolute bottom-10 left-10 pointer-events-none">
+          <div className="bg-blue-600/10 backdrop-blur-md px-6 py-3 rounded-full border border-blue-500/20 text-blue-500 flex items-center gap-3">
+            <Users className="w-4 h-4" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Audience engagement: {engagement.toFixed(0)}%</span>
+          </div>
+        </div>
+      </div>
+
+      {/* RIGHT: STRATEGY PANEL */}
+      <div className="w-full lg:w-[450px] bg-white flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar">
+        <div className="space-y-10">
+          <div className="flex items-center justify-between">
+            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Deck Strategy</h3>
+            <div className="p-3 bg-slate-50 rounded-2xl">
+              <Target className="w-5 h-5 text-slate-300" />
+            </div>
+          </div>
+
+          {/* Gauges */}
+          <div className="grid grid-cols-3 gap-4">
             {[
-              { label: "Logic", val: logic, icon: <Brain className="w-3 h-3" />, color: "bg-blue-600" },
-              { label: "Emotion", val: emotion, icon: <Heart className="w-3 h-3" />, color: "bg-red-500" },
-              { label: "Budget", val: budget, icon: <Coins className="w-3 h-3" />, color: "bg-amber-500" }
+              { label: "Logic", val: logic, icon: Brain, color: "bg-blue-600" },
+              { label: "Emotion", val: emotion, icon: Heart, color: "bg-rose-500" },
+              { label: "Budget", val: budget, icon: Coins, color: "bg-amber-500" }
             ].map((g) => (
-              <div key={g.label}>
-                <div className="flex justify-between items-center mb-1">
-                  <div className="flex items-center gap-2">
-                    <div className="text-slate-400">{g.icon}</div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{g.label}</span>
-                  </div>
-                  <span className="text-[10px] font-black text-slate-900">{g.val}%</span>
+              <div key={g.label} className="p-4 bg-slate-50 rounded-3xl border border-slate-100 flex flex-col items-center gap-3">
+                <div className={`p-2 rounded-xl bg-white shadow-sm`}>
+                  <g.icon className={`w-4 h-4 ${g.color.replace('bg-', 'text-')}`} />
                 </div>
-                <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+                <div className="h-16 w-1.5 bg-slate-200 rounded-full overflow-hidden relative">
                   <div 
-                    className={`h-full ${g.color} transition-all duration-500`} 
-                    style={{ width: `${g.val}%` }} 
+                    className={`absolute bottom-0 w-full ${g.color} transition-all duration-700 ease-out`} 
+                    style={{ height: `${g.val}%` }} 
                   />
                 </div>
+                <span className="text-[8px] font-black uppercase text-slate-400 tracking-widest">{g.label}</span>
               </div>
             ))}
           </div>
-        </div>
 
-        <div className="bg-white/80 backdrop-blur-xl p-6 rounded-2xl border border-white shadow-2xl pointer-events-auto w-48 text-center">
-          <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Audience Engagement</span>
-          <div className={`text-4xl font-black ${engagement > 70 ? 'text-green-600' : engagement < 40 ? 'text-red-600' : 'text-blue-600'}`}>
-            {engagement.toFixed(0)}%
-          </div>
-          <div className="mt-2 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-            <div 
-              className={`h-full transition-all duration-500 ${engagement > 70 ? 'bg-green-600' : engagement < 40 ? 'bg-red-600' : 'bg-blue-600'}`} 
-              style={{ width: `${engagement}%` }} 
-            />
-          </div>
-          <div className="flex items-center justify-center gap-1 mt-2">
-            <Users className="w-3 h-3 text-slate-400" />
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              {engagement > 70 ? 'Supportive' : engagement < 40 ? 'Skeptical' : 'Interested'}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* BOTTOM HUD: SLIDE DECK */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-full max-w-3xl">
-        <div className="bg-white/80 backdrop-blur-xl px-10 py-6 rounded-[3rem] border border-white shadow-2xl">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Select 3 Strategic Slides</span>
-            <span className="text-[10px] font-bold text-blue-600 uppercase bg-blue-50 px-2 py-0.5 rounded-full">
-              {selectedSlides.length} / 3 Selected
-            </span>
-          </div>
-          <div className="grid grid-cols-4 gap-4">
-            {availableSlides.map((slide) => {
-              const isSelected = selectedSlides.find(s => s.id === slide.id);
-              return (
-                <button
-                  key={slide.id}
-                  onClick={() => handleSlideSelect(slide)}
-                  disabled={isSelected || selectedSlides.length >= 3}
-                  className={`p-4 rounded-2xl border-2 transition-all text-left flex flex-col justify-between h-28 ${
-                    isSelected 
-                      ? "bg-blue-50 border-blue-100 opacity-60" 
-                      : selectedSlides.length >= 3
-                        ? "bg-slate-50 border-slate-50 opacity-40 cursor-not-allowed"
-                        : "bg-white border-white hover:border-blue-200 shadow-sm hover:-translate-y-1"
-                  }`}
-                >
-                  <h4 className="text-[10px] font-black uppercase leading-tight text-slate-900">{slide.title}</h4>
-                  <div className="flex items-center justify-between mt-auto">
-                    <div className="p-1.5 bg-slate-50 rounded-lg text-slate-400">
-                      {slide.type === 'logic' ? <Brain className="w-3 h-3" /> : slide.type === 'emotion' ? <Heart className="w-3 h-3" /> : <Coins className="w-3 h-3" />}
+          {/* Slide Selection */}
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Available Slides ({selectedSlideIds.length}/3)</span>
+              {selectedSlideIds.length === 3 && (
+                <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full uppercase">Deck Complete</span>
+              )}
+            </div>
+            <div className="grid grid-cols-1 gap-3">
+              {SLIDES.map((slide) => {
+                const isSelected = selectedSlideIds.includes(slide.id);
+                return (
+                  <button
+                    key={slide.id}
+                    onClick={() => handleSelect(slide.id)}
+                    disabled={isSelected || selectedSlideIds.length >= 3}
+                    className={`flex items-center gap-4 p-5 rounded-2xl border-2 transition-all ${
+                      isSelected 
+                        ? "bg-slate-900 border-slate-900 text-white opacity-50" 
+                        : selectedSlideIds.length >= 3
+                          ? "bg-slate-50 border-slate-50 opacity-40 cursor-not-allowed"
+                          : "bg-white border-slate-100 text-slate-600 hover:border-blue-400 hover:bg-blue-50/30 shadow-sm"
+                    }`}
+                  >
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                      isSelected ? 'bg-white/10' : 'bg-slate-50'
+                    }`}>
+                      {slide.type === 'logic' ? <Brain className="w-5 h-5" /> : slide.type === 'emotion' ? <Heart className="w-5 h-5" /> : <Coins className="w-5 h-5" />}
                     </div>
-                    {isSelected && <CheckCircle2 className="w-4 h-4 text-green-500" />}
-                  </div>
-                </button>
-              );
-            })}
+                    <div className="flex-1 text-left">
+                      <h4 className="text-xs font-black uppercase tracking-tight">{slide.title}</h4>
+                      <p className="text-[10px] font-bold opacity-60 line-clamp-1">{slide.content}</p>
+                    </div>
+                    {isSelected && <CheckCircle2 className="w-5 h-5 text-emerald-400" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Global Progress */}
+        <div className="mt-auto space-y-6">
+          <div className="p-8 bg-blue-600 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
+            <div className="relative z-10">
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <span className="text-[10px] font-black text-blue-200 uppercase tracking-widest block mb-1">Engagement Meter</span>
+                  <div className="text-4xl font-black tracking-tighter">{engagement.toFixed(0)}%</div>
+                </div>
+                <div className="p-3 bg-white/10 rounded-2xl">
+                  <Sparkles className="w-6 h-6 text-blue-200" />
+                </div>
+              </div>
+              <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-white transition-all duration-1000 ease-out" 
+                  style={{ width: `${engagement}%` }} 
+                />
+              </div>
+              <p className="mt-4 text-[10px] font-black uppercase tracking-widest text-blue-200">
+                {engagement > 75 ? 'Committee is extremely impressed' : engagement > 50 ? 'Building momentum...' : 'Needs more impact'}
+              </p>
+            </div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+          </div>
+
+          <div className="flex gap-4">
+            <button onClick={reset} className="flex-1 py-5 bg-white border border-slate-200 rounded-2xl text-slate-400 font-black text-[10px] uppercase tracking-widest hover:text-blue-600 transition-all flex items-center justify-center gap-2">
+              <RotateCcw className="w-4 h-4" /> Reset
+            </button>
+            <button 
+              disabled={selectedSlideIds.length < 3}
+              className={`flex-[2] py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl flex items-center justify-center gap-3 ${
+                selectedSlideIds.length < 3 
+                  ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
+                  : 'bg-slate-900 text-white hover:bg-slate-800'
+              }`}
+            >
+              Submit Proposal <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
 
-      {selectedSlides.length === 3 && engagement > 70 && (
-        <div className="absolute inset-0 bg-blue-600/90 backdrop-blur-xl flex flex-col items-center justify-center p-12 text-center animate-in fade-in zoom-in">
-          <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-2xl mb-8">
-            <Award className="w-12 h-12 text-blue-600" />
-          </div>
-          <h2 className="text-4xl font-black text-white mb-4 tracking-tighter uppercase">Proposal Accepted!</h2>
-          <p className="text-blue-50 text-lg max-w-md mb-8">
-            The committee was impressed by your balanced presentation. They've agreed to fund the "Smart Metering" project immediately.
-          </p>
-          <div className="flex gap-4">
-            <button 
-              onClick={reset}
-              className="px-8 py-4 bg-white text-blue-600 rounded-2xl font-bold hover:bg-blue-50 transition-all active:scale-95 shadow-xl"
-            >
-              Review Presentation
-            </button>
-            <button className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all active:scale-95 shadow-xl flex items-center gap-2">
-              Next Step <ArrowRight className="w-4 h-4" />
-            </button>
+      {/* Success Overlay */}
+      {isSuccess && (
+        <div className="absolute inset-0 bg-slate-900/95 backdrop-blur-2xl flex items-center justify-center p-12 z-50 animate-in fade-in zoom-in duration-700">
+          <div className="text-center max-w-sm">
+            <div className="w-24 h-24 bg-blue-600 rounded-[2.5rem] flex items-center justify-center mb-8 mx-auto shadow-2xl border-4 border-white/20">
+              <Award size={48} className="text-white" />
+            </div>
+            <h2 className="text-4xl font-black text-white mb-4 tracking-tighter uppercase leading-none">Proposal Approved</h2>
+            <p className="text-slate-400 mb-10 font-medium text-sm leading-relaxed">
+              Congratulations! Your balanced approach successfully persuaded the committee. The funding for the water optimization project has been unlocked.
+            </p>
+            <div className="flex flex-col gap-4">
+              <button className="w-full py-5 bg-blue-600 text-white font-black rounded-2xl transition-all shadow-xl hover:bg-blue-700 active:scale-95 text-xs uppercase tracking-widest flex items-center justify-center gap-3">
+                Claim Module Badge
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <button 
+                onClick={reset}
+                className="w-full py-5 bg-white/5 text-slate-400 font-black rounded-2xl transition-all hover:bg-white/10 text-xs uppercase tracking-widest"
+              >
+                Re-simulate
+              </button>
+            </div>
           </div>
         </div>
       )}

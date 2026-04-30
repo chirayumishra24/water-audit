@@ -47,10 +47,10 @@ export function ChapterContent({ chapter }: ChapterContentProps) {
       </div>
 
       {/* Main Content Area - Center Aligned */}
-      <div className="max-w-5xl mx-auto pt-4 relative z-20 flex flex-col gap-12">
+      <div className="w-full max-w-[95vw] 2xl:max-w-[1400px] mx-auto pt-4 relative z-20 flex flex-col gap-12">
         
         {/* Top Section: Title & Aquaman */}
-        <div className="flex flex-col lg:flex-row justify-between items-start gap-12 max-w-4xl mx-auto w-full">
+        <div className="flex flex-col lg:flex-row justify-between items-start gap-12 w-full mx-auto">
           {/* Left: Titles & Info */}
           <div className="flex-1 flex flex-col">
             {/* Breadcrumbs */}
@@ -75,21 +75,6 @@ export function ChapterContent({ chapter }: ChapterContentProps) {
               </p>
             </div>
 
-            {/* Feature Pills */}
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="bg-white/90 text-slate-800 px-5 py-2.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-2 border border-white">
-                <span className="bg-orange-500 text-white text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider">Focus</span>
-                Course Overview
-              </div>
-              <div className="bg-white/90 text-slate-800 px-5 py-2.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-2 border border-white">
-                <span className="bg-blue-500 text-white text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider">Mode</span>
-                All Formats
-              </div>
-              <div className="bg-white/90 text-slate-800 px-5 py-2.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-2 border border-white">
-                <span className="bg-green-500 text-white text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider">Practice</span>
-                Read only
-              </div>
-            </div>
           </div>
 
           {/* Right: Aquaman Helper */}
@@ -98,42 +83,10 @@ export function ChapterContent({ chapter }: ChapterContentProps) {
           </div>
         </div>
 
-        {/* Middle Section: Chapter Flow Widget */}
-        <div className="bg-white/50 backdrop-blur-2xl rounded-[2.5rem] p-8 border border-white shadow-[0_8px_30px_rgba(0,0,0,0.08)] relative overflow-hidden max-w-4xl mx-auto w-full mb-4">
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/60 to-transparent pointer-events-none"></div>
-          
-          <div className="relative z-10 flex items-center justify-between mb-6">
-            <span className="text-sm font-extrabold text-slate-600 tracking-wider uppercase">Chapter Flow</span>
-            <span className="text-sm font-extrabold text-slate-900 bg-white/80 px-3 py-1 rounded-full shadow-sm">0% Explored</span>
-          </div>
-          
-          {/* Progress Track */}
-          <div className="relative h-4 bg-slate-200/50 rounded-full overflow-hidden mb-8 shadow-inner border border-white/50">
-            <div className="absolute top-0 left-0 h-full w-[5%] bg-blue-500 rounded-full"></div>
-          </div>
 
-          {/* Steps */}
-          <div className="flex flex-wrap items-center gap-6 md:gap-10">
-            <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full border-2 border-red-500 flex items-center justify-center bg-white shadow-sm">
-                <span className="w-2 h-2 bg-red-500 rounded-full"></span>
-              </span>
-              <span className="text-sm md:text-base font-bold text-red-600">Sections</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full border-2 border-slate-300 bg-white shadow-sm"></span>
-              <span className="text-sm md:text-base font-bold text-slate-600">Practice</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full border-2 border-slate-300 bg-white shadow-sm"></span>
-              <span className="text-sm md:text-base font-bold text-slate-600">Recap</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Section: Main Course Content */}
-        <div className="bg-white/95 backdrop-blur-xl rounded-[2.5rem] p-6 sm:p-10 md:p-14 shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-2 border-white relative z-10 max-w-4xl mx-auto w-full">
-          <div className="prose-course max-w-none prose-lg md:prose-xl text-slate-800">
+        {/* Bottom Section: Main Course Content (No main card wrapper, relies on TopicCards) */}
+        <div className="relative z-10 w-full mx-auto">
+          <div className="prose-course max-w-none prose-lg md:prose-xl text-slate-800 w-full">
             {chapter.content}
           </div>
         </div>

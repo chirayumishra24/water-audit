@@ -6,6 +6,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
+import remarkSectionize from "remark-sectionize";
 import { mdxComponents } from "@/components/course/mdx-components";
 import {
   courseModuleDefinitions,
@@ -167,7 +168,7 @@ export const getChapterPageData = cache(
       components: mdxComponents,
       options: {
         mdxOptions: {
-          remarkPlugins: [remarkGfm],
+          remarkPlugins: [remarkGfm, remarkSectionize],
         },
       },
     });

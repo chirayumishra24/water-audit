@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { 
   OrbitControls, 
   PerspectiveCamera, 
-  Text, 
   Html, 
   RoundedBox,
   Box,
@@ -15,16 +14,32 @@ import {
   ContactShadows,
   Float,
   SpotLight,
-  Sparkles
+  Sparkles,
+  Grid
 } from '@react-three/drei';
 import * as THREE from 'three';
-import { Home, CheckCircle2, AlertTriangle, Search, ArrowRight, Droplets, MapPin, Activity, Target, ShieldCheck, Crosshair, Settings } from 'lucide-react';
+import { 
+  Search, 
+  CheckCircle2, 
+  MapPin, 
+  Activity, 
+  ShieldCheck, 
+  Eye, 
+  RotateCcw,
+  AlertCircle,
+  ArrowRight,
+  Info,
+  ChevronRight,
+  Droplets,
+  Wrench,
+  Zap
+} from 'lucide-react';
 
 const AUDIT_POINTS = [
-  { id: 'kitchen', name: 'Kitchen Sink', pos: [-4, 0.8, -4], type: 'Leak', description: 'Faucet dripping 5 times per minute.', saving: '20L/day', found: false },
-  { id: 'bathroom', name: 'Toilet Flush', pos: [4, 0.8, -4], type: 'Overflow', description: 'Faulty valve causing constant flow.', saving: '150L/day', found: false },
-  { id: 'garden', name: 'Garden Tap', pos: [0, 0.6, 5], type: 'Corrosion', description: 'External tap leaking into soil.', saving: '40L/day', found: false },
-  { id: 'tank', name: 'Roof Tank', pos: [0, 3.5, 0], type: 'Sensor Failure', description: 'Tank overflows daily due to missing sensor.', saving: '500L/day', found: false }
+  { id: 'kitchen', name: 'Kitchen Sink', pos: [-4, 0.8, -4], type: 'Leak', description: 'Faucet dripping 5 times per minute.', saving: '20L/day', found: false, icon: Droplets },
+  { id: 'bathroom', name: 'Toilet Flush', pos: [4, 0.8, -4], type: 'Overflow', description: 'Faulty valve causing constant flow.', saving: '150L/day', found: false, icon: AlertCircle },
+  { id: 'garden', name: 'Garden Tap', pos: [0, 0.6, 5], type: 'Corrosion', description: 'External tap leaking into soil.', saving: '40L/day', found: false, icon: Wrench },
+  { id: 'tank', name: 'Roof Tank', pos: [0, 3.5, 0], type: 'Sensor Failure', description: 'Tank overflows daily due to missing sensor.', saving: '500L/day', found: false, icon: Zap }
 ];
 
 function SinkModel({ position }: { position: [number, number, number] }) {
@@ -110,35 +125,40 @@ function Wall({ position, args, rotation = [0, 0, 0] }: { position: [number, num
 
 function Hotspot({ data, onSelect }: { data: typeof AUDIT_POINTS[0], onSelect: () => void }) {
   const [hovered, setHovered] = useState(false);
-  const mesh = useRef<THREE.Mesh>(null!);
-
-  useFrame((state) => {
-    if (mesh.current && !data.found) {
-      mesh.current.scale.setScalar(1 + Math.sin(state.clock.elapsedTime * 5) * 0.2);
-    }
-  });
+  const color = data.found ? "#22c55e" : hovered ? "#3b82f6" : "#60a5fa";
 
   return (
     <group position={data.pos as any}>
-      <mesh 
-        ref={mesh}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
-        onClick={(e) => {
-          e.stopPropagation();
-          onSelect();
-        }}
-      >
-        <sphereGeometry args={[0.3, 32, 32]} />
-        <meshStandardMaterial 
-          color={data.found ? "#22c55e" : "#3b82f6"} 
-          emissive={data.found ? "#22c55e" : "#3b82f6"}
-          emissiveIntensity={hovered ? 1.5 : 0.4}
-          transparent
-          opacity={0.6}
-        />
-      </mesh>
-      <Sparkles count={5} scale={1} size={1} speed={0.4} color={data.found ? "#22c55e" : "#3b82f6"} />
+      <Float speed={5} floatIntensity={0.5}>
+        <mesh 
+          onPointerOver={() => setHovered(true)}
+          onPointerOut={() => setHovered(false)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect();
+          }}
+        >
+          <sphereGeometry args={[0.3, 32, 32]} />
+          <meshStandardMaterial 
+            color={color} 
+            emissive={color}
+            emissiveIntensity={hovered ? 2 : 0.5}
+            transparent
+            opacity={0.6}
+          />
+        </mesh>
+        {!data.found && (
+          <Html distanceFactor={8} position={[0, 0.8, 0]} center>
+            <div className={`px-4 py-2 rounded-2xl bg-white/90 backdrop-blur-xl border-2 shadow-2xl transition-all duration-500 whitespace-nowrap flex items-center gap-2 cursor-pointer ${
+              hovered ? 'border-blue-600 scale-110' : 'border-white'
+            }`}>
+              <Search className="w-3 h-3 text-blue-600" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">Inspect</span>
+            </div>
+          </Html>
+        )}
+      </Float>
+      <Sparkles count={5} scale={1} size={1} speed={0.4} color={color} />
     </group>
   );
 }
@@ -155,157 +175,246 @@ export function VirtualSchoolAudit() {
   const foundCount = points.filter(p => p.found).length;
   const selectedData = points.find(p => p.id === selectedId);
   const totalSaving = points.filter(p => p.found).reduce((acc, p) => acc + parseInt(p.saving), 0);
+  const progress = (foundCount / AUDIT_POINTS.length) * 100;
 
   return (
-    <div className="w-full h-[750px] bg-slate-50 rounded-[3.5rem] overflow-hidden relative border-[12px] border-white shadow-[0_50px_100px_rgba(0,0,0,0.1)]">
-      <Canvas shadows dpr={[1, 2]}>
-        <PerspectiveCamera makeDefault position={[12, 12, 12]} fov={40} />
-        <OrbitControls makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 2.2} enablePan={false} />
-        
-        <ambientLight intensity={1.5} />
-        <SpotLight position={[10, 20, 10]} angle={0.3} penumbra={1} intensity={2} castShadow color="#ffffff" />
-        <Environment preset="city" />
-
-        <group position={[0, -1.5, 0]}>
-          <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-            <planeGeometry args={[40, 40]} />
-            <meshStandardMaterial color="#f8fafc" />
-          </mesh>
-          <Plane args={[18, 14]} position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-            <meshStandardMaterial color="#ffffff" roughness={0.1} />
-          </Plane>
-
-          <Wall position={[0, 1.5, -7]} args={[18, 3, 0.2]} /> 
-          <Wall position={[-9, 1.5, 0]} args={[0.2, 3, 14]} /> 
-          <Wall position={[9, 1.5, 0]} args={[0.2, 3, 14]} /> 
-          <Wall position={[0, 1.5, 7]} args={[18, 3, 0.2]} /> 
-
-          <SinkModel position={[-4, 0.1, -4]} />
-          <ToiletModel position={[4, 0, -4]} />
-          <GardenModel position={[0, 0, 5]} />
-          <WaterTankModel position={[0, 4.5, 0]} />
-
-          <Box args={[4, 0.2, 4]} position={[0, 3, 0]} receiveShadow castShadow>
-            <meshStandardMaterial color="#f1f5f9" />
-          </Box>
-
-          {points.map(p => (
-            <Hotspot 
-              key={p.id} 
-              data={p} 
-              onSelect={() => setSelectedId(p.id)} 
+    <div className="flex flex-col lg:flex-row w-full min-h-[750px] bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+      {/* LEFT: 3D SITE PANEL */}
+      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[450px]">
+        <Canvas shadows className="w-full h-full">
+          <PerspectiveCamera makeDefault position={[12, 12, 12]} fov={35} />
+          <OrbitControls 
+            enablePan={true}
+            minDistance={8}
+            maxDistance={25}
+            maxPolarAngle={Math.PI / 2.1}
+          />
+          
+          <ambientLight intensity={1.5} />
+          <spotLight position={[20, 30, 10]} intensity={800} castShadow />
+          
+          <Suspense fallback={null}>
+            <Grid
+              infiniteGrid
+              fadeDistance={40}
+              fadeStrength={5}
+              cellSize={1}
+              sectionSize={5}
+              sectionThickness={1}
+              sectionColor="#3b82f6"
+              cellColor="#e2e8f0"
             />
-          ))}
-        </group>
+            
+            <group position={[0, -1.5, 0]}>
+              <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+                <planeGeometry args={[40, 40]} />
+                <meshStandardMaterial color="#f8fafc" />
+              </mesh>
+              <Plane args={[18, 14]} position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+                <meshStandardMaterial color="#ffffff" roughness={0.1} />
+              </Plane>
 
-        <ContactShadows position={[0, -1.45, 0]} opacity={0.2} scale={20} blur={2.5} far={4.5} />
-      </Canvas>
+              <Wall position={[0, 1.5, -7]} args={[18, 3, 0.2]} /> 
+              <Wall position={[-9, 1.5, 0]} args={[0.2, 3, 14]} /> 
+              <Wall position={[9, 1.5, 0]} args={[0.2, 3, 14]} /> 
+              <Wall position={[0, 1.5, 7]} args={[18, 3, 0.2]} /> 
 
-      {/* UI: Light Horizontal HUD */}
-      <div className="absolute top-8 left-8 right-8 pointer-events-none flex justify-center">
-        <div className="bg-white/80 backdrop-blur-xl p-4 px-10 rounded-full border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.05)] text-slate-900 pointer-events-auto flex items-center gap-12 border-t-4 border-t-blue-500">
-          <div className="flex items-center gap-4 shrink-0">
-            <div className="w-10 h-10 bg-blue-50 rounded-2xl flex items-center justify-center">
-              <Activity className="w-5 h-5 text-blue-600" />
-            </div>
-            <div>
-              <h2 className="text-xs font-black tracking-widest uppercase leading-none text-slate-400">Virtual Audit</h2>
-              <p className="text-sm font-black text-slate-900 uppercase tracking-tighter">Facility Tracker</p>
+              <SinkModel position={[-4, 0.1, -4]} />
+              <ToiletModel position={[4, 0, -4]} />
+              <GardenModel position={[0, 0, 5]} />
+              <WaterTankModel position={[0, 4.5, 0]} />
+
+              <Box args={[4, 0.2, 4]} position={[0, 3, 0]} receiveShadow castShadow>
+                <meshStandardMaterial color="#f1f5f9" />
+              </Box>
+
+              {points.map(p => (
+                <Hotspot 
+                  key={p.id} 
+                  data={p} 
+                  onSelect={() => setSelectedId(p.id)} 
+                />
+              ))}
+            </group>
+            
+            <Environment preset="city" />
+            <ContactShadows position={[0, -1.45, 0]} opacity={0.4} scale={25} blur={2.5} far={10} color="#000000" />
+          </Suspense>
+        </Canvas>
+
+        {/* HUD Elements */}
+        <div className="absolute top-10 left-10 pointer-events-none">
+          <div className="bg-slate-900/80 backdrop-blur-xl p-6 rounded-[2.5rem] border border-white/10 shadow-2xl">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <Search className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">Audit Engine</span>
+                <h2 className="text-2xl font-black text-white uppercase tracking-tighter">School Campus Audit</h2>
+              </div>
             </div>
           </div>
-          
-          <div className="flex items-center gap-10">
-            <div className="flex items-center gap-6 min-w-[200px]">
-              <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest w-full">
-                <span className="mr-4">Protocol</span>
-                <span className="text-blue-600 font-bold">{foundCount} / 4</span>
-              </div>
-              <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden shrink-0 border border-slate-200">
-                <div className="h-full bg-blue-600 transition-all duration-700" style={{ width: `${(foundCount / 4) * 100}%` }} />
-              </div>
-            </div>
+        </div>
 
-            <div className="h-10 w-px bg-slate-100" />
-
-            <div className="flex items-center gap-6">
-              {points.map(p => (
-                <div key={p.id} className="flex flex-col items-center gap-1">
-                  <div className={`w-2 h-2 rounded-full ${p.found ? 'bg-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.3)]' : 'bg-slate-200'}`} />
-                  <span className={`text-[8px] font-black uppercase tracking-tight ${p.found ? 'text-slate-900' : 'text-slate-300'}`}>{p.name.split(' ')[0]}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="h-10 w-px bg-slate-100" />
-
-            <div className="text-right shrink-0">
-              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Recovered</p>
-              <p className="text-lg font-black text-blue-600 leading-none">{totalSaving} <span className="text-[10px]">LPD</span></p>
-            </div>
+        <div className="absolute bottom-10 left-10 pointer-events-none">
+          <div className="bg-blue-600/10 backdrop-blur-md px-6 py-3 rounded-full border border-blue-500/20 text-blue-500 flex items-center gap-3">
+            <Activity className="w-4 h-4 animate-pulse" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">
+              {foundCount === AUDIT_POINTS.length ? 'Campus Audit Complete' : `Locate ${AUDIT_POINTS.length - foundCount} more points`}
+            </span>
           </div>
         </div>
       </div>
 
-      {selectedData && (
-        <div className="absolute bottom-8 right-8 w-80 bg-white rounded-[3rem] p-8 border border-slate-100 shadow-[0_30px_100px_rgba(0,0,0,0.1)] flex flex-col animate-in slide-in-from-right duration-500 ease-out pointer-events-auto">
-          <button 
-            onClick={() => setSelectedId(null)}
-            className="absolute top-8 right-8 w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all"
-          >
-            ✕
-          </button>
-
-          <div className="flex items-center gap-5 mb-8">
-            <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center">
-              <Search className="w-7 h-7 text-blue-600" />
-            </div>
-            <div>
-              <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase mb-1">{selectedData.name}</h3>
-              <div className="flex items-center gap-2">
-                <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest">Inspection Required</span>
-              </div>
+      {/* RIGHT: REGISTRY PANEL */}
+      <div className="w-full lg:w-[450px] bg-white flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar">
+        <div className="space-y-10">
+          <div className="flex items-center justify-between">
+            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Campus Registry</h3>
+            <div className="p-3 bg-slate-50 rounded-2xl">
+              <MapPin className="w-5 h-5 text-slate-300" />
             </div>
           </div>
 
-          <div className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 mb-8 flex-1">
-            <p className="text-slate-600 text-[11px] leading-relaxed font-medium italic mb-6">
-              "{selectedData.description}"
-            </p>
-            <div className="flex items-center justify-between border-t border-slate-200 pt-4">
+          <div className="flex-1 space-y-4 min-h-[300px]">
+            {foundCount === 0 ? (
+              <div className="flex flex-col items-center justify-center text-center p-12 border-4 border-dashed border-slate-50 rounded-[3rem] h-full">
+                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6">
+                  <Eye className="w-10 h-10 text-slate-200" />
+                </div>
+                <h4 className="text-sm font-black text-slate-300 uppercase tracking-widest mb-2">No Points Audited</h4>
+                <p className="text-[10px] font-bold text-slate-400 leading-relaxed uppercase tracking-widest">
+                  Rotate the 3D campus view and click on the markers to begin the facility audit.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-500">
+                {points.filter(p => p.found).map(p => (
+                  <div key={p.id} className="p-6 bg-slate-50 rounded-[2.5rem] border border-slate-100 flex items-start gap-5 group hover:bg-white hover:shadow-xl transition-all">
+                    <div className="p-4 bg-white rounded-2xl shadow-sm group-hover:scale-110 transition-transform text-blue-600">
+                      {p.icon ? <p.icon size={24} /> : <CheckCircle2 size={24} />}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-xs font-black uppercase tracking-tight text-slate-900">{p.name}</h4>
+                        <span className="text-[8px] font-black px-2 py-1 bg-emerald-100 text-emerald-600 rounded-md uppercase tracking-widest">
+                          Audited
+                        </span>
+                      </div>
+                      <p className="text-[10px] font-bold text-slate-500 leading-relaxed mb-3">{p.description}</p>
+                      <div className="flex items-center justify-between border-t border-slate-200 pt-3">
+                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Savings Potential</span>
+                        <span className="text-xs font-black text-blue-600">{p.saving}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Selected Point Detail */}
+        {selectedData && !selectedData.found && (
+          <div className="bg-slate-900 p-10 rounded-[3rem] text-white shadow-2xl animate-in slide-in-from-bottom-8 relative overflow-hidden group">
+            <div className="relative z-10">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
+                  <AlertCircle className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h4 className="text-base font-black uppercase tracking-tighter leading-none mb-1">{selectedData.name}</h4>
+                  <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Inspection Active</span>
+                </div>
+              </div>
+              <p className="text-xs font-bold text-slate-400 leading-relaxed mb-8 italic">
+                "{selectedData.description}"
+              </p>
+              <button 
+                onClick={() => handleFound(selectedData.id)}
+                className="w-full bg-blue-600 text-white font-black py-5 rounded-2xl hover:bg-blue-500 transition-all shadow-xl flex items-center justify-center gap-3 active:scale-95 text-[10px] uppercase tracking-widest"
+              >
+                LOG REPAIR ACTION
+                <ShieldCheck className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+          </div>
+        )}
+
+        <div className="mt-auto space-y-6">
+          {/* Progress Widget */}
+          <div className="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden">
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Campus Coverage</span>
+              <div className="text-2xl font-black text-slate-900">{Math.round(progress)}%</div>
+            </div>
+            <div className="h-2 w-full bg-white rounded-full overflow-hidden mb-6 border border-slate-200">
+              <div 
+                className="h-full bg-blue-600 transition-all duration-1000 ease-out" 
+                style={{ width: `${progress}%` }} 
+              />
+            </div>
+            <div className="flex justify-between items-center pt-2">
               <div>
-                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Impact</p>
-                <p className="text-2xl font-black text-blue-600">{selectedData.saving}</p>
+                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Savings</p>
+                <p className="text-xl font-black text-blue-600 tracking-tighter">{totalSaving} LPD</p>
               </div>
-              <Activity className="w-8 h-8 text-blue-200" />
+              <button 
+                onClick={() => setPoints(AUDIT_POINTS)} 
+                className="p-3 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-all shadow-sm"
+              >
+                <RotateCcw size={16} />
+              </button>
             </div>
           </div>
 
+          <div className="flex items-start gap-4 p-6 bg-blue-50/50 rounded-3xl border border-blue-100/50">
+            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+              <Info className="w-5 h-5 text-blue-600" />
+            </div>
+            <p className="text-xs font-bold text-slate-500 leading-relaxed">
+              Identify all anomalies to unlock the comprehensive campus efficiency score.
+            </p>
+          </div>
+
           <button 
-            onClick={() => handleFound(selectedData.id)}
-            className="w-full bg-slate-900 text-white font-black py-4 rounded-2xl hover:bg-blue-600 transition-all shadow-xl flex items-center justify-center gap-3 active:scale-95"
+            disabled={foundCount < AUDIT_POINTS.length}
+            className={`w-full py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl flex items-center justify-center gap-3 ${
+              foundCount < AUDIT_POINTS.length 
+                ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
+                : 'bg-slate-900 text-white hover:bg-slate-800 hover:scale-[1.02]'
+            }`}
           >
-            CONFIRM REPAIR
-            <ShieldCheck className="w-4 h-4" />
+            Finalize Campus Audit <ArrowRight className="w-4 h-4" />
           </button>
         </div>
-      )}
+      </div>
 
-      {foundCount === 4 && (
-        <div className="absolute inset-0 bg-white/95 backdrop-blur-2xl flex items-center justify-center p-12 animate-in fade-in zoom-in duration-700 z-[100]">
+      {/* Completion Mastery Overlay */}
+      {foundCount === AUDIT_POINTS.length && (
+        <div className="absolute inset-0 bg-slate-900/95 backdrop-blur-2xl flex items-center justify-center p-12 z-50 animate-in fade-in zoom-in duration-700">
           <div className="text-center max-w-sm">
-            <div className="w-24 h-24 bg-blue-50 rounded-[2.5rem] flex items-center justify-center mb-8 mx-auto shadow-sm border border-blue-100">
-              <ShieldCheck size={48} className="text-blue-600" />
+            <div className="w-24 h-24 bg-blue-600 rounded-[2.5rem] flex items-center justify-center mb-8 mx-auto shadow-2xl border-4 border-white/20">
+              <ShieldCheck size={48} className="text-white" />
             </div>
-            <h2 className="text-4xl font-black mb-4 tracking-tighter text-slate-900 uppercase">Audit Completed</h2>
-            <p className="text-slate-500 mb-10 font-medium text-sm leading-relaxed">
-              Facility water integrity restored. All identified leaks have been rectified.
+            <h2 className="text-4xl font-black text-white mb-4 tracking-tighter uppercase leading-none">Campus Audited</h2>
+            <p className="text-slate-400 mb-10 font-medium text-sm leading-relaxed">
+              You have successfully identified all critical water inefficiencies in the school campus. Your recovery plan is ready.
             </p>
-            <button 
-              onClick={() => { setPoints(AUDIT_POINTS); setSelectedId(null); }}
-              className="w-full py-5 bg-blue-600 text-white font-black rounded-2xl transition-all shadow-xl hover:bg-blue-700 active:scale-95 text-lg"
-            >
-              RESET MISSION
-            </button>
+            <div className="flex flex-col gap-4">
+              <button className="w-full py-5 bg-blue-600 text-white font-black rounded-2xl transition-all shadow-xl hover:bg-blue-700 active:scale-95 text-xs uppercase tracking-widest flex items-center justify-center gap-3">
+                Download Audit Summary
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <button 
+                onClick={() => setPoints(AUDIT_POINTS)}
+                className="w-full py-5 bg-white/5 text-slate-400 font-black rounded-2xl transition-all hover:bg-white/10 text-xs uppercase tracking-widest"
+              >
+                Reset Audit
+              </button>
+            </div>
           </div>
         </div>
       )}
