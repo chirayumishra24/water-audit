@@ -116,11 +116,20 @@ export function WaterBalanceBuilder() {
         </div>
 
         <Canvas shadows className="w-full h-full">
-          <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={45} />
-          <OrbitControls enableRotate={true} enablePan={true} minDistance={5} maxDistance={15} />
+          <PerspectiveCamera makeDefault position={[0, 0.2, 9]} fov={42} />
+          <OrbitControls
+            enableRotate
+            enablePan={false}
+            target={[0, 0, 0]}
+            minDistance={7}
+            maxDistance={11}
+            minPolarAngle={Math.PI / 3.2}
+            maxPolarAngle={Math.PI / 1.9}
+          />
           
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} intensity={200} color="#3b82f6" />
+          <ambientLight intensity={1.15} />
+          <pointLight position={[8, 10, 10]} intensity={260} color="#60a5fa" />
+          <pointLight position={[-8, 6, 8]} intensity={180} color="#93c5fd" />
           <Environment preset="night" />
 
           <group position={[0, 0, 0]}>
@@ -170,7 +179,9 @@ export function WaterBalanceBuilder() {
               </div>
               <div>
                 <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">System Flow</span>
-                <h2 className="text-xl font-black text-white uppercase tracking-tighter leading-none">Mass Balance</h2>
+                <div className="text-xl font-black text-white uppercase tracking-tighter leading-none">
+                  Mass Balance
+                </div>
               </div>
             </div>
           </div>
@@ -188,7 +199,9 @@ export function WaterBalanceBuilder() {
       <div className="w-full lg:w-[450px] bg-white flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar">
         <div>
           <div className="flex items-center justify-between mb-8">
-            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Balance Sheet</h3>
+            <div className="text-2xl font-black text-slate-900 uppercase tracking-tighter">
+              Balance Sheet
+            </div>
             <div className="p-3 bg-slate-50 rounded-2xl">
               <Plus className="w-5 h-5 text-slate-300" />
             </div>
@@ -242,7 +255,9 @@ export function WaterBalanceBuilder() {
 
         <div className="space-y-6">
           <div className="p-6 bg-slate-900 rounded-[2.5rem] text-white shadow-2xl">
-            <h4 className="text-sm font-black uppercase tracking-widest mb-4 text-blue-400">Audit Protocol</h4>
+            <div className="text-sm font-black uppercase tracking-widest mb-4 text-blue-400">
+              Audit Protocol
+            </div>
             <p className="text-xs font-medium text-slate-400 leading-relaxed mb-6">
               A water balance is only "closed" when Input = Usage + Loss. Any positive gap suggests hidden leaks or unmetered connections.
             </p>

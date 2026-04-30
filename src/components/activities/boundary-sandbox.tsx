@@ -1,18 +1,15 @@
 'use client';
 
-import React, { useState, useRef, useMemo, Suspense } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import React, { useMemo, Suspense, useState } from 'react';
+import { Canvas, type ThreeEvent } from '@react-three/fiber';
 import { 
   OrbitControls, 
   PerspectiveCamera, 
   Plane,
   Grid,
-  Html,
-  RoundedBox,
   ContactShadows,
   Environment,
   Box,
-  Float
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { 
@@ -50,7 +47,13 @@ function LowPolyBuilding({ position, scale = [1, 1, 1], color = "#cbd5e1" }: { p
   );
 }
 
-function Terrain() {
+type ScenePointerHandlers = {
+  onPointerDown: (event: ThreeEvent<PointerEvent>) => void;
+  onPointerMove: (event: ThreeEvent<PointerEvent>) => void;
+  onPointerUp: () => void;
+};
+
+function Terrain({ onPointerDown, onPointerMove, onPointerUp }: ScenePointerHandlers) {
   return (
     <group>
       <LowPolyBuilding position={[-4, 0, -4]} scale={[1, 1.5, 1]} color="#f1f5f9" />
@@ -61,6 +64,16 @@ function Terrain() {
 
       <Plane args={[40, 40]} position={[0, -0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <meshStandardMaterial color="#ffffff" roughness={0.1} />
+      </Plane>
+      <Plane
+        args={[40, 40]}
+        position={[0, 0.03, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+      >
+        <meshBasicMaterial transparent opacity={0} />
       </Plane>
     </group>
   );
@@ -96,16 +109,21 @@ export function BoundarySandbox() {
   const [isDrawing, setIsDrawing] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
 
-  const onPointerDown = (e: any) => {
+  const toGroundPoint = (point: THREE.Vector3) => new THREE.Vector3(point.x, 0, point.z);
+
+  const onPointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (confirmed) return;
-    setStartPoint(e.point.clone());
-    setCurrentPoint(e.point.clone());
+    e.stopPropagation();
+    const point = toGroundPoint(e.point);
+    setStartPoint(point);
+    setCurrentPoint(point);
     setIsDrawing(true);
   };
 
-  const onPointerMove = (e: any) => {
+  const onPointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (isDrawing && !confirmed) {
-      setCurrentPoint(e.point.clone());
+      e.stopPropagation();
+      setCurrentPoint(toGroundPoint(e.point));
     }
   };
 
@@ -128,13 +146,7 @@ export function BoundarySandbox() {
     <div className="flex flex-col lg:flex-row w-full min-h-[750px] bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
       {/* LEFT: 3D DRAWING PANEL */}
       <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[450px]">
-        <Canvas 
-          shadows 
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          className="w-full h-full cursor-crosshair"
-        >
+        <Canvas shadows className="w-full h-full cursor-crosshair">
           <PerspectiveCamera makeDefault position={[12, 12, 12]} fov={35} />
           <OrbitControls 
             enableRotate={!isDrawing && confirmed} 
@@ -158,7 +170,11 @@ export function BoundarySandbox() {
               sectionColor="#3b82f6"
               cellColor="#e2e8f0"
             />
-            <Terrain />
+            <Terrain
+              onPointerDown={onPointerDown}
+              onPointerMove={onPointerMove}
+              onPointerUp={onPointerUp}
+            />
             <SelectionBox start={startPoint} end={currentPoint} />
             <Environment preset="city" />
             <ContactShadows position={[0, -0.01, 0]} opacity={0.4} scale={25} blur={2.5} far={10} color="#000000" />

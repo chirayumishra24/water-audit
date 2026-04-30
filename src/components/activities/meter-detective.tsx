@@ -36,33 +36,53 @@ import {
 } from 'lucide-react';
 
 function Digit({ value, position }: { value: number, position: [number, number, number] }) {
-  const mesh = useRef<THREE.Group>(null!);
+  const drumRef = useRef<THREE.Mesh>(null!);
   
-  useFrame((state, delta) => {
-    if (mesh.current) {
-      const targetRotation = (value * Math.PI * 2) / 10;
-      mesh.current.rotation.x = THREE.MathUtils.lerp(mesh.current.rotation.x, targetRotation, delta * 8);
+  useFrame((_, delta) => {
+    if (drumRef.current) {
+      const targetRotation = (value - 4.5) * 0.04;
+      drumRef.current.rotation.x = THREE.MathUtils.lerp(
+        drumRef.current.rotation.x,
+        targetRotation,
+        delta * 6,
+      );
     }
   });
 
   return (
-    <group position={position} ref={mesh}>
-      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
-        <Text
-          key={n}
-          position={[0, 0, 0.4]}
-          rotation={[-(n * Math.PI * 2) / 10, 0, 0]}
-          fontSize={0.28}
-          color="white"
-          anchorY="middle"
-          fontWeight="900"
-        >
-          {n}
-        </Text>
-      ))}
-      <mesh rotation={[0, 0, Math.PI / 2]}>
+    <group position={position}>
+      <mesh ref={drumRef} rotation={[0, 0, Math.PI / 2]}>
         <cylinderGeometry args={[0.35, 0.35, 0.22, 32]} />
         <meshStandardMaterial color="#0f172a" metalness={0.8} roughness={0.2} />
+      </mesh>
+
+      <mesh position={[0, 0, 0.36]}>
+        <planeGeometry args={[0.24, 0.54]} />
+        <meshStandardMaterial color="#020617" />
+      </mesh>
+
+      <Text
+        position={[0, 0, 0.48]}
+        fontSize={0.28}
+        color="white"
+        anchorX="center"
+        anchorY="middle"
+        outlineWidth={0.02}
+        outlineColor="#0f172a"
+      >
+        {value}
+      </Text>
+
+      <mesh position={[0, 0, 0.56]}>
+        <planeGeometry args={[0.24, 0.54]} />
+        <meshPhysicalMaterial
+          transparent
+          opacity={0.08}
+          roughness={0}
+          metalness={0.1}
+          transmission={0.95}
+          color="#e2e8f0"
+        />
       </mesh>
     </group>
   );
@@ -186,7 +206,9 @@ export function MeterDetective() {
               </div>
               <div>
                 <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">Unit #042</span>
-                <h2 className="text-2xl font-black text-white uppercase tracking-tighter leading-none">Flow Analyzer</h2>
+                <div className="text-2xl font-black text-white uppercase tracking-tighter leading-none">
+                  Flow Analyzer
+                </div>
               </div>
             </div>
           </div>
@@ -208,7 +230,9 @@ export function MeterDetective() {
       <div className="w-full lg:w-[450px] bg-white flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar">
         <div className="space-y-10">
           <div className="flex items-center justify-between">
-            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Investigation</h3>
+            <div className="text-2xl font-black text-slate-900 uppercase tracking-tighter">
+              Investigation
+            </div>
             <div className="p-3 bg-slate-50 rounded-2xl text-blue-600">
               <Search size={20} />
             </div>
@@ -250,25 +274,27 @@ export function MeterDetective() {
               </div>
             </div>
 
-            <div className="p-10 bg-blue-600 rounded-[3rem] text-white shadow-2xl relative overflow-hidden group">
+            <div className="p-8 md:p-10 bg-blue-600 rounded-[3rem] text-white shadow-2xl relative overflow-hidden group">
               <div className="relative z-10">
                 <div className="flex items-center gap-3 mb-6 opacity-80">
                   <Calculator className="w-5 h-5" />
                   <span className="text-[10px] font-black uppercase tracking-widest">Consumption Protocol</span>
                 </div>
-                <h4 className="text-2xl font-black uppercase tracking-tighter mb-8 leading-none">Determine Monthly Consumption</h4>
+                <div className="text-xl md:text-2xl font-black uppercase tracking-tighter mb-6 md:mb-8 leading-[1.05]">
+                  Determine Monthly Consumption
+                </div>
                 
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3 sm:items-stretch">
                   <input 
                     type="number"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="ENTER kL"
-                    className="flex-1 bg-white/10 border border-white/20 rounded-[1.5rem] px-8 py-5 text-white font-mono placeholder:text-white/20 focus:outline-none focus:ring-4 focus:ring-white/10 transition-all text-xl"
+                    className="min-w-0 flex-1 bg-white/10 border border-white/20 rounded-[1.5rem] px-6 py-4 md:px-8 md:py-5 text-white font-mono placeholder:text-white/20 focus:outline-none focus:ring-4 focus:ring-white/10 transition-all text-lg md:text-xl"
                   />
                   <button 
                     onClick={checkAnswer}
-                    className="px-8 bg-white text-blue-600 font-black rounded-[1.5rem] hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center justify-center group-hover:bg-blue-50"
+                    className="sm:shrink-0 min-h-14 px-6 md:px-8 bg-white text-blue-600 font-black rounded-[1.5rem] hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center justify-center group-hover:bg-blue-50"
                   >
                     RUN
                   </button>
@@ -316,11 +342,11 @@ export function MeterDetective() {
             }`}>
               {feedback.type === 'success' ? <ShieldCheck size={48} /> : <AlertTriangle size={48} />}
             </div>
-            <h3 className={`text-3xl font-black text-center mb-4 tracking-tighter uppercase ${
+            <div className={`text-3xl font-black text-center mb-4 tracking-tighter uppercase ${
               feedback.type === 'success' ? 'text-emerald-600' : 'text-rose-600'
             }`}>
               {feedback.type === 'success' ? 'VERIFIED' : 'REJECTED'}
-            </h3>
+            </div>
             <p className="text-slate-500 text-center text-sm font-medium mb-12 leading-relaxed px-4">
               {feedback.msg}
             </p>

@@ -25,7 +25,7 @@ import { Search, TrendingUp, Zap, ShieldCheck } from "lucide-react";
 
 const TopicCard = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="bg-white/95 backdrop-blur-xl rounded-[2.5rem] p-10 md:p-16 border border-white shadow-[0_20px_50px_rgba(0,0,0,0.05)] relative overflow-hidden mb-16 last:mb-0 transition-all duration-700 hover:shadow-[0_30px_70px_rgba(0,0,0,0.08)]">
+    <div className="bg-white/95 backdrop-blur-xl rounded-[2rem] p-6 md:p-10 border border-white shadow-[0_18px_42px_rgba(0,0,0,0.05)] relative overflow-hidden mb-12 last:mb-0 transition-all duration-700 hover:shadow-[0_24px_52px_rgba(0,0,0,0.08)]">
       {/* Decorative accent */}
       <div className="absolute top-0 left-0 w-2 h-full bg-blue-600/10 group-hover:bg-blue-600/30 transition-colors" />
       <div className="relative z-10">
@@ -51,20 +51,20 @@ function InlineLink({ href, ...props }: ComponentPropsWithoutRef<"a">) {
 
 
 export const mdxComponents = {
-  h2: (props: any) => <h2 className="text-4xl md:text-5xl font-black text-slate-900 mt-0 mb-8 tracking-tight leading-[1.1]" {...props} />,
-  h3: (props: any) => <h3 className="text-3xl md:text-4xl font-extrabold text-blue-800 mt-0 mb-6 tracking-tight leading-tight" {...props} />,
-  h4: (props: any) => <h4 className="text-2xl md:text-3xl font-bold text-slate-800 mt-8 mb-4 tracking-tight" {...props} />,
-  p: (props: any) => <p className="text-xl md:text-2xl text-slate-700 leading-[1.7] mb-8 font-medium selection:bg-blue-100" {...props} />,
+  h2: (props: any) => <h2 className="text-3xl md:text-4xl font-black text-slate-900 mt-0 mb-6 tracking-tight leading-[1.12]" {...props} />,
+  h3: (props: any) => <h3 className="text-2xl md:text-3xl font-extrabold text-blue-800 mt-0 mb-5 tracking-tight leading-tight" {...props} />,
+  h4: (props: any) => <h4 className="text-xl md:text-2xl font-bold text-slate-800 mt-7 mb-3 tracking-tight" {...props} />,
+  p: (props: any) => <p className="text-base md:text-lg text-slate-700 leading-[1.75] mb-6 font-medium selection:bg-blue-100" {...props} />,
   ul: (props: any) => <ul className="list-none space-y-4 mb-8" {...props} />,
-  ol: (props: any) => <ol className="list-decimal list-inside space-y-4 mb-8 text-xl md:text-2xl text-slate-700 font-medium" {...props} />,
+  ol: (props: any) => <ol className="list-decimal list-inside space-y-3 mb-6 text-base md:text-lg text-slate-700 font-medium" {...props} />,
   li: (props: any) => (
-    <li className="flex items-start gap-4 text-xl md:text-2xl text-slate-700 font-medium group">
-      <span className="mt-2.5 w-2 h-2 rounded-full bg-blue-500 shrink-0 group-hover:scale-125 transition-transform" />
+    <li className="flex items-start gap-3 text-base md:text-lg text-slate-700 font-medium group">
+      <span className="mt-2 w-2 h-2 rounded-full bg-blue-500 shrink-0 group-hover:scale-125 transition-transform" />
       <span>{props.children}</span>
     </li>
   ),
   blockquote: (props: any) => (
-    <blockquote className="border-l-8 border-blue-600 bg-blue-50/50 p-8 my-10 rounded-r-3xl text-2xl md:text-3xl font-bold text-blue-900 italic leading-relaxed" {...props} />
+    <blockquote className="border-l-8 border-blue-600 bg-blue-50/50 p-6 my-8 rounded-r-3xl text-lg md:text-xl font-bold text-blue-900 italic leading-relaxed" {...props} />
   ),
   strong: (props: any) => <strong className="font-black text-slate-900" {...props} />,
   em: (props: any) => <em className="italic text-slate-800" {...props} />,
@@ -115,4 +115,3 @@ export const mdxComponents = {
     <TopicCard {...props}>{children}</TopicCard>
   ),
 };
-

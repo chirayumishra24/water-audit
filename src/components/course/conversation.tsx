@@ -29,7 +29,7 @@ export function Message({ speaker, children }: { speaker: string; children: Reac
       {/* Message Content */}
       <div className={`flex-1 flex flex-col ${isTeacher ? 'items-start' : 'items-end'}`}>
         <span className="text-xs font-black text-slate-400 mb-2 px-3 uppercase tracking-[0.2em]">{speaker}</span>
-        <div className={`px-8 py-6 rounded-[2rem] shadow-xl text-xl md:text-2xl leading-relaxed max-w-[85%] font-medium transition-all duration-300
+        <div className={`px-8 py-6 rounded-[2rem] shadow-xl text-xl md:text-2xl leading-relaxed max-w-[85%] font-medium transition-all duration-300 [&_*]:text-inherit [&_p]:m-0 [&_strong]:text-inherit [&_em]:text-inherit
           ${isTeacher 
             ? 'bg-white text-slate-800 border border-slate-100 rounded-tl-sm hover:shadow-2xl' 
             : 'bg-slate-900 text-white rounded-tr-sm hover:bg-slate-800 shadow-slate-200'}
@@ -68,4 +68,3 @@ export function YoutubeEmbed({ url, title }: { url: string; title: string }) {
     </div>
   );
 }
-
