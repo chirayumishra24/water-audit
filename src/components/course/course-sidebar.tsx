@@ -14,16 +14,6 @@ export function CourseSidebar({
 }: CourseSidebarProps) {
   return (
     <nav className="glass-panel-strong rounded-lg p-4">
-      <div className="px-2 pb-4">
-        <p className="text-xs uppercase tracking-[0.16em] text-[var(--deep-soft)]">
-          Course map
-        </p>
-        <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-          Use the module and chapter links to move through the course. No next or previous buttons
-          are used in chapter pages.
-        </p>
-      </div>
-
       <div className="space-y-3">
         {modules.map((module) => {
           const isActiveModule = module.slug === currentModuleSlug;
@@ -34,7 +24,7 @@ export function CourseSidebar({
               className="rounded-lg border border-[rgba(14,165,233,0.1)] bg-[rgba(6,25,42,0.4)] p-2"
             >
               <Link
-                href={`/modules/${module.slug}/`}
+                href={`/${module.order}`}
                 className={`block rounded-md px-3 py-3 transition-colors duration-300 ${
                   isActiveModule
                     ? "bg-[rgba(14,165,233,0.2)] text-[var(--deep)] border border-[rgba(34,211,238,0.15)]"
@@ -58,7 +48,7 @@ export function CourseSidebar({
                   return (
                     <Link
                       key={chapter.slug}
-                      href={`/modules/${module.slug}/${chapter.slug}/`}
+                      href={`/${module.order}-${chapter.order}`}
                       className={`flex items-start gap-3 rounded-md px-3 py-2.5 text-sm leading-6 transition-colors duration-300 ${
                         isActiveChapter
                           ? "bg-[rgba(14,165,233,0.12)] text-[var(--deep)]"

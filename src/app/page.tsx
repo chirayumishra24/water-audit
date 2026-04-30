@@ -46,7 +46,7 @@ export default async function Home() {
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
-                href={`/modules/${modules[0]?.slug}/`}
+                href="/1"
                 className="inline-flex h-12 items-center gap-2 rounded-lg bg-[var(--accent)] px-5 text-sm font-medium text-[#020810] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_24px_rgba(34,211,238,0.3)]"
               >
                 Start with Module 1

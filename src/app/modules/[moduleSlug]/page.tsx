@@ -70,7 +70,7 @@ export default async function ModulePage(props: PageProps<"/modules/[moduleSlug]
             {courseModule.chapters.map((chapter) => (
               <a
                 key={chapter.slug}
-                href={`/modules/${courseModule.slug}/${chapter.slug}/`}
+                href={`/${courseModule.order}-${chapter.order}`}
                 className="glass-panel-strong group rounded-lg p-6 transition-transform duration-300 hover:-translate-y-0.5"
               >
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">

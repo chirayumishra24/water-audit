@@ -15,25 +15,42 @@ export async function generateStaticParams() {
   );
 }
 
-// This handles short links like /1-1, /1-2, /2-1
+// This handles short links like /1 (Module) or /1-1 (Chapter)
 export default async function ShortLinkPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   
-  // Regex to match "number-number"
-  const match = slug.match(/^(\d+)-(\d+)$/);
+  // Regex to match "number" or "number-number"
+  const match = slug.match(/^(\d+)(?:-(\d+))?$/);
   
   if (!match) {
     notFound();
   }
 
   const moduleOrder = parseInt(match[1], 10);
-  const chapterOrder = parseInt(match[2], 10);
+  const chapterOrder = match[2] ? parseInt(match[2], 10) : null;
 
   const modules = await getCourseModules();
   const targetModule = modules.find(m => m.order === moduleOrder);
   
   if (!targetModule) {
     notFound();
+  }
+
+  // If only module number was provided, redirect to module hub or show module hub
+  if (chapterOrder === null) {
+    // We can either redirect or render the ModulePage content here.
+    // For consistency with existing structure, let's redirect to the module hub.
+    // Or we can just import and render the ModulePage component.
+    // For simplicity, let's use the chapter logic for now or redirect.
+    const firstChapter = targetModule.chapters[0];
+    if (!firstChapter) notFound();
+    const chapter = await getChapterPageData(targetModule.slug, firstChapter.slug);
+    if (!chapter) notFound();
+    return (
+      <CourseShell currentModuleSlug={chapter.moduleSlug} currentChapterSlug={chapter.slug}>
+        <ChapterContent chapter={chapter} />
+      </CourseShell>
+    );
   }
 
   const targetChapter = targetModule.chapters.find(c => c.order === chapterOrder);

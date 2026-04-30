@@ -19,7 +19,7 @@ export function ModuleCard({ module }: ModuleCardProps) {
         {module.chapters.slice(0, 3).map((chapter) => (
           <Link
             key={chapter.slug}
-            href={`/modules/${module.slug}/${chapter.slug}/`}
+            href={`/${module.order}-${chapter.order}`}
             className="block rounded-lg border border-[rgba(14,165,233,0.12)] bg-[rgba(224,242,254,0.4)] px-4 py-3 text-sm text-[var(--muted)] transition-colors duration-300 hover:bg-[rgba(14,165,233,0.15)] hover:text-[var(--deep)]"
           >
             {chapter.title}
@@ -28,7 +28,7 @@ export function ModuleCard({ module }: ModuleCardProps) {
       </div>
 
       <Link
-        href={`/modules/${module.slug}/`}
+        href={`/${module.order}`}
         className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-[var(--accent)]"
       >
         Explore module

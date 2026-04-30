@@ -99,7 +99,7 @@ export function ChapterContent({ chapter }: ChapterContentProps) {
         </div>
 
         {/* Middle Section: Chapter Flow Widget */}
-        <div className="bg-white/50 backdrop-blur-2xl rounded-[2.5rem] p-8 border border-white shadow-[0_8px_30px_rgba(0,0,0,0.08)] relative overflow-hidden max-w-4xl mx-auto w-full">
+        <div className="bg-white/50 backdrop-blur-2xl rounded-[2.5rem] p-8 border border-white shadow-[0_8px_30px_rgba(0,0,0,0.08)] relative overflow-hidden max-w-4xl mx-auto w-full mb-4">
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/60 to-transparent pointer-events-none"></div>
           
           <div className="relative z-10 flex items-center justify-between mb-6">
@@ -132,7 +132,7 @@ export function ChapterContent({ chapter }: ChapterContentProps) {
         </div>
 
         {/* Bottom Section: Main Course Content */}
-        <div className="bg-white/95 backdrop-blur-xl rounded-[2.5rem] p-6 sm:p-10 md:p-14 shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-2 border-white relative z-20 max-w-4xl mx-auto w-full">
+        <div className="bg-white/95 backdrop-blur-xl rounded-[2.5rem] p-6 sm:p-10 md:p-14 shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-2 border-white relative z-10 max-w-4xl mx-auto w-full">
           <div className="prose-course max-w-none prose-lg md:prose-xl text-slate-800">
             {chapter.content}
           </div>
