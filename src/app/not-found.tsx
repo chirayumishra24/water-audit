@@ -9,14 +9,14 @@ export default function NotFound() {
           This course page does not exist.
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--muted)]">
-          The route is outside the generated course structure. Return to the course home or move
-          through the module links in the sidebar.
+          The route is outside the generated course structure. Return to the first course page or
+          move through the module links in the sidebar.
         </p>
         <Link
-          href="/"
+          href="/1-0"
           className="mt-8 inline-flex h-11 items-center rounded-lg bg-[var(--accent)] px-5 text-sm font-medium text-[#020810]"
         >
-          Back to course home
+          Back to first course page
         </Link>
       </div>
     </main>
