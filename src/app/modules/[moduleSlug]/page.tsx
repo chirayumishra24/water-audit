@@ -4,8 +4,6 @@ import { ArrowRight } from "lucide-react";
 import { CourseShell } from "@/components/course/course-shell";
 import { getCourseModuleBySlug, getCourseModules } from "@/lib/course/content";
 
-export const dynamicParams = false;
-
 export async function generateStaticParams() {
   const modules = await getCourseModules();
   return modules.map((module) => ({ moduleSlug: module.slug }));

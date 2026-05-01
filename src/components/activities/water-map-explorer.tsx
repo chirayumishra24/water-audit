@@ -225,7 +225,7 @@ export function WaterMapExplorer() {
           </div>
 
           <Link 
-            href="/1-3"
+            href="/1-2"
             className="w-full bg-slate-900 text-white font-black py-4 rounded-xl hover:bg-blue-600 transition-all shadow-lg flex items-center justify-center gap-2 group no-underline text-xs"
           >
             OPEN CASE STUDY

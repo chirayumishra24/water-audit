@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useMemo, useEffect, Suspense } from 'react';
+import { useRouter } from 'next/navigation';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { 
   OrbitControls, 
@@ -67,28 +68,44 @@ function WaterLevel({ height }: { height: number }) {
 function Bucket() {
   return (
     <group>
-      {/* Outer Shell */}
+      {/* Outer Shell - Tapered for realism */}
       <mesh>
-        <cylinderGeometry args={[1.05, 1.05, 2.1, 64]} />
+        <cylinderGeometry args={[1.05, 0.85, 2.1, 64]} />
         <meshStandardMaterial 
           color="#ffffff" 
           transparent 
-          opacity={0.15} 
+          opacity={0.2} 
           metalness={0.9} 
           roughness={0.05} 
           side={THREE.DoubleSide} 
         />
       </mesh>
+      {/* Inner Wall */}
+      <mesh scale={[0.98, 1, 0.98]}>
+        <cylinderGeometry args={[1.05, 0.85, 2.05, 64]} />
+        <meshStandardMaterial 
+          color="#f8fafc" 
+          transparent 
+          opacity={0.1} 
+          metalness={0.2} 
+          roughness={0.8} 
+        />
+      </mesh>
+      {/* Handle */}
+      <mesh position={[0, 1.05, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <torusGeometry args={[1.05, 0.04, 16, 64, Math.PI]} />
+        <meshStandardMaterial color="#334155" metalness={0.8} roughness={0.2} />
+      </mesh>
       {/* Base */}
-      <Cylinder args={[1.1, 1.1, 0.1]} position={[0, -1.05, 0]}>
+      <Cylinder args={[0.86, 0.86, 0.1]} position={[0, -1.05, 0]}>
         <meshStandardMaterial color="#334155" metalness={0.8} roughness={0.2} />
       </Cylinder>
       {/* Measurement Markers */}
       {[-0.8, -0.4, 0, 0.4, 0.8].map((y, i) => (
         <group key={i} position={[0, y, 0]}>
-          <mesh rotation={[0, 0, 0]} position={[1.05, 0, 0]}>
-            <boxGeometry args={[0.1, 0.01, 0.05]} />
-            <meshStandardMaterial color="#94a3b8" />
+          <mesh rotation={[0, (i * Math.PI) / 2, 0]} position={[0.9, 0, 0]}>
+            <boxGeometry args={[0.2, 0.01, 0.05]} />
+            <meshStandardMaterial color="#3b82f6" emissive="#3b82f6" emissiveIntensity={0.5} />
           </mesh>
           <Html position={[1.3, 0, 0]} center>
             <span className="text-[8px] font-black text-slate-400">{(i + 1) * 2}L</span>
@@ -100,6 +117,7 @@ function Bucket() {
 }
 
 export function BucketLab() {
+  const router = useRouter();
   const [level, setLevel] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [elapsed, setElapsed] = useState(0);
@@ -167,17 +185,39 @@ export function BucketLab() {
             <Bucket />
             <WaterLevel height={level} />
             
-            {/* Tap/Source */}
+            {/* Professional Tap Model */}
             <group position={[0, 4, 0]}>
-              <Cylinder args={[0.15, 0.15, 1.5]}>
-                <meshStandardMaterial color="#64748b" metalness={0.8} roughness={0.2} />
-              </Cylinder>
+              <mesh position={[1, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+                <cylinderGeometry args={[0.15, 0.15, 2, 32]} />
+                <meshStandardMaterial color="#94a3b8" metalness={0.9} roughness={0.1} />
+              </mesh>
+              <mesh position={[0, -0.2, 0]}>
+                <cylinderGeometry args={[0.15, 0.15, 0.5, 32]} />
+                <meshStandardMaterial color="#94a3b8" metalness={0.9} roughness={0.1} />
+              </mesh>
+              {/* Valve Handle */}
+              <mesh position={[1, 0.2, 0]} rotation={[Math.PI / 2, 0, 0]}>
+                <torusGeometry args={[0.2, 0.05, 16, 32]} />
+                <meshStandardMaterial color="#ef4444" metalness={0.5} roughness={0.5} />
+              </mesh>
+              
               {isRunning && (
                 <group>
                   <Sparkles count={50} scale={[0.1, 4, 0.1]} size={2} speed={3} color="#3b82f6" />
                   <mesh position={[0, -2, 0]}>
-                    <cylinderGeometry args={[0.08, 0.08, 4, 16]} />
-                    <meshStandardMaterial color="#3b82f6" transparent opacity={0.4} />
+                    <cylinderGeometry args={[0.08, 0.12, 4, 16]} />
+                    <meshStandardMaterial 
+                      color="#60a5fa" 
+                      transparent 
+                      opacity={0.6} 
+                      emissive="#3b82f6"
+                      emissiveIntensity={0.5}
+                    />
+                  </mesh>
+                  {/* Splash effect at water level */}
+                  <mesh position={[0, -4 + (level * 2), 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                    <ringGeometry args={[0.1, 0.4, 32]} />
+                    <meshStandardMaterial color="#93c5fd" transparent opacity={0.4} />
                   </mesh>
                 </group>
               )}
@@ -325,6 +365,7 @@ export function BucketLab() {
           </div>
 
           <button 
+            onClick={() => router.push('/2-2')}
             disabled={history.length === 0}
             className={`w-full flex items-center justify-center gap-3 py-6 rounded-[2rem] font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl ${
               history.length > 0 

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useMemo, Suspense } from 'react';
+import { useRouter } from 'next/navigation';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { 
   OrbitControls, 
@@ -42,74 +43,173 @@ const AUDIT_POINTS = [
   { id: 'tank', name: 'Roof Tank', pos: [0, 3.5, 0], type: 'Sensor Failure', description: 'Tank overflows daily due to missing sensor.', saving: '500L/day', found: false, icon: Zap }
 ];
 
-function SinkModel({ position }: { position: [number, number, number] }) {
+function DrippingWater({ position, speed = 1 }: { position: [number, number, number], speed?: number }) {
+  const [drops, setDrops] = useState<{ id: number, y: number, opacity: number }[]>([]);
+  const nextId = useRef(0);
+
+  useFrame((state, delta) => {
+    // Spawn new drop
+    if (state.clock.getElapsedTime() % (0.5 / speed) < 0.02) {
+      setDrops(prev => [...prev, { id: nextId.current++, y: 0, opacity: 1 }]);
+    }
+
+    // Update existing drops
+    setDrops(prev => prev
+      .map(drop => ({
+        ...drop,
+        y: drop.y - delta * 3,
+        opacity: drop.opacity - delta * 0.5
+      }))
+      .filter(drop => drop.y > -2 && drop.opacity > 0)
+    );
+  });
+
   return (
     <group position={position}>
-      <RoundedBox args={[2, 0.2, 1]} radius={0.05} position={[0, 0, 0]}>
-        <meshStandardMaterial color="#f1f5f9" />
+      {drops.map(drop => (
+        <mesh key={drop.id} position={[0, drop.y, 0]}>
+          <sphereGeometry args={[0.04, 8, 8]} />
+          <meshStandardMaterial color="#60a5fa" transparent opacity={drop.opacity} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function SinkModel({ position, isLeaking }: { position: [number, number, number], isLeaking?: boolean }) {
+  return (
+    <group position={position}>
+      {/* Countertop */}
+      <RoundedBox args={[3, 0.2, 1.5]} radius={0.05} position={[0, 0, 0]}>
+        <meshStandardMaterial color="#f8fafc" />
       </RoundedBox>
+      
+      {/* Sink Basin */}
       <mesh position={[0, -0.1, 0]}>
-        <boxGeometry args={[1.2, 0.4, 0.6]} />
-        <meshStandardMaterial color="#cbd5e1" metalness={0.5} roughness={0.2} />
+        <boxGeometry args={[1.5, 0.4, 0.8]} />
+        <meshStandardMaterial color="#cbd5e1" metalness={0.8} roughness={0.1} />
       </mesh>
-      <group position={[0, 0.1, -0.3]}>
-        <Cylinder args={[0.05, 0.05, 0.4]} rotation={[0, 0, 0]} position={[0, 0.2, 0]}>
+
+      {/* Faucet */}
+      <group position={[0, 0.1, -0.4]}>
+        <Cylinder args={[0.06, 0.06, 0.6]} position={[0, 0.3, 0]}>
           <meshStandardMaterial color="#94a3b8" metalness={1} roughness={0.1} />
         </Cylinder>
-        <Cylinder args={[0.05, 0.05, 0.3]} rotation={[Math.PI / 2, 0, 0]} position={[0, 0.4, 0.15]}>
+        <Cylinder args={[0.06, 0.06, 0.4]} rotation={[Math.PI / 2, 0, 0]} position={[0, 0.6, 0.2]}>
           <meshStandardMaterial color="#94a3b8" metalness={1} roughness={0.1} />
+        </Cylinder>
+        {isLeaking && <DrippingWater position={[0, 0.55, 0.4]} speed={2} />}
+      </group>
+
+      {/* Handles */}
+      <group position={[-0.3, 0.1, -0.4]}>
+        <Cylinder args={[0.04, 0.04, 0.1]} rotation={[Math.PI / 2, 0, 0]}>
+          <meshStandardMaterial color="#94a3b8" metalness={1} />
+        </Cylinder>
+      </group>
+      <group position={[0.3, 0.1, -0.4]}>
+        <Cylinder args={[0.04, 0.04, 0.1]} rotation={[Math.PI / 2, 0, 0]}>
+          <meshStandardMaterial color="#94a3b8" metalness={1} />
         </Cylinder>
       </group>
     </group>
   );
 }
 
-function ToiletModel({ position }: { position: [number, number, number] }) {
+function ToiletModel({ position, isLeaking }: { position: [number, number, number], isLeaking?: boolean }) {
   return (
     <group position={position} rotation={[0, Math.PI, 0]}>
-      <RoundedBox args={[0.8, 0.5, 1.2]} radius={0.2} position={[0, 0.25, 0]}>
-        <meshStandardMaterial color="#ffffff" />
+      {/* Base */}
+      <RoundedBox args={[1, 0.5, 1.4]} radius={0.3} position={[0, 0.25, 0.1]}>
+        <meshStandardMaterial color="#ffffff" roughness={0.1} />
       </RoundedBox>
-      <RoundedBox args={[0.8, 0.8, 0.4]} radius={0.1} position={[0, 0.9, -0.4]}>
-        <meshStandardMaterial color="#ffffff" />
+      {/* Tank */}
+      <RoundedBox args={[1, 1, 0.5]} radius={0.1} position={[0, 1, -0.4]}>
+        <meshStandardMaterial color="#ffffff" roughness={0.1} />
       </RoundedBox>
-      <RoundedBox args={[0.7, 0.1, 1]} radius={0.05} position={[0, 0.55, 0]}>
-        <meshStandardMaterial color="#f8fafc" />
+      {/* Lid */}
+      <RoundedBox args={[0.9, 0.1, 1.1]} radius={0.05} position={[0, 0.55, 0.1]}>
+        <meshStandardMaterial color="#f1f5f9" />
       </RoundedBox>
+      {/* Flush Handle */}
+      <mesh position={[0.4, 1.2, -0.1]}>
+        <boxGeometry args={[0.2, 0.05, 0.05]} />
+        <meshStandardMaterial color="#cbd5e1" metalness={0.8} />
+      </mesh>
+      {isLeaking && (
+        <Sparkles 
+          count={10} 
+          scale={[0.8, 0.8, 0.8]} 
+          size={2} 
+          speed={0.5} 
+          color="#60a5fa" 
+          position={[0, 0.5, 0]} 
+        />
+      )}
     </group>
   );
 }
 
-function WaterTankModel({ position }: { position: [number, number, number] }) {
+function WaterTankModel({ position, isLeaking }: { position: [number, number, number], isLeaking?: boolean }) {
   return (
     <group position={position}>
-      <Cylinder args={[1, 1, 2, 32]} castShadow>
-        <meshStandardMaterial color="#64748b" metalness={0.2} roughness={0.5} />
+      {/* Main Cylinder */}
+      <Cylinder args={[1.2, 1.2, 2.5, 32]} castShadow>
+        <meshStandardMaterial color="#334155" metalness={0.5} roughness={0.2} />
       </Cylinder>
-      <Cylinder args={[1.05, 1.05, 0.2]} position={[0, 1, 0]}>
+      {/* Top Lid */}
+      <Cylinder args={[1.25, 1.25, 0.3]} position={[0, 1.25, 0]}>
+        <meshStandardMaterial color="#1e293b" />
+      </Cylinder>
+      {/* Support Stand */}
+      <group position={[0, -1.25, 0]}>
+        <Box args={[0.2, 1, 0.2]} position={[0.8, -0.5, 0.8]}><meshStandardMaterial color="#475569" /></Box>
+        <Box args={[0.2, 1, 0.2]} position={[-0.8, -0.5, 0.8]}><meshStandardMaterial color="#475569" /></Box>
+        <Box args={[0.2, 1, 0.2]} position={[0.8, -0.5, -0.8]}><meshStandardMaterial color="#475569" /></Box>
+        <Box args={[0.2, 1, 0.2]} position={[-0.8, -0.5, -0.8]}><meshStandardMaterial color="#475569" /></Box>
+      </group>
+      {/* Overflow Pipe */}
+      <group position={[1.2, 0.8, 0]}>
+        <Cylinder args={[0.08, 0.08, 0.4]} rotation={[0, 0, Math.PI / 2]}>
+          <meshStandardMaterial color="#cbd5e1" />
+        </Cylinder>
+        <Cylinder args={[0.08, 0.08, 2]} position={[0.2, -1, 0]}>
+          <meshStandardMaterial color="#cbd5e1" />
+        </Cylinder>
+        {isLeaking && <DrippingWater position={[0.2, -2, 0]} speed={4} />}
+      </group>
+    </group>
+  );
+}
+
+function GardenModel({ position, isLeaking }: { position: [number, number, number], isLeaking?: boolean }) {
+  return (
+    <group position={position}>
+      {/* Grass patch */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <circleGeometry args={[2.5, 32]} />
+        <meshStandardMaterial color="#22c55e" roughness={1} />
+      </mesh>
+      {/* Pipe */}
+      <Cylinder args={[0.06, 0.06, 1.2]} position={[0, 0.6, 0]}>
         <meshStandardMaterial color="#475569" />
       </Cylinder>
-      <Cylinder args={[0.1, 0.1, 3]} position={[0.8, -1.5, 0]}>
-        <meshStandardMaterial color="#cbd5e1" />
-      </Cylinder>
-    </group>
-  );
-}
-
-function GardenModel({ position }: { position: [number, number, number] }) {
-  return (
-    <group position={position}>
-      <mesh rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[2, 32]} />
-        <meshStandardMaterial color="#4ade80" />
-      </mesh>
-      <Cylinder args={[0.05, 0.05, 1]} position={[0, 0.5, 0]}>
-        <meshStandardMaterial color="#64748b" />
-      </Cylinder>
-      <mesh position={[0, 1, 0.1]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.05, 0.05, 0.2]} />
-        <meshStandardMaterial color="#94a3b8" metalness={0.8} />
-      </mesh>
+      {/* Tap head */}
+      <group position={[0, 1.2, 0.1]} rotation={[Math.PI / 2, 0, 0]}>
+        <Cylinder args={[0.08, 0.08, 0.3]}>
+          <meshStandardMaterial color="#94a3b8" metalness={0.8} />
+        </Cylinder>
+        <mesh position={[0, 0.15, 0]}>
+          <sphereGeometry args={[0.1, 16, 16]} />
+          <meshStandardMaterial color="#94a3b8" metalness={0.8} />
+        </mesh>
+        {/* Handle */}
+        <mesh position={[0, 0.25, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <boxGeometry args={[0.3, 0.04, 0.08]} />
+          <meshStandardMaterial color="#ef4444" />
+        </mesh>
+        {isLeaking && <DrippingWater position={[0, 0, 0.15]} speed={1.5} />}
+      </group>
     </group>
   );
 }
@@ -118,7 +218,7 @@ function Wall({ position, args, rotation = [0, 0, 0] }: { position: [number, num
   return (
     <mesh position={position} rotation={rotation as any} receiveShadow castShadow>
       <boxGeometry args={args} />
-      <meshStandardMaterial color="#f1f5f9" roughness={0.8} />
+      <meshStandardMaterial color="#ffffff" roughness={0.8} />
     </mesh>
   );
 }
@@ -138,32 +238,35 @@ function Hotspot({ data, onSelect }: { data: typeof AUDIT_POINTS[0], onSelect: (
             onSelect();
           }}
         >
-          <sphereGeometry args={[0.3, 32, 32]} />
+          <sphereGeometry args={[0.4, 32, 32]} />
           <meshStandardMaterial 
             color={color} 
             emissive={color}
             emissiveIntensity={hovered ? 2 : 0.5}
             transparent
-            opacity={0.6}
+            opacity={0.4}
           />
         </mesh>
         {!data.found && (
-          <Html distanceFactor={8} position={[0, 0.8, 0]} center>
-            <div className={`px-4 py-2 rounded-2xl bg-white/90 backdrop-blur-xl border-2 shadow-2xl transition-all duration-500 whitespace-nowrap flex items-center gap-2 cursor-pointer ${
-              hovered ? 'border-blue-600 scale-110' : 'border-white'
+          <Html distanceFactor={10} position={[0, 1, 0]} center>
+            <div className={`px-5 py-2.5 rounded-2xl bg-white shadow-2xl border-2 transition-all duration-300 whitespace-nowrap flex items-center gap-3 cursor-pointer group ${
+              hovered ? 'border-blue-600 scale-110 -translate-y-2' : 'border-slate-100 opacity-80'
             }`}>
-              <Search className="w-3 h-3 text-blue-600" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">Inspect</span>
+              <div className="w-6 h-6 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                <Search className="w-3.5 h-3.5" />
+              </div>
+              <span className="text-[11px] font-black uppercase tracking-widest text-slate-700">Audit Point</span>
             </div>
           </Html>
         )}
       </Float>
-      <Sparkles count={5} scale={1} size={1} speed={0.4} color={color} />
+      <Sparkles count={8} scale={1.2} size={2} speed={0.6} color={color} />
     </group>
   );
 }
 
 export function VirtualSchoolAudit() {
+  const router = useRouter();
   const [points, setPoints] = useState(AUDIT_POINTS);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   
@@ -207,26 +310,35 @@ export function VirtualSchoolAudit() {
             
             <group position={[0, -1.5, 0]}>
               <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-                <planeGeometry args={[40, 40]} />
-                <meshStandardMaterial color="#f8fafc" />
+                <planeGeometry args={[50, 50]} />
+                <meshStandardMaterial color="#f1f5f9" />
               </mesh>
-              <Plane args={[18, 14]} position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+              
+              {/* Plot Base */}
+              <Plane args={[22, 18]} position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
                 <meshStandardMaterial color="#ffffff" roughness={0.1} />
               </Plane>
 
-              <Wall position={[0, 1.5, -7]} args={[18, 3, 0.2]} /> 
-              <Wall position={[-9, 1.5, 0]} args={[0.2, 3, 14]} /> 
-              <Wall position={[9, 1.5, 0]} args={[0.2, 3, 14]} /> 
-              <Wall position={[0, 1.5, 7]} args={[18, 3, 0.2]} /> 
+              {/* Building Walls - More Structured */}
+              <group position={[0, 1.5, -2]}>
+                <Wall position={[0, 0, -5]} args={[18, 4, 0.4]} /> {/* Back Wall */}
+                <Wall position={[-9, 0, 2]} args={[0.4, 4, 14]} /> {/* Left Wall */}
+                <Wall position={[9, 0, 2]} args={[0.4, 4, 14]} />  {/* Right Wall */}
+                
+                {/* Interior Partition */}
+                <Wall position={[0, 0, 2]} args={[0.4, 4, 6]} /> 
+              </group>
 
-              <SinkModel position={[-4, 0.1, -4]} />
-              <ToiletModel position={[4, 0, -4]} />
-              <GardenModel position={[0, 0, 5]} />
-              <WaterTankModel position={[0, 4.5, 0]} />
-
-              <Box args={[4, 0.2, 4]} position={[0, 3, 0]} receiveShadow castShadow>
-                <meshStandardMaterial color="#f1f5f9" />
+              {/* Roof Section */}
+              <Box args={[18, 0.4, 6]} position={[0, 4.5, -4]} receiveShadow castShadow>
+                <meshStandardMaterial color="#f8fafc" />
               </Box>
+
+              {/* Models with leak state */}
+              <SinkModel position={[-5, 0.1, -4]} isLeaking={!points.find(p => p.id === 'kitchen')?.found} />
+              <ToiletModel position={[5, 0, -4]} isLeaking={!points.find(p => p.id === 'bathroom')?.found} />
+              <GardenModel position={[0, 0, 6]} isLeaking={!points.find(p => p.id === 'garden')?.found} />
+              <WaterTankModel position={[0, 6, -4]} isLeaking={!points.find(p => p.id === 'tank')?.found} />
 
               {points.map(p => (
                 <Hotspot 
@@ -237,8 +349,8 @@ export function VirtualSchoolAudit() {
               ))}
             </group>
             
-            <Environment preset="city" />
-            <ContactShadows position={[0, -1.45, 0]} opacity={0.4} scale={25} blur={2.5} far={10} color="#000000" />
+            <Environment preset="apartment" />
+            <ContactShadows position={[0, -1.45, 0]} opacity={0.6} scale={30} blur={2} far={10} color="#1e293b" />
           </Suspense>
         </Canvas>
 
@@ -380,6 +492,7 @@ export function VirtualSchoolAudit() {
           </div>
 
           <button 
+            onClick={() => router.push('/1-3')}
             disabled={foundCount < AUDIT_POINTS.length}
             className={`w-full py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl flex items-center justify-center gap-3 ${
               foundCount < AUDIT_POINTS.length 
@@ -404,8 +517,11 @@ export function VirtualSchoolAudit() {
               You have successfully identified all critical water inefficiencies in the school campus. Your recovery plan is ready.
             </p>
             <div className="flex flex-col gap-4">
-              <button className="w-full py-5 bg-blue-600 text-white font-black rounded-2xl transition-all shadow-xl hover:bg-blue-700 active:scale-95 text-xs uppercase tracking-widest flex items-center justify-center gap-3">
-                Download Audit Summary
+              <button 
+                onClick={() => router.push('/1-3')}
+                className="w-full py-5 bg-blue-600 text-white font-black rounded-2xl transition-all shadow-xl hover:bg-blue-700 active:scale-95 text-xs uppercase tracking-widest flex items-center justify-center gap-3"
+              >
+                Continue to Next Chapter
                 <ArrowRight className="w-4 h-4" />
               </button>
               <button 

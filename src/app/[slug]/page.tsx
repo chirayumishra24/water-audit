@@ -3,8 +3,6 @@ import { ChapterContent } from "@/components/course/chapter-content";
 import { CourseShell } from "@/components/course/course-shell";
 import { getChapterPageData, getCourseModules } from "@/lib/course/content";
 
-export const dynamicParams = false;
-
 export async function generateStaticParams() {
   const modules = await getCourseModules();
 

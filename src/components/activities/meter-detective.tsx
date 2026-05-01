@@ -1,373 +1,334 @@
-'use client';
+"use client";
 
-import React, { useState, useRef, useMemo, useEffect, Suspense } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { 
-  OrbitControls, 
-  PerspectiveCamera, 
-  Text, 
-  RoundedBox,
-  Cylinder,
-  Float,
+import React, { useState, useRef, useMemo } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import {
+  OrbitControls,
+  PerspectiveCamera,
   Environment,
   ContactShadows,
-  Sparkles
-} from '@react-three/drei';
-import * as THREE from 'three';
+  Float,
+  RoundedBox,
+  Text,
+  Edges,
+  MeshTransmissionMaterial,
+} from "@react-three/drei";
 import { 
   Search, 
-  Calculator, 
+  Clock, 
+  RotateCcw, 
   CheckCircle2, 
-  AlertTriangle, 
-  ArrowRight, 
-  Activity, 
-  Gauge, 
-  Zap,
-  Info,
-  Calendar,
-  Layers,
-  ChevronRight,
-  RotateCcw,
-  Target,
-  ShieldCheck,
-  Eye,
+  AlertCircle,
+  ArrowRight,
   TrendingUp,
-  Cpu
-} from 'lucide-react';
+  Droplets,
+  Calculator,
+  ChevronRight
+} from "lucide-react";
+import * as THREE from "three";
+import { useRouter } from "next/navigation";
 
-function Digit({ value, position }: { value: number, position: [number, number, number] }) {
-  const drumRef = useRef<THREE.Mesh>(null!);
+// --- 3D Meter Components ---
+
+function MeterDial({ value, index }: { value: number, index: number }) {
+  const dialRef = useRef<THREE.Group>(null);
+  const targetRotation = (value / 10) * Math.PI * 2;
   
-  useFrame((_, delta) => {
-    if (drumRef.current) {
-      const targetRotation = (value - 4.5) * 0.04;
-      drumRef.current.rotation.x = THREE.MathUtils.lerp(
-        drumRef.current.rotation.x,
-        targetRotation,
-        delta * 6,
-      );
+  useFrame(() => {
+    if (dialRef.current) {
+      dialRef.current.rotation.y = THREE.MathUtils.lerp(dialRef.current.rotation.y, -targetRotation, 0.1);
     }
   });
 
   return (
-    <group position={position}>
-      <mesh ref={drumRef} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.35, 0.35, 0.22, 32]} />
-        <meshStandardMaterial color="#0f172a" metalness={0.8} roughness={0.2} />
+    <group position={[index * 0.8 - 1.2, 0, 0]} ref={dialRef}>
+      <mesh>
+        <cylinderGeometry args={[0.35, 0.35, 0.1, 32]} rotation={[Math.PI / 2, 0, 0]} />
+        <meshStandardMaterial color="#f8fafc" roughness={0.3} metalness={0.2} />
       </mesh>
+      
+      {/* Numbers */}
+      {Array.from({ length: 10 }).map((_, i) => (
+        <Text
+          key={i}
+          position={[
+            Math.sin((i / 10) * Math.PI * 2) * 0.22,
+            Math.cos((i / 10) * Math.PI * 2) * 0.22,
+            0.06
+          ]}
+          fontSize={0.08}
+          color="#1e293b"
+          font="/fonts/Inter-Bold.woff"
+        >
+          {i}
+        </Text>
+      ))}
 
-      <mesh position={[0, 0, 0.36]}>
-        <planeGeometry args={[0.24, 0.54]} />
-        <meshStandardMaterial color="#020617" />
-      </mesh>
-
-      <Text
-        position={[0, 0, 0.48]}
-        fontSize={0.28}
-        color="white"
-        anchorX="center"
-        anchorY="middle"
-        outlineWidth={0.02}
-        outlineColor="#0f172a"
-      >
-        {value}
-      </Text>
-
-      <mesh position={[0, 0, 0.56]}>
-        <planeGeometry args={[0.24, 0.54]} />
-        <meshPhysicalMaterial
-          transparent
-          opacity={0.08}
-          roughness={0}
-          metalness={0.1}
-          transmission={0.95}
-          color="#e2e8f0"
-        />
+      {/* Pointer */}
+      <mesh position={[0, 0, 0.05]}>
+        <boxGeometry args={[0.02, 0.15, 0.02]} />
+        <meshStandardMaterial color="#ef4444" emissive="#ef4444" emissiveIntensity={1} />
       </mesh>
     </group>
   );
 }
 
-function WaterMeter({ reading, flowRate }: { reading: number, flowRate: number }) {
-  const digits = reading.toString().padStart(6, '0').split('').map(Number);
-  const internalRef = useRef<THREE.Group>(null!);
-
-  useFrame((state) => {
-    if (internalRef.current) {
-      internalRef.current.rotation.z += flowRate * 0.05;
-    }
-  });
-
+function WaterMeter({ reading }: { reading: number[] }) {
   return (
-    <group rotation={[0.2, -0.2, 0]}>
-      <RoundedBox args={[3.2, 2.2, 1.2]} radius={0.3} smoothness={4}>
-        <meshStandardMaterial color="#1e293b" metalness={0.6} roughness={0.3} />
+    <group position={[0, 0, 0]}>
+      {/* Meter Body */}
+      <RoundedBox args={[3.5, 1.2, 0.6]} radius={0.1} position={[0, 0, -0.2]}>
+        <meshStandardMaterial color="#1e293b" roughness={0.1} metalness={0.8} />
+        <Edges color="#334155" />
       </RoundedBox>
-      
-      <mesh position={[0, 0, 0.51]}>
-        <planeGeometry args={[2.8, 1.8]} />
-        <meshStandardMaterial color="#020617" />
-      </mesh>
 
-      <group position={[0, 0.3, 0.55]}>
-        <mesh>
-          <planeGeometry args={[2.4, 0.7]} />
-          <meshStandardMaterial color="#0f172a" />
-        </mesh>
-        <group position={[-0.85, 0, 0.01]}>
-          {digits.map((d, i) => (
-            <Digit key={i} value={d} position={[i * 0.35, 0, 0]} />
-          ))}
-        </group>
-      </group>
-
-      <group position={[0, -0.4, 0.55]} ref={internalRef}>
-        <mesh>
-          <circleGeometry args={[0.3, 32]} />
-          <meshStandardMaterial color="#3b82f6" metalness={0.8} emissive="#1d4ed8" emissiveIntensity={0.5} />
-        </mesh>
-        {[0, 1, 2, 3].map(i => (
-          <mesh key={i} rotation={[0, 0, i * Math.PI / 2]}>
-            <planeGeometry args={[0.05, 0.5]} />
-            <meshStandardMaterial color="white" />
-          </mesh>
-        ))}
-      </group>
-
-      <mesh position={[0, 0, 0.7]}>
-        <planeGeometry args={[2.8, 1.8]} />
-        <meshPhysicalMaterial 
-          transparent 
-          opacity={0.2} 
-          roughness={0} 
-          metalness={0.2} 
-          transmission={0.9} 
-          thickness={0.5} 
+      {/* Display Glass */}
+      <mesh position={[0, 0, 0.1]}>
+        <boxGeometry args={[3.2, 0.8, 0.05]} />
+        <MeshTransmissionMaterial 
+          thickness={0.2}
+          roughness={0}
+          transmission={1}
+          ior={1.5}
           color="#94a3b8"
         />
       </mesh>
+
+      {/* Dials */}
+      {reading.map((val, i) => (
+        <MeterDial key={i} value={val} index={i} />
+      ))}
+
+      {/* Label */}
+      <Text
+        position={[0, -0.8, 0]}
+        fontSize={0.15}
+        color="#94a3b8"
+        font="/fonts/Inter-Medium.woff"
+      >
+        Industrial Grade Pulse Meter (KL)
+      </Text>
     </group>
   );
 }
 
-export function MeterDetective() {
-  const [day, setDay] = useState(1);
-  const [readings] = useState({ 1: 12450, 30: 13820 });
-  const [input, setInput] = useState("");
-  const [feedback, setFeedback] = useState<{ type: "success" | "error", msg: string } | null>(null);
-  const [isScanning, setIsScanning] = useState(false);
+// --- Main Component ---
 
-  const checkAnswer = () => {
-    const answer = readings[30] - readings[1];
-    if (parseInt(input) === answer) {
-      setFeedback({ type: "success", msg: "CONSURE: 1,370 kL. DATA INTEGRITY SECURED." });
+const SCENARIOS = [
+  {
+    id: 1,
+    title: "The Weekend Drift",
+    context: "Production stopped on Friday 6 PM. Check the meter on Monday 8 AM.",
+    initialReading: [1, 2, 4, 5],
+    finalReading: [1, 2, 6, 8],
+    hint: "If the meter moved while machines were off, what does that imply?",
+    expectedDelta: 23,
+    interpretation: "Baseline Leakage Detected",
+    desc: "A change of 23 KL during non-production hours indicates a significant leak or uncontrolled process makeup."
+  },
+  {
+    id: 2,
+    title: "Shift Comparison",
+    context: "Night shift claims zero water use for cleaning. Check meter from 10 PM to 6 AM.",
+    initialReading: [2, 5, 8, 0],
+    finalReading: [2, 6, 1, 2],
+    hint: "Calculate the total volume used during the 8-hour shift.",
+    expectedDelta: 32,
+    interpretation: "Unauthorized Consumption",
+    desc: "The 32 KL consumption contradicts the 'zero use' claim, suggesting unrecorded cleaning cycles."
+  }
+];
+
+export function MeterDetective() {
+  const router = useRouter();
+  const [activeScenario, setActiveScenario] = useState(0);
+  const [showResult, setShowResult] = useState(false);
+  const [userInput, setUserInput] = useState("");
+  const [feedback, setFeedback] = useState<null | { type: 'success' | 'error', message: string }>(null);
+
+  const scenario = SCENARIOS[activeScenario];
+  
+  const handleCheck = () => {
+    const val = parseInt(userInput);
+    if (val === scenario.expectedDelta) {
+      setFeedback({ type: 'success', message: `Correct! ${scenario.interpretation}.` });
+      setShowResult(true);
     } else {
-      setFeedback({ type: "error", msg: "ERROR: CALCULATION DISCREPANCY DETECTED. TRY AGAIN." });
+      setFeedback({ type: 'error', message: `Incorrect calculation. Try again.` });
     }
   };
 
-  useEffect(() => {
-    setIsScanning(true);
-    const timer = setTimeout(() => setIsScanning(false), 1500);
-    return () => clearTimeout(timer);
-  }, [day]);
+  const nextScenario = () => {
+    if (activeScenario < SCENARIOS.length - 1) {
+      setActiveScenario(prev => prev + 1);
+      setShowResult(false);
+      setUserInput("");
+      setFeedback(null);
+    }
+  };
 
   return (
-    <div className="flex flex-col lg:flex-row w-full min-h-[750px] bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
-      {/* LEFT: 3D METER PANEL */}
-      <div className="relative flex-1 bg-slate-950 border-b lg:border-b-0 lg:border-r border-slate-900 overflow-hidden min-h-[450px]">
-        <div className="absolute inset-0 opacity-10 pointer-events-none" 
-          style={{ backgroundImage: 'radial-gradient(#3b82f6 1px, transparent 1px)', backgroundSize: '30px 30px' }} 
-        />
-
-        <Canvas shadows className="w-full h-full">
-          <PerspectiveCamera makeDefault position={[0, 0, 7]} fov={45} />
-          <OrbitControls enableZoom={false} minPolarAngle={Math.PI / 3} maxPolarAngle={Math.PI / 1.8} />
-          
-          <ambientLight intensity={0.2} />
-          <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={500} color="#60a5fa" castShadow />
-          <Environment preset="city" />
-
-          <Suspense fallback={null}>
-            <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.3}>
-              <WaterMeter reading={readings[day as 1 | 30]} flowRate={day === 30 ? 5 : 0} />
+    <div className="w-full flex flex-col gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[600px]">
+        
+        {/* 3D Meter Display */}
+        <div className="lg:col-span-8 bg-slate-900 rounded-[2.5rem] relative overflow-hidden shadow-2xl border border-slate-800">
+          <Canvas>
+            <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={35} />
+            <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 1.5} minPolarAngle={Math.PI / 3} />
+            
+            <ambientLight intensity={0.5} />
+            <pointLight position={[5, 5, 5]} intensity={1.5} />
+            <spotLight position={[-5, 5, 5]} angle={0.2} penumbra={1} intensity={1} />
+            
+            <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.2}>
+              <WaterMeter reading={showResult ? scenario.finalReading : scenario.initialReading} />
             </Float>
-            <ContactShadows position={[0, -2, 0]} opacity={0.6} scale={10} blur={2.5} far={4} color="#000000" />
-            <Sparkles count={40} scale={5} size={1} speed={0.4} color="#60a5fa" />
-          </Suspense>
-        </Canvas>
 
-        {/* HUD Elements */}
-        <div className="absolute top-10 left-10 pointer-events-none">
-          <div className="bg-slate-900/80 backdrop-blur-xl p-6 rounded-[2.5rem] border border-white/10 shadow-2xl">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                <Gauge className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">Unit #042</span>
-                <div className="text-2xl font-black text-white uppercase tracking-tighter leading-none">
-                  Flow Analyzer
-                </div>
-              </div>
+            <Environment preset="studio" />
+            <ContactShadows position={[0, -1.5, 0]} opacity={0.4} scale={10} blur={2} />
+          </Canvas>
+
+          {/* HUD Overlay */}
+          <div className="absolute top-6 left-6 flex flex-col gap-2">
+            <div className="px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/10 flex items-center gap-2 text-white/80">
+              <Clock size={16} className="text-blue-400" />
+              <span className="text-xs font-black uppercase tracking-widest">
+                {showResult ? 'Reading: Final' : 'Reading: Initial'}
+              </span>
             </div>
+          </div>
+
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-center w-full px-12">
+            <h4 className="text-white font-black text-xl mb-2">{scenario.title}</h4>
+            <p className="text-slate-400 text-sm font-medium leading-relaxed max-w-md mx-auto">{scenario.context}</p>
           </div>
         </div>
 
-        {isScanning && (
-          <div className="absolute inset-x-0 h-[2px] bg-blue-500 shadow-[0_0_15px_#3b82f6] z-10 animate-[scan_1.5s_ease-in-out_infinite]" />
-        )}
-
-        <div className="absolute bottom-10 left-10 pointer-events-none">
-          <div className="bg-blue-600/10 backdrop-blur-md px-6 py-3 rounded-full border border-blue-500/20 text-blue-400 flex items-center gap-3">
-            <Activity className="w-4 h-4 animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em]">{isScanning ? 'Scanning Data...' : 'Stable Monitoring'}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* RIGHT: ANALYSIS PANEL */}
-      <div className="w-full lg:w-[450px] bg-white flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar">
-        <div className="space-y-10">
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-black text-slate-900 uppercase tracking-tighter">
-              Investigation
-            </div>
-            <div className="p-3 bg-slate-50 rounded-2xl text-blue-600">
-              <Search size={20} />
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="p-1.5 bg-slate-100 rounded-[2.5rem] flex gap-1">
-              {[1, 30].map(d => (
-                <button 
-                  key={d}
-                  onClick={() => { setDay(d); setFeedback(null); }}
-                  className={`flex-1 py-4 rounded-[2rem] text-[10px] font-black tracking-widest uppercase transition-all ${
-                    day === d 
-                      ? 'bg-white text-blue-600 shadow-xl' 
-                      : 'text-slate-400 hover:text-slate-600'
-                  }`}
-                >
-                  DAY {d.toString().padStart(2, '0')}
-                </button>
-              ))}
-            </div>
-
-            <div className="p-10 bg-slate-50 rounded-[3rem] border border-slate-100 relative overflow-hidden group">
-              <div className="relative z-10">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-4">Meter Reading</span>
-                <div className="flex items-end gap-3">
-                  <span className="text-5xl font-black text-slate-900 tracking-tighter font-mono">{readings[day as 1 | 30]}</span>
-                  <span className="text-xs font-black text-blue-600 uppercase mb-2 tracking-widest">kiloLitres</span>
-                </div>
-                <div className="mt-8 h-2 w-full bg-slate-200 rounded-full overflow-hidden border border-white shadow-inner">
-                  <div 
-                    className="h-full bg-blue-600 transition-all duration-1000 ease-out" 
-                    style={{ width: `${(readings[day as 1 | 30] / readings[30]) * 100}%` }} 
-                  />
-                </div>
+        {/* Investigation Controls */}
+        <div className="lg:col-span-4 flex flex-col gap-4">
+          <div className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm flex flex-col gap-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-blue-100 text-blue-600">
+                <Search size={20} />
               </div>
-              <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                <Target size={120} />
-              </div>
+              <h3 className="text-lg font-black text-slate-900 tracking-tight">Case Investigation</h3>
             </div>
 
-            <div className="p-8 md:p-10 bg-blue-600 rounded-[3rem] text-white shadow-2xl relative overflow-hidden group">
-              <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-6 opacity-80">
-                  <Calculator className="w-5 h-5" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Consumption Protocol</span>
-                </div>
-                <div className="text-xl md:text-2xl font-black uppercase tracking-tighter mb-6 md:mb-8 leading-[1.05]">
-                  Determine Monthly Consumption
-                </div>
-                
-                <div className="flex flex-col sm:flex-row gap-3 sm:items-stretch">
+            <div className="space-y-4">
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Your Calculation</label>
+                <div className="flex items-center gap-3">
                   <input 
                     type="number"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="ENTER kL"
-                    className="min-w-0 flex-1 bg-white/10 border border-white/20 rounded-[1.5rem] px-6 py-4 md:px-8 md:py-5 text-white font-mono placeholder:text-white/20 focus:outline-none focus:ring-4 focus:ring-white/10 transition-all text-lg md:text-xl"
+                    value={userInput}
+                    onChange={(e) => setUserInput(e.target.value)}
+                    placeholder="Enter KL volume..."
+                    className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-lg font-black text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                   />
                   <button 
-                    onClick={checkAnswer}
-                    className="sm:shrink-0 min-h-14 px-6 md:px-8 bg-white text-blue-600 font-black rounded-[1.5rem] hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center justify-center group-hover:bg-blue-50"
+                    onClick={handleCheck}
+                    className="h-14 w-14 bg-blue-600 rounded-xl text-white flex items-center justify-center hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20"
                   >
-                    RUN
+                    <Calculator size={24} />
                   </button>
                 </div>
               </div>
-              <div className="absolute bottom-0 right-0 w-48 h-48 bg-white/5 rounded-full blur-3xl translate-y-1/2 translate-x-1/2" />
+
+              {feedback && (
+                <div className={`p-4 rounded-2xl flex gap-3 animate-in slide-in-from-top-2 ${
+                  feedback.type === 'success' ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-800'
+                }`}>
+                  {feedback.type === 'success' ? <CheckCircle2 className="shrink-0" /> : <AlertCircle className="shrink-0" />}
+                  <p className="text-xs font-bold leading-relaxed">{feedback.message}</p>
+                </div>
+              )}
+
+              {showResult && (
+                <div className="p-4 rounded-2xl bg-blue-50 border border-blue-100 text-blue-900 animate-in zoom-in">
+                  <div className="flex items-center gap-2 mb-2">
+                    <TrendingUp size={16} />
+                    <span className="text-xs font-black uppercase">Interpretation</span>
+                  </div>
+                  <p className="text-xs font-medium leading-relaxed">{scenario.desc}</p>
+                </div>
+              )}
             </div>
           </div>
-        </div>
 
-        <div className="mt-auto space-y-6">
-          <div className="flex items-start gap-4 p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100">
-            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shrink-0 shadow-sm text-blue-600">
-              <Cpu size={24} />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-slate-500 leading-relaxed">
-                Subtract the initial reading (Day 01) from the final reading (Day 30) to determine total water usage.
-              </p>
-            </div>
-          </div>
+          <div className="bg-slate-900 p-6 rounded-[2rem] text-white flex flex-col gap-4">
+            {showResult ? (
+              activeScenario < SCENARIOS.length - 1 ? (
+                <button
+                  onClick={nextScenario}
+                  className="w-full h-14 bg-blue-600 hover:bg-blue-500 text-white rounded-xl flex items-center justify-center gap-3 font-black transition-all shadow-[0_0_20px_rgba(37,99,235,0.4)]"
+                >
+                  Next Investigation
+                  <ArrowRight size={20} />
+                </button>
+              ) : (
+                <button
+                  onClick={() => router.push('/2-4')}
+                  className="w-full h-14 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl flex items-center justify-center gap-3 font-black transition-all shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+                >
+                  Complete Module
+                  <CheckCircle2 size={20} />
+                </button>
+              )
+            ) : (
+              <button
+                disabled
+                className="w-full h-14 bg-white/10 text-white/30 rounded-xl flex items-center justify-center gap-3 font-black cursor-not-allowed"
+              >
+                Solve Case to Proceed
+              </button>
+            )}
 
-          <div className="flex gap-4">
             <button 
-              onClick={() => { setInput(''); setFeedback(null); }} 
-              className="p-5 bg-slate-100 text-slate-400 rounded-2xl hover:bg-slate-200 hover:text-slate-600 transition-all active:scale-95"
+              onClick={() => {
+                setActiveScenario(0);
+                setShowResult(false);
+                setUserInput("");
+                setFeedback(null);
+              }}
+              className="flex items-center justify-center gap-2 text-[10px] font-bold text-slate-500 hover:text-white transition-colors uppercase tracking-[0.2em]"
             >
-              <RotateCcw size={20} />
-            </button>
-            <button className="flex-1 py-5 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl hover:bg-slate-800 transition-all flex items-center justify-center gap-3">
-              Export Audit Log <ArrowRight className="w-4 h-4" />
+              <RotateCcw size={12} /> Reset Activity
             </button>
           </div>
         </div>
       </div>
 
-      {/* Feedback Overlay */}
-      {feedback && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center p-12 bg-slate-950/40 backdrop-blur-md pointer-events-none">
-          <div className={`pointer-events-auto max-w-sm w-full p-12 rounded-[3.5rem] shadow-2xl border-4 animate-in zoom-in duration-500 ${
-            feedback.type === 'success' ? 'bg-white border-emerald-500 shadow-emerald-500/20' : 'bg-white border-rose-500 shadow-rose-500/20'
-          }`}>
-            <div className={`w-24 h-24 rounded-[2.5rem] flex items-center justify-center mx-auto mb-10 shadow-2xl ${
-              feedback.type === 'success' ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'
-            }`}>
-              {feedback.type === 'success' ? <ShieldCheck size={48} /> : <AlertTriangle size={48} />}
-            </div>
-            <div className={`text-3xl font-black text-center mb-4 tracking-tighter uppercase ${
-              feedback.type === 'success' ? 'text-emerald-600' : 'text-rose-600'
-            }`}>
-              {feedback.type === 'success' ? 'VERIFIED' : 'REJECTED'}
-            </div>
-            <p className="text-slate-500 text-center text-sm font-medium mb-12 leading-relaxed px-4">
-              {feedback.msg}
-            </p>
-            <button 
-              onClick={() => setFeedback(null)}
-              className={`w-full py-6 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl active:scale-95 ${
-                feedback.type === 'success' ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-200' : 'bg-slate-900 text-white hover:bg-slate-800 shadow-slate-200'
-              }`}
-            >
-              {feedback.type === 'success' ? 'Next Analysis' : 'Try Again'}
-            </button>
+      {/* Audit Best Practices */}
+      <div className="bg-white p-8 rounded-[2rem] border border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="flex gap-4">
+          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+            <Droplets size={20} />
+          </div>
+          <div>
+            <h4 className="font-black text-slate-900 mb-1">Billing vs Line</h4>
+            <p className="text-sm text-slate-500 leading-relaxed font-medium">Billing meters tell you what the utility sees; line meters tell you what actually enters a branch.</p>
           </div>
         </div>
-      )}
-
-      <style jsx>{`
-        @keyframes scan {
-          0% { top: 0; }
-          100% { top: 100%; }
-        }
-      `}</style>
+        <div className="flex gap-4">
+          <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 shrink-0">
+            <Clock size={20} />
+          </div>
+          <div>
+            <h4 className="font-black text-slate-900 mb-1">Interval Logging</h4>
+            <p className="text-sm text-slate-500 leading-relaxed font-medium">Reading meters at consistent intervals (e.g. shift start/end) is critical for identifying leaks.</p>
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 shrink-0">
+            <TrendingUp size={20} />
+          </div>
+          <div>
+            <h4 className="font-black text-slate-900 mb-1">Baseline Flow</h4>
+            <p className="text-sm text-slate-500 leading-relaxed font-medium">Flow during idle periods (night/weekends) is your biggest clue for identifying hidden system losses.</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

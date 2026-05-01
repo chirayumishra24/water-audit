@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, Suspense, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Canvas, type ThreeEvent } from '@react-three/fiber';
 import { 
   OrbitControls, 
@@ -104,6 +105,7 @@ function SelectionBox({ start, end }: { start: THREE.Vector3 | null, end: THREE.
 }
 
 export function BoundarySandbox() {
+  const router = useRouter();
   const [startPoint, setStartPoint] = useState<THREE.Vector3 | null>(null);
   const [currentPoint, setCurrentPoint] = useState<THREE.Vector3 | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -324,7 +326,10 @@ export function BoundarySandbox() {
                 </p>
               </div>
             </div>
-            <button className="w-full lg:w-auto px-12 py-6 bg-white text-slate-900 font-black rounded-2xl hover:bg-blue-600 hover:text-white transition-all shadow-xl text-xs uppercase tracking-widest flex items-center justify-center gap-3 active:scale-95">
+            <button 
+              onClick={() => router.push('/2-1')}
+              className="w-full lg:w-auto px-12 py-6 bg-white text-slate-900 font-black rounded-2xl hover:bg-blue-600 hover:text-white transition-all shadow-xl text-xs uppercase tracking-widest flex items-center justify-center gap-3 active:scale-95"
+            >
               Proceed to Metering
               <ArrowRight className="w-4 h-4" />
             </button>
