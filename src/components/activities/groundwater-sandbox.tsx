@@ -180,6 +180,23 @@ function Text({ label, pos }: { label: string, pos: [number, number, number] }) 
   );
 }
 
+// --- Frame-loop updater (must be inside Canvas) ---
+
+function SaturationUpdater({ isRaining, intensity, structureCount, onUpdate }: {
+  isRaining: boolean;
+  intensity: number;
+  structureCount: number;
+  onUpdate: React.Dispatch<React.SetStateAction<number>>;
+}) {
+  useFrame((_, delta) => {
+    if (isRaining) {
+      const rate = (intensity * (structureCount + 1) * 0.01) * delta;
+      onUpdate(prev => Math.min(1, prev + rate));
+    }
+  });
+  return null;
+}
+
 // --- Main Activity ---
 
 const STRUCTURES = [
@@ -195,13 +212,6 @@ export function GroundwaterSandbox() {
   const [isRaining, setIsRaining] = useState(false);
   const [intensity, setIntensity] = useState(1);
   const [saturation, setSaturation] = useState(0.2);
-  
-  useFrame((state, delta) => {
-    if (isRaining) {
-      const rate = (intensity * (structures.length + 1) * 0.01) * delta;
-      setSaturation(prev => Math.min(1, prev + rate));
-    }
-  });
 
   const toggleStructure = (id: string) => {
     setStructures(prev => prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]);
@@ -236,6 +246,12 @@ export function GroundwaterSandbox() {
             <pointLight position={[-10, 10, -10]} intensity={0.5} />
             
             <Suspense fallback={null}>
+              <SaturationUpdater 
+                isRaining={isRaining} 
+                intensity={intensity} 
+                structureCount={structures.length} 
+                onUpdate={setSaturation} 
+              />
               <TerrainSection 
                 structures={structures} 
                 isRaining={isRaining} 
