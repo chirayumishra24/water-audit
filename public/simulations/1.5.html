@@ -1,0 +1,431 @@
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title></title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&amp;family=Poppins:wght@300;400;600&amp;display=swap"
+    rel="stylesheet" />
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<style type="text/css">
+    :root {
+        --primary: #0ea5e9;
+        --primary-dark: #0284c7;
+        --primary-light: #7dd3fc;
+        --text-dark: #0c4a6e;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .font-playful {
+        font-family: 'Baloo 2', cursive;
+    }
+
+    .ocean-bg {
+        background: linear-gradient(180deg, #7dd3fc 0%, #e6f6ff 40%, #ffffff 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .wave {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 140px;
+        bottom: -2px;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="1" d="M0,192L48,186.7C96,181,192,171,288,176C384,181,480,203,576,208C672,213,768,203,864,192C960,181,1056,171,1152,160C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x bottom/cover;
+        animation: wave 12s linear infinite;
+        opacity: 0.9;
+        z-index: 5;
+    }
+
+    @keyframes wave {
+        0% {
+            background-position-x: 0;
+        }
+
+        100% {
+            background-position-x: 1200px;
+        }
+    }
+
+    .bubble {
+        position: absolute;
+        border-radius: 9999px;
+        pointer-events: none;
+        opacity: 0.75;
+        transform: translate(-50%, -50%);
+        animation: floatUp 3.5s linear infinite;
+        z-index: 10;
+    }
+
+    @keyframes floatUp {
+        from {
+            transform: translate(-50%, 0) scale(1);
+            opacity: 0.85;
+        }
+
+        to {
+            transform: translate(-50%, -320px) scale(0.3);
+            opacity: 0;
+        }
+    }
+
+    .soft-card {
+        background: white;
+        box-shadow: 0 10px 25px rgba(6, 17, 42, 0.08);
+        border-radius: 1.5rem;
+        padding: 2rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .soft-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(6, 17, 42, 0.15);
+    }
+
+    /* Fullscreen Button – Page Level */
+    #fullscreen-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        width: 52px;
+        height: 52px;
+        background: rgba(14, 165, 233, 0.9);
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    #fullscreen-btn:hover {
+        background: #0284c7;
+        transform: scale(1.1);
+    }
+
+    #fullscreen-btn img {
+        width: 30px;
+        height: 30px;
+        transition: opacity 0.3s;
+    }
+
+    #fullscreen-btn .exit {
+        opacity: 0;
+        position: absolute;
+    }
+
+    body.fullscreen #fullscreen-btn .enter {
+        opacity: 0;
+    }
+
+    body.fullscreen #fullscreen-btn .exit {
+        opacity: 1;
+    }
+
+    /* Iframe-specific Fullscreen Button */
+    .iframe-wrapper {
+        position: relative;
+        width: 100%;
+        height: 80vh;
+        min-height: 600px;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(6, 17, 42, 0.15);
+        background: white;
+    }
+
+    .iframe-wrapper iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    #iframe-fullscreen-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 1000;
+        width: 44px;
+        height: 44px;
+        background: rgba(14, 165, 233, 0.85);
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    #iframe-fullscreen-btn:hover {
+        background: #0284c7;
+        transform: scale(1.1);
+    }
+
+    #iframe-fullscreen-btn img {
+        width: 26px;
+        height: 26px;
+        transition: opacity 0.3s;
+    }
+
+    #iframe-fullscreen-btn .exit {
+        opacity: 0;
+        position: absolute;
+    }
+
+    .iframe-wrapper.fullscreen #iframe-fullscreen-btn .enter {
+        opacity: 0;
+    }
+
+    .iframe-wrapper.fullscreen #iframe-fullscreen-btn .exit {
+        opacity: 1;
+    }
+
+    /* Floating UI */
+    #back-to-top {
+        position: fixed;
+        bottom: 32px;
+        left: 32px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: white;
+        font-size: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 25px rgba(6, 17, 42, 0.15);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 900;
+        cursor: pointer;
+    }
+
+    #back-to-top.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    #progress-container {
+        position: fixed;
+        right: 24px;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 33vh;
+        width: 14px;
+        background: rgba(125, 211, 252, 0.25);
+        border-radius: 999px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(6, 17, 42, 0.15);
+        z-index: 800;
+    }
+
+    #progress-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 0%;
+        background: linear-gradient(to top, var(--primary-light), var(--primary));
+        transition: height 0.2s ease;
+    }
+
+    /* Option A - Most reliable: force text container above wave */
+    header .text-center {
+        position: relative;
+        z-index: 30 !important;
+        /* higher than wave's 5 */
+        background: rgba(255, 255, 255, 0.92);
+        /* ← semi-transparent white helps readability too */
+        backdrop-filter: blur(6px);
+        /* modern glass effect – optional but looks nice */
+        padding: 2.5rem 1.5rem;
+        border-radius: 1.25rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Option B - If you want to keep wave behind everything in header */
+    .wave {
+        z-index: 1 !important;
+        /* push wave way back */
+    }
+
+    /* Option C - Give whole content block strong stacking context */
+    header>.container {
+        z-index: 25 !important;
+    }
+</style>
+<!-- Page-level Fullscreen Button -->
+<p><button aria-label="Toggle Page Fullscreen" id="fullscreen-btn"><img alt="Enter Fullscreen" class="enter"
+            src="/s/articles/6971c474348e12598d489e16/images/fullscreen.png" /> <img alt="Exit Fullscreen" class="exit"
+            src="/s/articles/6971c474348e12598d489e16/images/exit.png" /></button><!-- Back to Top --><button
+        id="back-to-top" title="Back to Top">&uarr;</button><!-- Progress Bar --></p>
+
+<div id="progress-container">
+    <div id="progress-bar">&nbsp;</div>
+</div>
+<!-- Hero -->
+
+<header class="ocean-bg relative min-h-[60vh] flex items-center pb-16">
+    <div class="container mx-auto px-6 lg:px-12 max-w-7xl relative z-20">
+        <div class="text-center max-w-4xl mx-auto relative z-30"><!-- ← added z-30 here -->
+            <h1 class="font-playful text-5xl md:text-6xl lg:text-7xl leading-tight text-sky-900 mb-6">Water Quest</h1>
+
+            <p class="text-xl md:text-2xl text-slate-700 mb-8">Experiential Activity: Water Hero Challenge</p>
+
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto">Put your water audit skills into action! Complete this
+                interactive challenge to become a certified Water Hero.</p>
+        </div>
+
+        <div class="wave">&nbsp;</div>
+        <!-- wave stays at z-5 (from your <style>) -->
+    </div>
+</header>
+
+<main class="container mx-auto px-6 lg:px-12 max-w-7xl -mt-16 relative z-30 pb-24"><!-- Instructions Card -->
+    <section class="bg-white soft-card p-8 md:p-12 mb-12 shadow-xl">
+        <h2 class="text-3xl md:text-4xl font-bold text-sky-900 mb-6 text-center">Your Mission</h2>
+
+        <div class="prose prose-lg text-slate-700 max-w-none">
+            <p>In this hands-on activity you will:</p>
+
+            <ul>
+                <li>Track your real daily water habits</li>
+                <li>Complete short conservation missions</li>
+                <li>See instant impact (liters saved)</li>
+                <li>Earn badges and progress</li>
+                <li>Get your personal <strong>Water Hero Certificate PDF</strong> at the end</li>
+            </ul>
+
+            <p class="font-medium mt-6">Time needed: 30&ndash;90 minutes (do it in one go or save &amp; resume later)
+            </p>
+
+            <p class="mt-4 text-center"><strong>Tip:</strong> Have your water audit notes/flow rates ready &mdash; it
+                makes the experience more personal!</p>
+        </div>
+    </section>
+    <!-- Embedded Activity with its own fullscreen button -->
+
+    <section>
+        <h2 class="text-3xl md:text-4xl font-bold text-sky-900 text-center mb-8">Start Your Water Hero Challenge</h2>
+
+        <div class="iframe-wrapper relative"><!-- Iframe-specific Fullscreen Button --><button
+                aria-label="Toggle Activity Fullscreen" id="iframe-fullscreen-btn"><img alt="Enter Fullscreen"
+                    class="enter" src="/s/articles/6971c474348e12598d489e16/images/fullscreen.png" /> <img
+                    alt="Exit Fullscreen" class="exit"
+                    src="/s/articles/6971c474348e12598d489e16/images/exit.png" /></button><iframe allowfullscreen=""
+                id="activity-iframe" loading="lazy" src="https://water-hero-saver.lovable.app"
+                title="Water Hero Challenge – Experiential Activity"></iframe></div>
+        <!-- Submission instruction -->
+
+        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-6 mt-8 rounded-r-lg">
+            <h3 class="text-xl font-bold text-emerald-700 mb-3">Important Next Step</h3>
+
+            <p class="text-lg text-emerald-800">After completing the activity:</p>
+
+            <p class="text-base text-slate-700 mt-2">1. Download your final report / certificate from the app.<br />
+                2. Submit the downloaded PDF (or screenshot/link) back to the LMS.<br />
+                <span class="font-medium">Your teacher will review it and mark your completion.</span>
+            </p>
+        </div>
+
+        <p class="text-center text-slate-600 mt-6 text-sm">If the activity doesn&#39;t load, try refreshing or use
+            Chrome/Edge.</p>
+    </section>
+</main>
+
+<footer class="mt-16 py-10 bg-gradient-to-t from-sky-900 to-sky-800 text-white text-center">
+    <p class="text-lg">Water Quest &mdash; Every Drop Counts</p>
+
+    <p class="mt-2 opacity-90">Save water. Save the future. You&#39;re already a hero!</p>
+</footer>
+<!-- Scripts -->
+<script>
+    // Back to Top
+    const backToTop = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => {
+        backToTop.classList.toggle('visible', window.scrollY > 400);
+    });
+    backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    // Progress Bar
+    const progressBar = document.getElementById('progress-bar');
+    function updateProgress() {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrolled = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        progressBar.style.height = `${scrolled}%`;
+    }
+    window.addEventListener('scroll', updateProgress);
+    window.addEventListener('resize', updateProgress);
+    updateProgress();
+
+    // Mouse Bubbles
+    const colors = ['rgba(255,255,255,0.9)', 'rgba(200,240,255,0.85)', 'rgba(255,255,255,0.75)'];
+    document.addEventListener('mousemove', (e) => {
+        if (Math.random() > 0.85) return;
+        const bubble = document.createElement('div');
+        const size = Math.floor(Math.random() * 24) + 12;
+        bubble.style.width = bubble.style.height = size + 'px';
+        bubble.style.left = e.pageX + 'px';
+        bubble.style.top = e.pageY + 'px';
+        bubble.style.background = colors[Math.floor(Math.random() * colors.length)];
+        bubble.className = 'bubble';
+        document.body.appendChild(bubble);
+        setTimeout(() => bubble.remove(), 5000);
+    });
+
+    // Page-level Fullscreen
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => { });
+        } else {
+            document.exitFullscreen().catch(() => { });
+        }
+    });
+    document.addEventListener('fullscreenchange', () => {
+        document.body.classList.toggle('fullscreen', !!document.fullscreenElement);
+    });
+
+    // Iframe-specific Fullscreen (independent)
+    const iframeFullscreenBtn = document.getElementById('iframe-fullscreen-btn');
+    const activityIframe = document.getElementById('activity-iframe');
+    const iframeWrapper = document.querySelector('.iframe-wrapper');
+
+    iframeFullscreenBtn.addEventListener('click', () => {
+        if (!iframeWrapper.classList.contains('fullscreen')) {
+            if (activityIframe.requestFullscreen) {
+                activityIframe.requestFullscreen().then(() => {
+                    iframeWrapper.classList.add('fullscreen');
+                }).catch(() => alert("Fullscreen not supported in this browser for iframes."));
+            } else if (activityIframe.webkitRequestFullscreen) { // Safari
+                activityIframe.webkitRequestFullscreen();
+                iframeWrapper.classList.add('fullscreen');
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+            iframeWrapper.classList.remove('fullscreen');
+        }
+    });
+
+    // Listen for iframe fullscreen changes
+    document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement && iframeWrapper.classList.contains('fullscreen')) {
+            iframeWrapper.classList.remove('fullscreen');
+        }
+    });
+</script>

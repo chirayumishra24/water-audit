@@ -1,0 +1,719 @@
+<div>
+    <div>
+        <div>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </div>
+    </div>
+</div>
+<title></title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&amp;family=Poppins:wght@300;400;600&amp;display=swap"
+    rel="stylesheet" />
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<style type="text/css">
+    .ocean-bg {
+        background: linear-gradient(180deg, #7dd3fc 0%, #e6f6ff 40%, #fff 100%);
+        position: relative;
+        overflow: hidden
+    }
+
+    .wave {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 140px;
+        bottom: -2px;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="1" d="M0,192L48,186.7C96,181,192,171,288,176C384,181,480,203,576,208C672,213,768,203,864,192C960,181,1056,171,1152,160C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x bottom/cover;
+        animation: wave 10s linear infinite;
+        opacity: .85;
+        z-index: 5
+    }
+
+    @keyframes wave {
+        0% {
+            background-position-x: 0
+        }
+
+        100% {
+            background-position-x: 1200px
+        }
+    }
+
+    .bubble {
+        position: absolute;
+        border-radius: 9999px;
+        pointer-events: none;
+        opacity: .7;
+        transform: translate(-50%, -50%);
+        animation: floatUp linear infinite;
+        z-index: 10
+    }
+
+    @keyframes floatUp {
+        from {
+            transform: translate(-50%, 0) scale(1);
+            opacity: .8
+        }
+
+        to {
+            transform: translate(-50%, -280px) scale(.5);
+            opacity: 0
+        }
+    }
+
+    .soft-card {
+        box-shadow: 0 10px 25px rgba(6, 17, 42, .1);
+        border-radius: 1.5rem;
+        margin-left: 1rem;
+        margin-right: 1rem;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem
+    }
+
+    @media (min-width:640px) {
+        .soft-card {
+            margin-left: 2rem;
+            margin-right: 2rem;
+            padding-left: 2.5rem;
+            padding-right: 2.5rem
+        }
+    }
+
+    @media (min-width:1024px) {
+        .soft-card {
+            margin-left: 3rem;
+            margin-right: 3rem;
+            padding-left: 3rem;
+            padding-right: 3rem
+        }
+    }
+
+    .highlight-box {
+        background: rgba(125, 211, 252, .25);
+        border-left: 6px solid #0ea5e9;
+        border-radius: .75rem
+    }
+
+    #fullscreen-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        width: 52px;
+        height: 52px;
+        background: #0ea5e9;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        backdrop-filter: blur(4px);
+        transition: all .2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, .3)
+    }
+
+    #fullscreen-btn:hover {
+        background: #0284c7;
+        transform: scale(1.1)
+    }
+
+    #fullscreen-btn img {
+        width: 30px;
+        height: 30px;
+        transition: opacity .3s ease
+    }
+
+    #fullscreen-btn .exit {
+        opacity: 0;
+        position: absolute
+    }
+
+    body.fullscreen #fullscreen-btn .enter {
+        opacity: 0
+    }
+
+    body.fullscreen #fullscreen-btn .exit {
+        opacity: 1
+    }
+
+    .hero-content-wrapper {
+        position: relative;
+        z-index: 30
+    }
+
+    .hero-list {
+        position: relative;
+        z-index: 15;
+        background: rgba(255, 255, 255, 0.78);
+        backdrop-filter: blur(6px);
+        padding: 1.75rem;
+        border-radius: 1.25rem;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+    }
+
+    .audio-container {
+        position: relative;
+        background: url('/s/articles/6996f2af0592535920f9fbab/images/Subtitle(4).gif') center/cover no-repeat;
+        border-radius: 16px;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, .25);
+        margin: 1rem auto;
+        width: 90%;
+        max-width: 900px;
+        aspect-ratio: 19/12;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 1rem;
+        padding-bottom: 1rem
+    }
+
+    .audio-container audio {
+        width: 100%;
+        border-radius: 12px;
+        border: 2px solid #2D2B7E;
+        background: #F5F5FF;
+        height: 50px;
+        padding: 4px;
+        box-shadow: 0 3px 10px rgba(45, 43, 126, .3)
+    }
+
+    #back-to-top {
+        position: fixed;
+        bottom: 32px;
+        left: 32px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #0ea5e9;
+        color: #fff;
+        font-size: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 25px rgba(6, 17, 42, .15);
+        opacity: 0;
+        visibility: hidden;
+        transition: all .3s ease;
+        z-index: 900;
+        cursor: pointer
+    }
+
+    #back-to-top.visible {
+        opacity: 1;
+        visibility: visible
+    }
+
+    #back-to-top:hover {
+        background: #0284c7;
+        transform: translateY(-4px)
+    }
+
+    #progress-container {
+        position: fixed;
+        right: 24px;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 33vh;
+        width: 14px;
+        background: rgba(125, 211, 252, .25);
+        border-radius: 999px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(6, 17, 42, .15);
+        z-index: 800
+    }
+
+    #progress-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 0%;
+        background: linear-gradient(to top, #7dd3fc, #0ea5e9);
+        transition: height .2s ease;
+        border-radius: 999px
+    }
+
+    #notes-btn {
+        position: fixed;
+        bottom: 32px;
+        right: 32px;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #0ea5e9;
+        box-shadow: 0 10px 25px rgba(6, 17, 42, .15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 1000;
+        transition: all .3s ease
+    }
+
+    #notes-btn:hover {
+        background: #0284c7;
+        transform: scale(1.1)
+    }
+
+    #notes-btn img {
+        width: 36px;
+        height: 36px
+    }
+
+    #notes-panel {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        right: -380px;
+        width: 360px;
+        height: 60vh;
+        background: rgba(255, 255, 255, .94);
+        backdrop-filter: blur(12px);
+        border-left: 1px solid rgba(125, 211, 252, .4);
+        box-shadow: -12px 0 40px rgba(0, 0, 0, .18);
+        transition: right .4s cubic-bezier(.23, 1, .32, 1);
+        z-index: 950;
+        padding: 20px;
+        border-radius: 16px 0 0 16px;
+        display: flex;
+        flex-direction: column
+    }
+
+    #notes-panel.open {
+        right: 0
+    }
+
+    #notes-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px
+    }
+
+    #notes-title {
+        font-family: 'Baloo 2', cursive;
+        font-size: 1.6rem;
+        color: #0c4a6e;
+        font-weight: 600
+    }
+
+    #notes-close {
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        color: #64748b;
+        cursor: pointer
+    }
+
+    #notes-textarea {
+        flex: 1;
+        width: 100%;
+        padding: 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        font-size: 1.05rem;
+        line-height: 1.6;
+        resize: none;
+        background: #fff;
+        color: #0c4a6e
+    }
+
+    #notes-textarea:focus {
+        outline: none;
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, .15)
+    }
+
+    #notes-actions {
+        margin-top: 12px;
+        display: flex;
+        gap: 10px
+    }
+
+    #notes-actions button {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all .2s
+    }
+
+    #downloadNotes {
+        background: #10b981;
+        color: #fff
+    }
+
+    #downloadNotes:hover {
+        background: #059669
+    }
+
+    #clearNotes {
+        background: #ef4444;
+        color: #fff
+    }
+
+    #clearNotes:hover {
+        background: #dc2626
+    }
+
+    #notes-saved {
+        margin-top: 8px;
+        font-size: .85rem;
+        color: #64748b;
+        text-align: right
+    }
+</style>
+<p><button id="back-to-top" title="Back to Top">&uarr;</button></p>
+
+<div id="progress-container">
+    <div id="progress-bar" style="height:0%">&nbsp;</div>
+</div>
+
+<p><button id="notes-btn" title="Take Notes"><img alt="Notes"
+            src="/s/articles/6971c474348e12598d489e16/images/notes.png" /></button></p>
+
+<div id="notes-panel">
+    <div id="notes-header">
+        <div id="notes-title">My Water Notes</div>
+        <button id="notes-close">&times;</button>
+    </div>
+    <textarea id="notes-textarea" placeholder="Jot down findings, questions, reminders..."></textarea>
+
+    <div id="notes-actions"><button id="downloadNotes">Download .doc</button><button id="clearNotes">Clear</button>
+    </div>
+
+    <div id="notes-saved">Last saved: 12:24 PM</div>
+</div>
+
+<p><button aria-label="Toggle Fullscreen" id="fullscreen-btn"><img alt="Enter Fullscreen" class="enter"
+            src="/s/articles/6971c474348e12598d489e16/images/fullscreen.png" /> <img alt="Exit Fullscreen" class="exit"
+            src="/s/articles/6971c474348e12598d489e16/images/exit.png" /></button></p>
+
+<header class="ocean-bg relative min-h-[580px] flex items-center pb-16">
+    <div
+        class="container mx-auto px-6 sm:px-10 md:px-14 lg:px-20 xl:px-28 max-w-8xl relative z-20 hero-content-wrapper">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div class="pt-8 md:pt-12 lg:pt-16 pl-4 sm:pl-6 md:pl-10 lg:pl-16 xl:pl-20">
+                <h1 class="font-playful text-5xl sm:text-6xl lg:text-7xl leading-tight text-sky-900">Water Quest</h1>
+
+                <p class="mt-5 text-xl sm:text-2xl text-slate-700 max-w-2xl">Chapter 4.1: Identifying Wastage</p>
+
+                <div class="mt-10 flex flex-wrap gap-4"><a
+                        class="inline-flex items-center gap-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-7 py-4 rounded-2xl shadow-lg transform transition hover:-translate-y-1 active:scale-95 text-lg"
+                        href="#steps">🔍 Start Hunting Leaks</a></div>
+
+                <ul class="hero-list mt-10 grid grid-cols-1 sm:grid-cols-2 gap-5 text-lg text-slate-800 font-medium">
+                    <li class="flex items-center gap-3">🚰 Dripping taps = silent thieves</li>
+                    <li class="flex items-center gap-3">💦 Wet patches = hidden leaks</li>
+                    <li class="flex items-center gap-3">🪣 Overflowing tank = thousands of liters lost</li>
+                    <li class="flex items-center gap-3">📏 Measure &rarr; Fix &rarr; Save big!</li>
+                </ul>
+            </div>
+
+            <div class="flex justify-center lg:justify-end pt-8 lg:pt-0">
+                <div
+                    class="w-[340px] h-[340px] sm:w-[420px] sm:h-[420px] soft-card bg-gradient-to-tr from-sky-50 to-white p-6">
+                    <lottie-player autoplay="" background="transparent" loop="" speed="0.8"
+                        src="https://assets8.lottiefiles.com/packages/lf20_kkflmtur.json"></lottie-player></div>
+            </div>
+        </div>
+
+        <div class="wave">&nbsp;</div>
+    </div>
+</header>
+
+<section class="relative -mt-10 mb-16 z-40 w-full">
+    <div class="w-full">
+        <div class="audio-container">
+            <audio controls="" controlslist="nodownload" oncontextmenu="return false">
+                <source src="https://pa2-cmd.github.io/Water_Audit/4.1.mp3" type="audio/mp3" /> Your browser does not
+                support the audio element.
+            </audio>
+        </div>
+    </div>
+</section>
+
+<main
+    class="container mx-auto px-6 sm:px-10 md:px-14 lg:px-20 xl:px-28 max-w-8xl -mt-10 sm:-mt-12 lg:-mt-14 relative z-30 pb-24">
+    <section class="bg-white soft-card p-8 md:p-12 mb-16">
+        <h2 class="text-3xl md:text-4xl font-semibold text-sky-900 mb-6">Finding Hidden Water Thieves</h2>
+
+        <p class="text-lg text-slate-700 leading-relaxed mb-8">Identifying wastage is the most powerful first step in
+            any water audit. Small leaks, drips, and overflows waste thousands of liters every month &mdash; often
+            without anyone noticing. Spotting them early can save more water (and money) than almost any other change.
+        </p>
+
+        <div class="my-10 flex justify-center"><img
+                alt="Hidden leaks and drips – dripping faucet with water wastage on floor"
+                class="rounded-xl shadow-2xl max-w-full md:max-w-4xl w-full"
+                src="/s/articles/69953c68c3c6360b436a921d/images/Major cause of winter water damage.jpg" /></div>
+    </section>
+
+    <section class="space-y-12 mb-16" id="steps">
+        <div class="bg-white soft-card p-8 md:p-12">
+            <h2 class="text-3xl font-semibold text-sky-900 mb-6">Step-by-Step: How to Hunt for Wastage</h2>
+
+            <ol class="list-decimal pl-6 space-y-6 text-lg text-slate-700">
+                <li><strong>Systematic Inspection</strong><br />
+                    Walk through every water point. Check:
+                    <ul class="list-disc pl-6 mt-2 space-y-2">
+                        <li>Taps &mdash; drips even when closed</li>
+                        <li>Pipes &mdash; wet spots on walls/floor/ground</li>
+                        <li>Overhead tanks &mdash; overflow during filling or night</li>
+                        <li>Toilets &mdash; silent flush valve leaks (food color test)</li>
+                    </ul>
+                </li>
+                <li><strong>Record Every Clue</strong><br />
+                    Note location + problem (e.g. &quot;Kitchen tap &ndash; slow drip&quot;, &quot;Main pipe near gate
+                    &ndash; wet soil&quot;).</li>
+                <li><strong>Quantify the Loss</strong><br />
+                    Bucket &amp; stopwatch method:
+                    <ul class="list-disc pl-6 mt-2 space-y-2">
+                        <li>Collect leak for 1 minute</li>
+                        <li>Measure volume (mL or L)</li>
+                        <li>Daily loss = volume/min &times; 1,440 minutes</li>
+                    </ul>
+                    Example: 120 mL/min = <strong>172.8 L/day</strong>!
+                </li>
+            </ol>
+        </div>
+
+        <div class="bg-white soft-card p-8 md:p-12">
+            <h2 class="text-3xl font-semibold text-sky-900 mb-6">Most Common Wastage Hotspots</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-sky-50 rounded-2xl p-6 border border-sky-200">
+                    <h3 class="text-xl font-semibold text-sky-800 mb-3">Dripping Taps</h3>
+
+                    <p class="text-slate-700">Even 1 drop/sec &asymp; 4,000 L/month wasted!</p>
+                </div>
+
+                <div class="bg-sky-50 rounded-2xl p-6 border border-sky-200">
+                    <h3 class="text-xl font-semibold text-sky-800 mb-3">Overflowing Tanks</h3>
+
+                    <p class="text-slate-700">Faulty float valve &rarr; thousands of liters lost overnight.</p>
+                </div>
+
+                <div class="bg-sky-50 rounded-2xl p-6 border border-sky-200">
+                    <h3 class="text-xl font-semibold text-sky-800 mb-3">Hidden Pipe Leaks</h3>
+
+                    <p class="text-slate-700">Wet patches, moss, or lower pressure are clues.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-white soft-card p-8 md:p-12 mb-16">
+        <h2 class="text-3xl md:text-4xl font-semibold text-sky-900 mb-6">Why Finding Wastage Matters So Much</h2>
+
+        <p class="text-lg text-slate-700 mb-6">Fixing one dripping tap can save more than shorter showers or turning off
+            lights. Small leaks are silent thieves &mdash; but once found, they are the easiest and cheapest to stop.
+        </p>
+
+        <div class="highlight-box p-7 text-center">
+            <p class="text-xl font-bold">One slow drip (60 drops/min) wastes &asymp; 8,000 liters per year.<br />
+                That&rsquo;s enough drinking &amp; cooking water for one person for ~4 months!</p>
+        </div>
+    </section>
+
+    <div class="max-w-6xl mx-auto p-6 bg-white rounded-2xl shadow-xl my-12 border border-sky-100">
+        <h2 class="text-3xl md:text-4xl font-bold text-sky-900 text-center mb-6">Spot &amp; Classify Wastage</h2>
+
+        <p class="text-center text-lg text-slate-700 mb-10">Drag each situation card from the left column to the correct
+            category on the right.</p>
+
+        <div class="flex flex-col lg:flex-row gap-8 lg:gap-12"><!-- LEFT: Items to drag -->
+            <div class="flex-1 bg-sky-50/40 p-6 rounded-xl border border-sky-200">
+                <h3 class="text-xl font-semibold text-center mb-6 text-sky-800">Wastage Situations</h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 min-h-[400px]" id="items">
+                    <div class="card bg-white p-5 rounded-xl shadow-md border-2 border-slate-200 cursor-grab active:cursor-grabbing select-none text-center"
+                        draggable="true">
+                        <div class="text-5xl mb-3">🪣</div>
+
+                        <p class="font-medium">Overhead tank overflows 45 min every night</p>
+
+                        <p class="text-sm text-slate-600 mt-2">&asymp; 25,000 L / month</p>
+                    </div>
+
+                    <div class="card bg-white p-5 rounded-xl shadow-md border-2 border-slate-200 cursor-grab active:cursor-grabbing select-none text-center"
+                        draggable="true">
+                        <div class="text-5xl mb-3">🚽</div>
+
+                        <p class="font-medium">Toilet cistern silent leak (running continuously)</p>
+
+                        <p class="text-sm text-slate-600 mt-2">&asymp; 40,000&ndash;80,000 L / month</p>
+                    </div>
+
+                    <div class="card bg-white p-5 rounded-xl shadow-md border-2 border-slate-200 cursor-grab active:cursor-grabbing select-none text-center"
+                        draggable="true">
+                        <div class="text-5xl mb-3">🌧️</div>
+
+                        <p class="font-medium">Underground pipe leak &ndash; large wet patch in yard</p>
+
+                        <p class="text-sm text-slate-600 mt-2">Can be 100,000+ L / month</p>
+                    </div>
+
+                    <div class="card bg-white p-5 rounded-xl shadow-md border-2 border-slate-200 cursor-grab active:cursor-grabbing select-none text-center"
+                        draggable="true">
+                        <div class="text-5xl mb-3">🚰</div>
+
+                        <p class="font-medium">Kitchen tap drips 1 drop every 3 seconds</p>
+
+                        <p class="text-sm text-slate-600 mt-2">&asymp; 1,500 L / year</p>
+                    </div>
+
+                    <div class="card bg-white p-5 rounded-xl shadow-md border-2 border-slate-200 cursor-grab active:cursor-grabbing select-none text-center"
+                        draggable="true">
+                        <div class="text-5xl mb-3">🚿</div>
+
+                        <p class="font-medium">Shower head drips very slowly (1 drop / 8 sec)</p>
+
+                        <p class="text-sm text-slate-600 mt-2">&asymp; 600 L / year</p>
+                    </div>
+
+                    <div class="card bg-white p-5 rounded-xl shadow-md border-2 border-slate-200 cursor-grab active:cursor-grabbing select-none text-center"
+                        draggable="true">
+                        <div class="text-5xl mb-3">🚰</div>
+
+                        <p class="font-medium">Bathroom tap drips 1 drop every 4 seconds</p>
+
+                        <p class="text-sm text-slate-600 mt-2">&asymp; 1,200 L / year</p>
+                    </div>
+                </div>
+            </div>
+            <!-- RIGHT: Drop zones -->
+
+            <div class="flex-1 grid grid-rows-2 gap-6">
+                <div class="dropzone bg-red-50 border-4 border-red-400 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[220px]"
+                    id="high">
+                    <h3 class="text-2xl font-bold text-red-700 mb-3">Very High Wastage</h3>
+
+                    <p class="text-slate-600 text-center mb-4">Urgent &ndash; huge daily/monthly loss</p>
+
+                    <div class="flex flex-wrap gap-4 justify-center w-full min-h-[100px]" id="high-drop">&nbsp;</div>
+                </div>
+
+                <div class="dropzone bg-emerald-50 border-4 border-emerald-400 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[220px]"
+                    id="medium">
+                    <h3 class="text-2xl font-bold text-emerald-700 mb-3">Medium / Small Wastage</h3>
+
+                    <p class="text-slate-600 text-center mb-4">Noticeable but lower volume</p>
+
+                    <div class="flex flex-wrap gap-4 justify-center w-full min-h-[100px]" id="medium-drop">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hidden mt-10 p-6 bg-sky-100 rounded-2xl text-center text-xl font-medium" id="feedback">&nbsp;</div>
+
+        <div class="text-center mt-8"><button
+                class="px-8 py-4 bg-gray-600 hover:bg-gray-700 text-white rounded-xl text-lg font-medium shadow-md"
+                onclick="location.reload()">Reset Activity</button></div>
+    </div>
+    <script>
+        // Drag-and-drop logic – left to right only
+        const items = document.querySelectorAll('[draggable="true"]');
+        const zones = [document.getElementById('high'), document.getElementById('medium')];
+
+        items.forEach(item => {
+            item.addEventListener('dragstart', e => {
+                e.dataTransfer.setData('text/html', item.outerHTML);
+                setTimeout(() => item.style.opacity = '0.4', 0);
+            });
+            item.addEventListener('dragend', () => {
+                item.style.opacity = '1';
+            });
+        });
+
+        zones.forEach(zone => {
+            zone.addEventListener('dragover', e => {
+                e.preventDefault();
+                zone.classList.add('bg-opacity-30', 'border-dashed');
+            });
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('bg-opacity-30', 'border-dashed');
+            });
+            zone.addEventListener('drop', e => {
+                e.preventDefault();
+                zone.classList.remove('bg-opacity-30', 'border-dashed');
+
+                const data = e.dataTransfer.getData('text/html');
+                const temp = document.createElement('div');
+                temp.innerHTML = data;
+                const card = temp.firstChild;
+
+                // Remove original card
+                document.querySelector('[draggable="true"][style*="opacity: 0.4"]')?.remove();
+
+                // Add to target drop area
+                const dropArea = zone.querySelector('div[id$="-drop"]');
+                dropArea.appendChild(card);
+
+                checkCompletion();
+            });
+        });
+
+        function checkCompletion() {
+            const total = items.length;
+            const placed = document.querySelectorAll('#high-drop > div, #medium-drop > div').length;
+
+            if (placed === total) {
+                const feedback = document.getElementById('feedback');
+                feedback.classList.remove('hidden');
+
+                const highItems = Array.from(document.querySelectorAll('#high-drop > div'));
+                const correctHigh = highItems.filter(c =>
+                    c.textContent.includes('Overhead tank') ||
+                    c.textContent.includes('Toilet cistern') ||
+                    c.textContent.includes('Underground pipe')
+                );
+
+                feedback.innerHTML = correctHigh.length === 3
+                    ? '<span class="text-emerald-700 font-bold text-2xl block">🎉 Perfect! You correctly identified the biggest water thieves.</span>'
+                    : '<span class="text-amber-700 font-bold text-2xl block">Good try! Some very high wastage items belong in the left column.</span>';
+            }
+        }
+    </script>
+</main>
+
+<footer class="mt-16 py-10 bg-sky-900 text-white text-center">
+    <div class="container mx-auto px-6 sm:px-10 md:px-14 lg:px-20 xl:px-28 max-w-8xl">
+        <p class="text-lg">Water Quest &mdash; Chapter 4.1: Identifying Wastage</p>
+
+        <p class="mt-2 opacity-90">Spot it &rarr; Stop it &rarr; Save thousands of liters! 🔍💧</p>
+    </div>
+</footer>
+<script>
+    const colors = ['rgba(255,255,255,0.9)', 'rgba(200,240,255,0.8)', 'rgba(255,255,255,0.7)'];
+    document.addEventListener('mousemove', e => { if (Math.random() > .9) return; const b = document.createElement('div'); const s = Math.floor(Math.random() * 20) + 10; b.style.width = s + 'px'; b.style.height = s + 'px'; b.style.left = e.pageX + 'px'; b.style.top = e.pageY + 'px'; b.style.background = colors[Math.floor(Math.random() * colors.length)]; b.className = 'bubble'; b.style.animationDuration = (Math.random() * 3 + 2.5) + 's'; document.body.appendChild(b); setTimeout(() => b.remove(), 4000) });
+
+    const fsBtn = document.getElementById('fullscreen-btn');
+    fsBtn.addEventListener('click', () => { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(console.error) } else if (document.exitFullscreen) { document.exitFullscreen() } });
+    document.addEventListener('fullscreenchange', () => { document.body.classList.toggle('fullscreen', !!document.fullscreenElement) });
+
+    const btt = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => { btt.classList.toggle('visible', window.scrollY > 400) });
+    btt.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }) });
+
+    const pb = document.getElementById('progress-bar');
+    function up() { const t = window.scrollY; const h = document.documentElement.scrollHeight - window.innerHeight; pb.style.height = h > 0 ? (t / h * 100) + '%' : '0%' }
+    window.addEventListener('scroll', up); window.addEventListener('resize', up); up();
+
+    const nb = document.getElementById('notes-btn'), np = document.getElementById('notes-panel'), nc = document.getElementById('notes-close'), na = document.getElementById('notes-textarea'), ns = document.getElementById('notes-saved'), cl = document.getElementById('clearNotes'), dl = document.getElementById('downloadNotes'), sk = 'waterQuestPageNotes';
+    na.value = localStorage.getItem(sk) || '';
+    function ust() { const n = new Date(); ns.textContent = `Last saved: ${n.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` } ust();
+    let st; na.addEventListener('input', () => { clearTimeout(st); st = setTimeout(() => { localStorage.setItem(sk, na.value); ust() }, 700) });
+    nb.addEventListener('click', () => np.classList.toggle('open'));
+    nc.addEventListener('click', () => np.classList.remove('open'));
+    document.addEventListener('click', e => { if (!np.contains(e.target) && !nb.contains(e.target)) np.classList.remove('open') });
+    cl.addEventListener('click', () => { if (confirm("Clear all notes? This cannot be undone.")) { na.value = ""; localStorage.removeItem(sk); ust() } });
+    dl.addEventListener('click', () => { const c = na.value || "No notes yet."; const b = new Blob([c], { type: 'application/msword' }); const u = URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = 'My_Water_Quest_Notes.doc'; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(u) });
+</script>

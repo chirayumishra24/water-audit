@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Automation Concepts | Space-Tech Interface</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons for futuristic icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>/* --- DESIGN SYSTEM TOKENS --- */
+:root {
+    /* Color Palette - Sci-fi Teal/Aqua */
+    --bg-dark: #001214;
+    --bg-accent: #001d21;
+    --teal-primary: #00ffff;
+    --teal-mid: #008080;
+    --teal-dark: #004d4d;
+    --cyan-glow: rgba(0, 255, 255, 0.4);
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    
+    /* Neumorphic Shadows (Dark Mode) */
+    --nm-outer-light: rgba(255, 255, 255, 0.02);
+    --nm-outer-dark: rgba(0, 0, 0, 0.5);
+    --nm-inner-light: rgba(255, 255, 255, 0.05);
+    --nm-inner-dark: rgba(0, 0, 0, 0.3);
+
+    /* Spacing & Radius */
+    --radius-lg: 28px;
+    --radius-md: 20px;
+    --radius-sm: 12px;
+    --spacing-xl: 4rem;
+    --spacing-lg: 2.5rem;
+    --spacing-md: 1.5rem;
+}
+
+/* --- RESET & BASE --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: #e0fbfc;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+h1, h2, h3, h4, .nav-link, .btn-primary {
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 2px;
+}
+
+/* --- BACKGROUND ANIMATION --- */
+.glow-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at 50% 50%, #004d4d 0%, transparent 60%);
+    opacity: 0.15;
+    z-index: -1;
+    animation: bg-pulse 15s infinite alternate ease-in-out;
+}
+
+@keyframes bg-pulse {
+    0% { transform: scale(1) translate(0, 0); }
+    50% { transform: scale(1.2) translate(5%, 5%); }
+    100% { transform: scale(1) translate(-5%, -5%); }
+}
+
+/* --- UTILITIES: CARDS & EFFECTS --- */
+.glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--teal-primary);
+    box-shadow: 0 0 20px var(--cyan-glow);
+}
+
+.neumorphic-card {
+    background: var(--bg-accent);
+    border-radius: var(--radius-md);
+    box-shadow: 10px 10px 20px var(--nm-outer-dark),
+                -5px -5px 15px var(--nm-outer-light);
+    padding: var(--spacing-md);
+    border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.neumorphic-inner {
+    background: var(--bg-dark);
+    box-shadow: inset 5px 5px 10px var(--nm-inner-dark),
+                inset -2px -2px 5px var(--nm-inner-light);
+    border-radius: var(--radius-sm);
+}
+
+/* --- NAVIGATION --- */
+.top-nav {
+    position: fixed;
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 1200px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    border-radius: 35px;
+    z-index: 1000;
+}
+
+.nav-left, .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-link {
+    background: none;
+    border: none;
+    color: #94adad;
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    transition: 0.3s;
+    padding: 0.5rem 1rem;
+}
+
+.nav-link.active, .nav-link:hover {
+    color: var(--teal-primary);
+    text-shadow: 0 0 10px var(--cyan-glow);
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--teal-primary);
+}
+
+.search-container {
+    flex: 1;
+    max-width: 400px;
+    margin: 0 2rem;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    gap: 0.8rem;
+}
+
+.search-bar input {
+    background: none;
+    border: none;
+    color: white;
+    width: 100%;
+    outline: none;
+    font-size: 0.9rem;
+}
+
+.search-bar i {
+    color: #557777;
+    width: 18px;
+    cursor: pointer;
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.profile-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal-mid), var(--teal-dark));
+}
+
+/* Navigation styles removed (navbar removed from markup) */
+
+/* --- HERO SECTION --- */
+.dashboard-container {
+    padding-top: 140px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 120px;
+}
+
+.hero-section {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 3rem;
+    padding: var(--spacing-xl) 2rem;
+    align-items: center;
+}
+
+.glitch-text {
+    font-size: 4rem;
+    font-weight: 700;
+    color: #fff;
+    position: relative;
+    text-shadow: 0 0 20px var(--cyan-glow);
+    margin-bottom: 1rem;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #94adad;
+    max-width: 500px;
+    margin-bottom: 2rem;
+}
+
+/* --- BUTTONS --- */
+.futuristic-btn {
+    background: linear-gradient(135deg, var(--teal-mid), var(--bg-accent));
+    border: 1px solid var(--teal-primary);
+    color: white;
+    padding: 1rem 2.5rem;
+    border-radius: var(--radius-sm);
+    font-family: 'Orbitron';
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: 0.4s;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+}
+
+.futuristic-btn:hover {
+    box-shadow: 0 0 30px var(--cyan-glow);
+    transform: scale(1.05);
+}
+
+/* --- FLOATING CARDS --- */
+.floating-cards {
+    position: relative;
+    height: 300px;
+}
+
+.stat-card {
+    position: absolute;
+    top: 20%;
+    right: 10%;
+    width: 220px;
+    display: flex;
+    gap: 1rem;
+}
+
+.cta-card {
+    position: absolute;
+    bottom: 20%;
+    right: 30%;
+    width: 250px;
+}
+
+.pulse {
+    color: var(--teal-primary);
+    animation: text-pulse 2s infinite;
+}
+
+@keyframes text-pulse {
+    0% { opacity: 1; text-shadow: 0 0 5px var(--cyan-glow); }
+    50% { opacity: 0.5; text-shadow: 0 0 15px var(--cyan-glow); }
+    100% { opacity: 1; text-shadow: 0 0 5px var(--cyan-glow); }
+}
+
+.float-anim { animation: float 6s ease-in-out infinite; }
+.float-anim-delayed { animation: float 6s ease-in-out 3s infinite; }
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+}
+
+/* --- CONTENT GRID --- */
+.chapter-content {
+    padding: 0 2rem;
+}
+
+.section-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2.5rem;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.card-tag {
+    font-size: 0.7rem;
+    color: var(--teal-primary);
+    border-bottom: 1px solid var(--teal-dark);
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    padding-bottom: 0.2rem;
+}
+
+.section-grid h2 {
+    color: #fff;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.concept-grid, .comparative-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+.info-block i, .concept-item i {
+    font-size: 2rem;
+    color: var(--teal-primary);
+    margin-bottom: 1rem;
+}
+
+.fact-card {
+    background: radial-gradient(circle at top right, rgba(0, 255, 255, 0.1), transparent);
+}
+
+.cyan-glow {
+    border-color: var(--teal-primary);
+    box-shadow: inset 0 0 15px var(--cyan-glow);
+}
+
+/* --- GALLERY --- */
+.gallery-section {
+    padding: 4rem 2rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.gallery-slider {
+    display: flex;
+    gap: 2rem;
+    overflow-x: auto;
+    padding: 1rem 0;
+    scrollbar-width: none;
+}
+
+.gallery-item {
+    min-width: 350px;
+    height: 250px;
+    position: relative;
+    overflow: hidden;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: crop;
+    transition: 0.5s;
+    filter: grayscale(0.5);
+}
+
+.gallery-item:hover img {
+    filter: grayscale(0);
+    transform: scale(1.1);
+}
+
+.gallery-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    font-family: 'Orbitron';
+    font-size: 0.8rem;
+}
+
+/* --- FOOTER --- */
+.site-footer {
+    position: relative;
+    padding: 1rem 0;
+    text-align: center;
+    color: #9fbdbd;
+    font-size: 0.9rem;
+    border-top: 1px solid rgba(255,255,255,0.03);
+    margin-top: 2rem;
+}
+.site-footer a {
+    color: var(--teal-primary);
+    text-decoration: none;
+}
+.site-footer small {
+    display: block;
+    color: #7f9b9b;
+    margin-top: 0.25rem;
+}
+
+/* --- REVEAL ANIMATIONS --- */
+[data-reveal] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: 1s cubic-bezier(0.5, 0, 0, 1);
+}
+
+[data-reveal].revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 900px) {
+    .hero-section {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    .hero-content {
+        order: 1;
+    }
+    .floating-cards {
+        display: none;
+    }
+    .glitch-text {
+        font-size: 2.5rem;
+    }
+    .top-nav {
+        padding: 0 1rem;
+    }
+    .search-container {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .concept-grid, .comparative-grid {
+        grid-template-columns: 1fr;
+    }
+    .section-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+<body>
+    <div class="glow-bg"></div>
+
+    <!-- Navbar removed -->
+
+    <main class="dashboard-container">
+        <header class="hero-section">
+            <div class="hero-content">
+                <h1 class="glitch-text" data-text="UNDERSTANDING AUTOMATION">UNDERSTANDING AUTOMATION</h1>
+                <p class="subtitle">Exploring the future of self-regulating systems and smart technology.</p>
+                <div class="hero-actions">
+                    <button class="btn-primary futuristic-btn">GET STARTED <i data-lucide="arrow-right"></i></button>
+                </div>
+            </div>
+            
+            <div class="floating-cards">
+                <div class="glass-card stat-card float-anim">
+                    <div class="card-icon"><i data-lucide="cpu"></i></div>
+                    <div class="card-info">
+                        <h3>Chapter 1.1</h3>
+                        <p>Core Concepts</p>
+                    </div>
+                </div>
+                <div class="glass-card cta-card float-anim-delayed">
+                    <p>Status: <span class="pulse">Active Monitoring</span></p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 65%;"></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="chapter-content">
+            <div class="section-grid">
+
+                <!-- Split chapter into separate topic cards -->
+
+                <div class="glass-card full-width" data-reveal>
+                    <h2>Overview</h2>
+                    <p class="subtitle">Automation uses sensors, controllers, and small programs to make devices act intelligently and without constant human input — saving energy and improving convenience.</p>
+                </div>
+
+                <div class="neumorphic-card" data-reveal>
+                    <div class="card-tag">What is Automation?</div>
+                    <p>Automation is the process of making things operate automatically using circuits and programs, without constant human intervention. It transforms manual tasks into efficient, self-regulating systems.</p>
+                </div>
+
+                <div class="glass-card" data-reveal>
+                    <div class="card-tag">Everyday Examples</div>
+                    <ul>
+                        <li>Smart classrooms: Motion sensors switch off lights and fans when rooms are empty.</li>
+                        <li>Garden irrigation: Moisture sensors trigger pumps only when soil is dry.</li>
+                        <li>Vacuum robots: Scheduled cleaning and obstacle avoidance.</li>
+                    </ul>
+                </div>
+
+                <div class="glass-card" data-reveal>
+                    <div class="card-tag">Case Study: Faro Barcelona</div>
+                    <div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap;">
+                        <div style="flex:1;min-width:260px;">
+                            <p>Ceiling fans in schools using automated control systems to optimize airflow and energy consumption based on occupancy. <a href="https://faro.es/en/explore/stories/faro-barcelona-pupils-in-schools/" target="_blank" rel="noopener">Read more</a> — <a href="https://hs-8901683.f.hubspotemail.net/hubfs/8901683/Ebook/Ventiladores%20escuelas/Ventiladores-de-techo-Faro-Barcelona-en-escuelas-en.pdf?utm_campaign=DESCARGA%20DE%20CONTENIDO&amp;utm_medium=email&amp;_hsenc=p2ANqtz-_s8XSDDZFiB_sFO0IAyrrnkyJOmsppuRpGonvFUw6eeIWwnBPHPijQkfBzFaQZ27wi0uRX77OnoWB5N9FwK5TG7k-vzw&amp;_hsmi=269025132&amp;utm_content=269025132&amp;utm_source=hs_automation" target="_blank" rel="noopener">Case PDF</a></p>
+                        </div>
+                        <div style="width:320px;">
+                            <img src="https://login.skillizee.io/s/articles/69982e8ea219110bf35e24fe/images/image-20260220153748-7.png" alt="Faro Barcelona" style="width:100%;height:auto;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.6);" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card full-width" data-reveal>
+                    <div class="card-tag">Watch — Videos</div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;">
+                        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;">
+                            <iframe loading="lazy" src="https://www.youtube.com/embed/U7kHR7x1Zm8" title="Industrial automation basics" style="position:absolute;left:0;top:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
+                        </div>
+                        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;">
+                            <iframe loading="lazy" src="https://www.youtube.com/embed/172cIvPUDi4" title="Intro to automation" style="position:absolute;left:0;top:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card full-width" data-reveal>
+                    <div class="card-tag">Interactive 3D</div>
+                    <p>Explore a 3D Smart Home Arduino model:</p>
+                    <div style="width:100%;max-width:1000px;border-radius:8px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.6);">
+                        <iframe loading="lazy" title="Smart Home - arduino" frameborder="0" src="https://sketchfab.com/3d-models/smart-home-arduino-99d47f5dd8164ec58cf9100b4ca494d3/embed" style="width:100%;height:480px;border:0" allow="autoplay; fullscreen; xr-spatial-tracking"></iframe>
+                    </div>
+                </div>
+
+                <div class="glass-card" data-reveal>
+                    <div class="card-tag">Automation in Nature & the Human Body</div>
+                    <p>Nature and the human body demonstrate automation: heartbeat, breathing, and the water cycle all operate automatically using signals and feedback loops.</p>
+                    <img src="https://login.skillizee.io/s/articles/69982e8ea219110bf35e24fe/images/image-20260220153748-11.jpeg" alt="Human body automation" style="width:100%;max-width:480px;height:auto;margin-top:0.5rem;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.6);" />
+                </div>
+
+                <div class="glass-card fact-card cyan-glow" data-reveal>
+                    <h3>Fun Fact</h3>
+                    <p>Automation can save up to <strong>30%</strong> on electricity bills in schools by preventing lights and fans from being left on accidentally.</p>
+                </div>
+
+                <!-- Definition Card -->
+                <div class="glass-card definition-card" data-reveal>
+                    <div class="card-tag">DEFINITION</div>
+                    <h2>What is automation?</h2>
+                    <p>Automation is the process of making things operate automatically using circuits and programs, without constant human intervention. It transforms manual tasks into efficient, self-regulating systems.</p>
+                </div>
+
+                <!-- Explanation Card -->
+                <div class="neumorphic-card explanation-card" data-reveal>
+                    <div class="card-tag">OVERVIEW</div>
+                    <p>Automation means using technology to control everyday devices automatically. Instead of switching things on and off by hand, automation uses <strong>sensors, controllers, and simple computer programs</strong> to run these tasks independently. This helps save energy, reduce costs, and make life easier.</p>
+                </div>
+
+                <!-- Examples Section -->
+                <div class="glass-card full-width" data-reveal>
+                    <div class="card-tag">EVERYDAY EXAMPLES</div>
+                    <div class="concept-grid">
+                        <div class="concept-item">
+                            <i data-lucide="lightbulb"></i>
+                            <h4>Smart Classrooms</h4>
+                            <p>An automated system with a motion sensor can turn off lights and fans when no movement is detected, preventing energy waste.</p>
+                        </div>
+                        <div class="concept-item">
+                            <i data-lucide="droplets"></i>
+                            <h4>Garden Irrigation</h4>
+                            <p>Moisture sensors detect dry soil and activate water pumps, conserving water by watering only when needed.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fun Fact 1 -->
+                <div class="glass-card fact-card cyan-glow" data-reveal>
+                    <div class="card-icon"><i data-lucide="zap"></i></div>
+                    <h3>Did you know?</h3>
+                    <p>Automation can save up to <strong>30% on electricity bills</strong> in schools by preventing lights and fans from being left on accidentally.</p>
+                </div>
+
+                <!-- Case Study -->
+                <div class="neumorphic-card case-study-card" data-reveal>
+                    <div class="card-tag">CASE STUDY</div>
+                    <h2>Faro Barcelona</h2>
+                    <p>Ceiling fans in schools using automated control systems to optimize airflow and energy consumption based on occupancy.</p>
+                    <button class="btn-secondary">READ MORE</button>
+                </div>
+
+                <!-- Nature/Body Section -->
+                <div class="glass-card full-width" data-reveal>
+                    <div class="card-tag">NATURAL AUTOMATION</div>
+                    <div class="comparative-grid">
+                        <div class="info-block">
+                            <i data-lucide="heart"></i>
+                            <h4>Human Body</h4>
+                            <p>Functions like heartbeat, breathing, and digestion happen automatically using nerve signals and hormones.</p>
+                            <div class="mini-fact">Human heart beats ~100k times daily.</div>
+                        </div>
+                        <div class="info-block">
+                            <i data-lucide="sun"></i>
+                            <h4>Nature</h4>
+                            <p>Sunrise, sunset, the water cycle, and animal migration operate independently based on natural signals.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Visual Gallery -->
+        <section class="gallery-section" data-reveal>
+            <div class="section-header">
+                <h2>VISUAL ARCHIVE</h2>
+                <div class="slider-controls">
+                    <button class="slider-arrow prev"><i data-lucide="chevron-left"></i></button>
+                    <button class="slider-arrow next"><i data-lucide="chevron-right"></i></button>
+                </div>
+            </div>
+            <div class="gallery-slider">
+                <div class="gallery-item glass-card card-reveal">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=500" alt="Circuits">
+                    <div class="gallery-overlay">CIRCUITRY_ALPHA</div>
+                </div>
+                <div class="gallery-item glass-card card-reveal">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=500" alt="Tech">
+                    <div class="gallery-overlay">SYSTEM_CORE</div>
+                </div>
+                <div class="gallery-item glass-card card-reveal">
+                    <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=500" alt="Robotics">
+                    <div class="gallery-overlay">AUTOMATA_01</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer glass" role="contentinfo">
+        <div>
+            <span>© 2026 <a href="https://skillizee.io" target="_blank" rel="noopener">Skillizee</a></span>
+            <small>Course: Home Automation</small>
+        </div>
+    </footer>
+
+    <script>document.addEventListener('DOMContentLoaded', () => {
+    // 1. Initialize Lucide Icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    // 2. Scroll Reveal Observer
+    const revealCallback = (entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                // Once revealed, we can unobserve if we don't need re-animation
+                // observer.unobserve(entry.target);
+            }
+        });
+    };
+
+    const revealObserver = new IntersectionObserver(revealCallback, {
+        threshold: 0.15
+    });
+
+    const revealElements = document.querySelectorAll('[data-reveal]');
+    revealElements.forEach(el => revealObserver.observe(el));
+
+    // 3. Navigation Activity Toggle
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+        });
+    });
+
+    // 4. Gallery Slider Micro-interactions
+    const slider = document.querySelector('.gallery-slider');
+    const nextBtn = document.querySelector('.slider-arrow.next');
+    const prevBtn = document.querySelector('.slider-arrow.prev');
+
+    if (slider && nextBtn && prevBtn) {
+        nextBtn.addEventListener('click', () => {
+            slider.scrollBy({ left: 300, behavior: 'smooth' });
+        });
+        prevBtn.addEventListener('click', () => {
+            slider.scrollBy({ left: -300, behavior: 'smooth' });
+        });
+    }
+
+    // 5. Button Click Effects (Simple Audio Feedback Mockup or Visual Pulse)
+    const allButtons = document.querySelectorAll('button');
+    allButtons.forEach(btn => {
+        btn.addEventListener('mousedown', () => {
+            btn.style.transform = 'scale(0.95)';
+        });
+        btn.addEventListener('mouseup', () => {
+            btn.style.transform = '';
+        });
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = '';
+        });
+    });
+
+    // 6. Search Bar Focus Effect
+    const searchInput = document.querySelector('.search-bar input');
+    const searchBar = document.querySelector('.search-bar');
+    if (searchInput && searchBar) {
+        searchInput.addEventListener('focus', () => {
+            searchBar.style.boxShadow = 'inset 0 0 15px var(--cyan-glow)';
+            searchBar.style.borderColor = 'var(--teal-primary)';
+        });
+        searchInput.addEventListener('blur', () => {
+            searchBar.style.boxShadow = '';
+            searchBar.style.borderColor = '';
+        });
+    }
+
+    // 7. Dynamic Data Mockup: Update system time in profile (Optional Sci-fi touch)
+    const profileSection = document.querySelector('.profile-section');
+    if (profileSection) {
+        const timeDisplay = document.createElement('span');
+        timeDisplay.style.fontSize = '0.6rem';
+        timeDisplay.style.color = '#557777';
+        timeDisplay.style.marginLeft = '10px';
+        profileSection.appendChild(timeDisplay);
+
+        const updateTime = () => {
+            const now = new Date();
+            const timeStr = now.getHours().toString().padStart(2, '0') + ':' + 
+                           now.getMinutes().toString().padStart(2, '0') + ':' + 
+                           now.getSeconds().toString().padStart(2, '0');
+            timeDisplay.textContent = `[SYS_TIME: ${timeStr}]`;
+        };
+        setInterval(updateTime, 1000);
+        updateTime();
+    }
+});
+</script>
+</body>
+</html>

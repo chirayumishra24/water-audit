@@ -1,0 +1,839 @@
+<div>
+    <div>
+        <div>
+            <div>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            </div>
+        </div>
+    </div>
+</div>
+<title></title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&amp;family=Poppins:wght@300;400;600&amp;display=swap"
+    rel="stylesheet" />
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<style type="text/css">
+    .ocean-bg {
+        background: linear-gradient(180deg, #7dd3fc 0%, #e6f6ff 40%, #fff 100%);
+        position: relative;
+        overflow: hidden
+    }
+
+    .wave {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 140px;
+        bottom: -2px;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="1" d="M0,192L48,186.7C96,181,192,171,288,176C384,181,480,203,576,208C672,213,768,203,864,192C960,181,1056,171,1152,160C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x bottom/cover;
+        animation: wave 10s linear infinite;
+        opacity: .85;
+        z-index: 5
+    }
+
+    @keyframes wave {
+        0% {
+            background-position-x: 0
+        }
+
+        100% {
+            background-position-x: 1200px
+        }
+    }
+
+    .bubble {
+        position: absolute;
+        border-radius: 9999px;
+        pointer-events: none;
+        opacity: .7;
+        transform: translate(-50%, -50%);
+        animation: floatUp linear infinite;
+        z-index: 10
+    }
+
+    @keyframes floatUp {
+        from {
+            transform: translate(-50%, 0) scale(1);
+            opacity: .8
+        }
+
+        to {
+            transform: translate(-50%, -280px) scale(.5);
+            opacity: 0
+        }
+    }
+
+    .soft-card {
+        box-shadow: 0 10px 25px rgba(6, 17, 42, .1);
+        border-radius: 1.5rem;
+        margin-left: 1rem;
+        margin-right: 1rem;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem
+    }
+
+    @media (min-width:640px) {
+        .soft-card {
+            margin-left: 2rem;
+            margin-right: 2rem;
+            padding-left: 2.5rem;
+            padding-right: 2.5rem
+        }
+    }
+
+    @media (min-width:1024px) {
+        .soft-card {
+            margin-left: 3rem;
+            margin-right: 3rem;
+            padding-left: 3rem;
+            padding-right: 3rem
+        }
+    }
+
+    .highlight-box {
+        background: rgba(125, 211, 252, .25);
+        border-left: 6px solid #0ea5e9;
+        border-radius: .75rem
+    }
+
+    #fullscreen-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        width: 52px;
+        height: 52px;
+        background: #0ea5e9;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        backdrop-filter: blur(4px);
+        transition: all .2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, .3)
+    }
+
+    #fullscreen-btn:hover {
+        background: #0284c7;
+        transform: scale(1.1)
+    }
+
+    #fullscreen-btn img {
+        width: 30px;
+        height: 30px;
+        transition: opacity .3s ease
+    }
+
+    #fullscreen-btn .exit {
+        opacity: 0;
+        position: absolute
+    }
+
+    body.fullscreen #fullscreen-btn .enter {
+        opacity: 0
+    }
+
+    body.fullscreen #fullscreen-btn .exit {
+        opacity: 1
+    }
+
+    .hero-content-wrapper {
+        position: relative;
+        z-index: 30
+    }
+
+    .hero-list {
+        position: relative;
+        z-index: 15;
+        background: rgba(255, 255, 255, 0.78);
+        backdrop-filter: blur(6px);
+        padding: 1.75rem;
+        border-radius: 1.25rem;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+    }
+
+    .audio-container {
+        position: relative;
+        background: url('/s/articles/6996f2af0592535920f9fbab/images/Subtitle(4).gif') center/cover no-repeat;
+        border-radius: 16px;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, .25);
+        margin: 1rem auto;
+        width: 90%;
+        max-width: 900px;
+        aspect-ratio: 19/12;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 1rem;
+        padding-bottom: 1rem
+    }
+
+    .audio-container audio {
+        width: 100%;
+        border-radius: 12px;
+        border: 2px solid #2D2B7E;
+        background: #F5F5FF;
+        height: 50px;
+        padding: 4px;
+        box-shadow: 0 3px 10px rgba(45, 43, 126, .3)
+    }
+
+    .video-container {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        overflow: hidden;
+        border-radius: 12px
+    }
+
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%
+    }
+
+    #back-to-top {
+        position: fixed;
+        bottom: 32px;
+        left: 32px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #0ea5e9;
+        color: #fff;
+        font-size: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 25px rgba(6, 17, 42, .15);
+        opacity: 0;
+        visibility: hidden;
+        transition: all .3s ease;
+        z-index: 900;
+        cursor: pointer
+    }
+
+    #back-to-top.visible {
+        opacity: 1;
+        visibility: visible
+    }
+
+    #back-to-top:hover {
+        background: #0284c7;
+        transform: translateY(-4px)
+    }
+
+    #progress-container {
+        position: fixed;
+        right: 24px;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 33vh;
+        width: 14px;
+        background: rgba(125, 211, 252, .25);
+        border-radius: 999px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(6, 17, 42, .15);
+        z-index: 800
+    }
+
+    #progress-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 0%;
+        background: linear-gradient(to top, #7dd3fc, #0ea5e9);
+        transition: height .2s ease;
+        border-radius: 999px
+    }
+
+    #notes-btn {
+        position: fixed;
+        bottom: 32px;
+        right: 32px;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #0ea5e9;
+        box-shadow: 0 10px 25px rgba(6, 17, 42, .15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 1000;
+        transition: all .3s ease
+    }
+
+    #notes-btn:hover {
+        background: #0284c7;
+        transform: scale(1.1)
+    }
+
+    #notes-btn img {
+        width: 36px;
+        height: 36px
+    }
+
+    #notes-panel {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        right: -380px;
+        width: 360px;
+        height: 60vh;
+        background: rgba(255, 255, 255, .94);
+        backdrop-filter: blur(12px);
+        border-left: 1px solid rgba(125, 211, 252, .4);
+        box-shadow: -12px 0 40px rgba(0, 0, 0, .18);
+        transition: right .4s cubic-bezier(.23, 1, .32, 1);
+        z-index: 950;
+        padding: 20px;
+        border-radius: 16px 0 0 16px;
+        display: flex;
+        flex-direction: column
+    }
+
+    #notes-panel.open {
+        right: 0
+    }
+
+    #notes-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px
+    }
+
+    #notes-title {
+        font-family: 'Baloo 2', cursive;
+        font-size: 1.6rem;
+        color: #0c4a6e;
+        font-weight: 600
+    }
+
+    #notes-close {
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        color: #64748b;
+        cursor: pointer
+    }
+
+    #notes-textarea {
+        flex: 1;
+        width: 100%;
+        padding: 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        font-size: 1.05rem;
+        line-height: 1.6;
+        resize: none;
+        background: #fff;
+        color: #0c4a6e
+    }
+
+    #notes-textarea:focus {
+        outline: none;
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, .15)
+    }
+
+    #notes-actions {
+        margin-top: 12px;
+        display: flex;
+        gap: 10px
+    }
+
+    #notes-actions button {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all .2s
+    }
+
+    #downloadNotes {
+        background: #10b981;
+        color: #fff
+    }
+
+    #downloadNotes:hover {
+        background: #059669
+    }
+
+    #clearNotes {
+        background: #ef4444;
+        color: #fff
+    }
+
+    #clearNotes:hover {
+        background: #dc2626
+    }
+
+    #notes-saved {
+        margin-top: 8px;
+        font-size: .85rem;
+        color: #64748b;
+        text-align: right
+    }
+</style>
+<p><button id="back-to-top" title="Back to Top">&uarr;</button></p>
+
+<div id="progress-container">
+    <div id="progress-bar" style="height:0%">&nbsp;</div>
+</div>
+
+<p><button id="notes-btn" title="Take Notes"><img alt="Notes"
+            src="/s/articles/6971c474348e12598d489e16/images/notes.png" /></button></p>
+
+<div id="notes-panel">
+    <div id="notes-header">
+        <div id="notes-title">My Water Notes</div>
+        <button id="notes-close">&times;</button>
+    </div>
+    <textarea id="notes-textarea" placeholder="Jot down findings, questions, reminders..."></textarea>
+
+    <div id="notes-actions"><button id="downloadNotes">Download .doc</button><button id="clearNotes">Clear</button>
+    </div>
+
+    <div id="notes-saved">Last saved: 12:25 PM</div>
+</div>
+
+<p><button aria-label="Toggle Fullscreen" id="fullscreen-btn"><img alt="Enter Fullscreen" class="enter"
+            src="/s/articles/6971c474348e12598d489e16/images/fullscreen.png" /> <img alt="Exit Fullscreen" class="exit"
+            src="/s/articles/6971c474348e12598d489e16/images/exit.png" /></button></p>
+
+<header class="ocean-bg relative min-h-[580px] flex items-center pb-16">
+    <div
+        class="container mx-auto px-6 sm:px-10 md:px-14 lg:px-20 xl:px-28 max-w-8xl relative z-20 hero-content-wrapper">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div class="pt-8 md:pt-12 lg:pt-16 pl-4 sm:pl-6 md:pl-10 lg:pl-16 xl:pl-20">
+                <h1 class="font-playful text-5xl sm:text-6xl lg:text-7xl leading-tight text-sky-900">Water Quest</h1>
+
+                <p class="mt-5 text-xl sm:text-2xl text-slate-700 max-w-2xl">Chapter 4.3: Flow Restriction &amp; Water
+                    Saving</p>
+
+                <div class="mt-10 flex flex-wrap gap-4"><a
+                        class="inline-flex items-center gap-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-7 py-4 rounded-2xl shadow-lg transform transition hover:-translate-y-1 active:scale-95 text-lg"
+                        href="#aerators">💧 Save Water at the Tap</a></div>
+
+                <ul class="hero-list mt-10 grid grid-cols-1 sm:grid-cols-2 gap-5 text-lg text-slate-800 font-medium">
+                    <li class="flex items-center gap-3">🪠 Aerators = less water, same feel</li>
+                    <li class="flex items-center gap-3">🚰 Partial tap opening = big savings</li>
+                    <li class="flex items-center gap-3">🌧️ Recharge groundwater = more water for all</li>
+                    <li class="flex items-center gap-3">🌳 Trees + bunds + check dams = nature&rsquo;s help</li>
+                </ul>
+            </div>
+
+            <div class="flex justify-center lg:justify-end pt-8 lg:pt-0">
+                <div
+                    class="w-[340px] h-[340px] sm:w-[420px] sm:h-[420px] soft-card bg-gradient-to-tr from-sky-50 to-white p-6">
+                    <lottie-player autoplay="" background="transparent" loop="" speed="0.8"
+                        src="https://assets8.lottiefiles.com/packages/lf20_kkflmtur.json"></lottie-player></div>
+            </div>
+        </div>
+
+        <div class="wave">&nbsp;</div>
+    </div>
+</header>
+
+<section class="relative -mt-10 mb-16 z-40 w-full">
+    <div class="w-full">
+        <div class="audio-container">
+            <audio controls="" controlslist="nodownload" oncontextmenu="return false">
+                <source src="https://pa2-cmd.github.io/Water_Audit/4.3.mp3" type="audio/mp3" /> Your browser does not
+                support the audio element.
+            </audio>
+        </div>
+    </div>
+</section>
+
+<main
+    class="container mx-auto px-6 sm:px-10 md:px-14 lg:px-20 xl:px-28 max-w-8xl -mt-10 sm:-mt-12 lg:-mt-14 relative z-30 pb-24">
+    <section class="bg-white soft-card p-8 md:p-12 mb-16">
+        <h2 class="text-3xl md:text-4xl font-semibold text-sky-900 mb-6">Use Less at the Tap &mdash; Save More Overall
+        </h2>
+
+        <p class="text-lg text-slate-700 leading-relaxed mb-8">Fixing leaks stops waste &mdash; but reducing flow at
+            every tap is another powerful way to save water. Most people open taps fully (&ldquo;full throttle&rdquo;),
+            using far more than needed. Simple devices and habits can cut usage dramatically without losing convenience.
+        </p>
+
+        <div class="my-10 flex justify-center"><img alt="Aerator saving water"
+                class="rounded-xl shadow-2xl max-w-full md:max-w-4xl"
+                src="/s/articles/69953f124a726c0a6cc74b35/images/Lo.jpg" /></div>
+    </section>
+
+    <section class="bg-white soft-card p-8 md:p-12 mb-16" id="aerators">
+        <h2 class="text-3xl font-semibold text-sky-900 mb-6">Water-Saving Devices: Aerators &amp; Flow Caps</h2>
+
+        <p class="text-lg text-slate-700 mb-8">These cheap, easy-to-install attachments reduce flow while keeping the
+            stream strong and comfortable.</p>
+
+        <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
+            <!-- First video: 25% width on large screens, 9:16 ratio -->
+            <div class="w-full lg:w-[25%]">
+                <div class="relative w-full" style="padding-bottom: 177.78%;">
+                    <!-- 9:16 = 16/9 * 100 ≈ 177.78% --><iframe allowfullscreen=""
+                        class="absolute inset-0 w-full h-full rounded-xl shadow-lg" frameborder="0"
+                        src="https://www.youtube.com/embed/B6u2hqpcbj4?rel=0" title="Aerator Demo"></iframe></div>
+            </div>
+            <!-- Second video: 75% width on large screens, 16:9 ratio -->
+
+            <div class="w-full lg:w-[75%]">
+                <div class="relative w-full" style="padding-bottom: 56.25%;"><!-- 16:9 = 9/16 * 100 = 56.25% --><iframe
+                        allowfullscreen="" class="absolute inset-0 w-full h-full rounded-xl shadow-lg" frameborder="0"
+                        src="https://www.youtube.com/embed/2LtfEz2jimA?rel=0" title="Flow Restriction Demo"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight-box p-7 text-center mt-10">
+            <p class="text-lg font-medium">Result: Cut tap flow from 15 L/min to 6 L/min &rarr; save up to 60% on
+                hand-washing, dishwashing, and showers!</p>
+        </div>
+    </section>
+
+    <section class="bg-white soft-card p-8 md:p-12 mb-16">
+        <h2 class="text-3xl font-semibold text-sky-900 mb-6">Practical Implementation &amp; Mindful Habits</h2>
+
+        <p class="text-lg text-slate-700 mb-6">Devices help, but behavior matters too &mdash; you can save water today
+            without buying anything.</p>
+
+        <ul class="list-disc pl-6 space-y-4 text-lg text-slate-700">
+            <li><strong>Manual Control</strong>: Open taps only partially for hand-washing, brushing, or utensils
+                &mdash; often enough for the job.</li>
+            <li><strong>Before &amp; After Measurement</strong>: Use bucket + stopwatch to measure flow rate (L/min)
+                before and after changes &mdash; see the real difference!</li>
+        </ul>
+
+        <div class="mt-8 highlight-box p-7 text-center">
+            <p class="text-xl font-bold">30-second hand wash at full flow = ~7.5 L<br />
+                At half flow or with aerator = ~3 L<br />
+                &rarr; Saves 4.5 L every time!</p>
+        </div>
+    </section>
+
+    <section class="bg-white soft-card p-8 md:p-12 mb-16">
+        <h2 class="text-3xl font-semibold text-sky-900 mb-6">Increasing Water Availability: Groundwater Recharge</h2>
+
+        <p class="text-lg text-slate-700 mb-6">Groundwater (wells &amp; borewells) is vital &mdash; but over-extraction
+            is depleting it fast. Simple community actions can help rainwater soak back into the ground instead of
+            running off.</p>
+
+        <div class="my-10 flex justify-center">
+            <div class="video-container aspect-video max-w-4xl w-full"><iframe allowfullscreen="" frameborder="0"
+                    src="https://www.youtube.com/embed/RuKmVWGDbcI?rel=0" title="Groundwater Recharge"></iframe></div>
+        </div>
+        <!-- Images below video: 60% | 40% split -->
+
+        <div class="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-6 my-10 max-w-5xl mx-auto items-start">
+            <!-- First image: ~60% width (Check dam) -->
+            <div class="overflow-hidden rounded-xl shadow-lg"><img alt="Check dam"
+                    class="w-full h-64 md:h-80 object-cover" loading="lazy"
+                    src="/s/articles/69953f124a726c0a6cc74b35/images/One Woman Made 100 Villages in Rajasthan Fertile Using Traditional Water Harvesting Methods.jpg" />
+                <p class="text-center text-sm text-slate-600 mt-2 font-medium">Check Dam &ndash; Slows water flow to
+                    allow recharge</p>
+            </div>
+            <!-- Second image: ~40% width (Percolation tank / Borewell recharge) -->
+
+            <div class="overflow-hidden rounded-xl shadow-lg"><img alt="Percolation tank"
+                    class="w-full h-64 md:h-80 object-cover" loading="lazy"
+                    src="/s/articles/69953f124a726c0a6cc74b35/images/Unlocking Growth_ A Comprehensive Analysis of the Asia-Pacific Oil and Gas Storage Tank Market.jpg" />
+                <p class="text-center text-sm text-slate-600 mt-2 font-medium">Percolation Tank / Borewell Recharge</p>
+            </div>
+        </div>
+
+        <ol class="list-decimal pl-6 space-y-6 text-lg text-slate-700">
+            <li><strong>Contour Bunds</strong> &mdash; Earth barriers along contour lines on slopes hold water, reduce
+                runoff, allow percolation, and prevent soil erosion.</li>
+            <li><strong>Check Dams</strong> &mdash; Small dams across streams slow water speed, giving it more time to
+                soak into the ground and recharge aquifers.</li>
+            <li><strong>Percolation Tanks &amp; Borewell Recharge</strong> &mdash; Man-made basins or direct recharge
+                into borewells capture runoff and send it underground.</li>
+        </ol>
+
+        <div class="mt-8 highlight-box p-7">
+            <p class="text-lg font-medium">Other ways to increase water: plant trees (more rain), reduce pollution, stop
+                wastage, recycle water, and harvest rainwater.</p>
+        </div>
+    </section>
+
+    <div class="max-w-5xl mx-auto px-4 py-12 bg-white rounded-2xl shadow-xl border border-sky-100 my-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-sky-900 text-center mb-6">Flow Restriction &amp; Water Saving
+            Quiz</h2>
+
+        <p class="text-center text-lg text-slate-700 mb-10">Test your knowledge on saving water at the tap and helping
+            recharge groundwater!<br />
+            <span class="text-sm text-slate-500">5 questions &bull; Choose the best answer &bull; Next after each</span>
+        </p>
+        <!-- Quiz container -->
+
+        <div class="space-y-8 min-h-[500px]" id="quiz-container">
+            <div class="bg-sky-50 p-6 md:p-8 rounded-xl border border-sky-200">
+                <h3 class="text-2xl md:text-3xl font-bold text-sky-800 mb-6">Question 1 of 5</h3>
+
+                <p class="text-xl md:text-2xl text-slate-800 mb-6">What is the main benefit of installing aerators on
+                    taps?</p>
+
+                <div class="flex justify-center mb-8"><img alt="Illustration for question"
+                        class="rounded-xl shadow-lg max-w-full md:max-w-xl w-full h-auto object-contain"
+                        src="https://tinkerprograms.com/wp-content/uploads/2018/08/faucetaeratorblog.jpg" /></div>
+
+                <div class="space-y-4"><label
+                        class="flex items-center p-4 bg-white rounded-lg border border-sky-100 cursor-pointer hover:bg-sky-50 transition"><input
+                            class="mr-4 w-5 h-5 text-sky-600" name="answer" type="radio" value="0" /> <span
+                            class="text-lg text-slate-700">Makes water hotter</span> </label> <label
+                        class="flex items-center p-4 bg-white rounded-lg border border-sky-100 cursor-pointer hover:bg-sky-50 transition">
+                        <input class="mr-4 w-5 h-5 text-sky-600" name="answer" type="radio" value="1" /> <span
+                            class="text-lg text-slate-700">Mixes air with water to reduce flow by 40&ndash;60% while
+                            keeping pressure feel</span> </label> <label
+                        class="flex items-center p-4 bg-white rounded-lg border border-sky-100 cursor-pointer hover:bg-sky-50 transition">
+                        <input class="mr-4 w-5 h-5 text-sky-600" name="answer" type="radio" value="2" /> <span
+                            class="text-lg text-slate-700">Removes chlorine from water</span> </label> <label
+                        class="flex items-center p-4 bg-white rounded-lg border border-sky-100 cursor-pointer hover:bg-sky-50 transition">
+                        <input class="mr-4 w-5 h-5 text-sky-600" name="answer" type="radio" value="3" /> <span
+                            class="text-lg text-slate-700">Makes the tap look shiny</span> </label></div>
+            </div>
+        </div>
+        <!-- Navigation & Result -->
+
+        <div class="flex justify-between items-center mt-10"><button
+                class="px-6 py-3 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-xl font-medium transition hidden"
+                id="prev-btn">Previous</button><button
+                class="px-8 py-4 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-lg font-bold shadow-md transition"
+                id="next-btn">Next</button></div>
+        <!-- Result section (hidden initially) -->
+
+        <div class="hidden text-center mt-12 space-y-6" id="result">
+            <h3 class="text-4xl md:text-5xl font-bold text-emerald-600">Your Score: <span id="score-text">0</span>/5
+            </h3>
+
+            <p class="text-xl text-slate-700" id="feedback">&nbsp;</p>
+
+            <div class="fixed inset-0 pointer-events-none z-50" id="confetti-container">&nbsp;</div>
+            <button
+                class="px-8 py-4 bg-gray-600 hover:bg-gray-700 text-white rounded-xl text-lg font-medium shadow-md transition"
+                onclick="location.reload()">Try Again</button>
+        </div>
+    </div>
+    <script>
+        // Quiz data - 5 questions
+        const quizData = [
+            {
+                question: "What is the main benefit of installing aerators on taps?",
+                options: [
+                    "Makes water hotter",
+                    "Mixes air with water to reduce flow by 40–60% while keeping pressure feel",
+                    "Removes chlorine from water",
+                    "Makes the tap look shiny"
+                ],
+                correct: 1,
+                image: "https://tinkerprograms.com/wp-content/uploads/2018/08/faucetaeratorblog.jpg"  // [image:3]
+            },
+            {
+                question: "What do flow restrictors (or flow limiters) do when inserted into a tap or shower?",
+                options: [
+                    "Increase water pressure dramatically",
+                    "Limit maximum flow rate (e.g. to 6–9 L/min instead of 15+ L/min)",
+                    "Change the color of water",
+                    "Filter out large particles only"
+                ],
+                correct: 1,
+                image: "https://m.media-amazon.com/images/I/51sMayaZwfL._AC_UF894,1000_QL80_.jpg"  // [image:0] from flow restrictor search
+            },
+            {
+                question: "How can you measure the real water savings after adding aerators or restrictors?",
+                options: [
+                    "Guess by looking at the stream",
+                    "Use a bucket and stopwatch to calculate flow rate (L/min) before & after",
+                    "Ask the plumber",
+                    "Check your electricity bill"
+                ],
+                correct: 1,
+                image: "https://i.ytimg.com/vi/D2sabYjUDMg/maxresdefault.jpg"  // [image:6]
+            },
+            {
+                question: "Why are contour bunds useful for groundwater recharge?",
+                options: [
+                    "They block all water from entering the ground",
+                    "They slow runoff on slopes so rainwater can soak into the soil instead of flowing away",
+                    "They increase soil erosion",
+                    "They are only decorative"
+                ],
+                correct: 1,
+                image: "https://assets.corteva.com/is/image/Corteva/IMG-Contour_Farming_1_4529x3000-Global?$image_desktop$"  // [image:8]
+            },
+            {
+                question: "What is the primary purpose of constructing check dams in streams?",
+                options: [
+                    "To create swimming pools",
+                    "To slow water flow, trap sediment, and give more time for percolation into groundwater",
+                    "To increase flood risk",
+                    "To make the stream narrower"
+                ],
+                correct: 1,
+                image: "https://content.wotr.org/integrated-watershed-development-securing-rural-indias-water-future/assets/PEAd8tXgBu/check-dam-at-gadbadi-village-1-4096x2731.jpg"  // [image:11]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedAnswers = new Array(quizData.length).fill(null);
+
+        const quizContainer = document.getElementById('quiz-container');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const resultDiv = document.getElementById('result');
+        const scoreText = document.getElementById('score-text');
+        const feedback = document.getElementById('feedback');
+
+        // Render current question
+        function renderQuestion() {
+            const q = quizData[currentQuestion];
+            quizContainer.innerHTML = `
+    <div class="bg-sky-50 p-6 md:p-8 rounded-xl border border-sky-200">
+      <h3 class="text-2xl md:text-3xl font-bold text-sky-800 mb-6">
+        Question ${currentQuestion + 1} of 5
+      </h3>
+      <p class="text-xl md:text-2xl text-slate-800 mb-6">${q.question}</p>
+      <div class="flex justify-center mb-8">
+        <img src="${q.image}" alt="Illustration for question" class="rounded-xl shadow-lg max-w-full md:max-w-xl w-full h-auto object-contain">
+      </div>
+      <div class="space-y-4">
+        ${q.options.map((opt, i) => `
+          <label class="flex items-center p-4 bg-white rounded-lg border border-sky-100 cursor-pointer hover:bg-sky-50 transition">
+            <input type="radio" name="answer" value="${i}" class="mr-4 w-5 h-5 text-sky-600" ${selectedAnswers[currentQuestion] === i ? 'checked' : ''}>
+            <span class="text-lg text-slate-700">${opt}</span>
+          </label>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+            // Enable/disable buttons
+            prevBtn.classList.toggle('hidden', currentQuestion === 0);
+            nextBtn.textContent = currentQuestion === quizData.length - 1 ? "Finish & See Result" : "Next";
+        }
+
+        // Handle next
+        nextBtn.addEventListener('click', () => {
+            const selected = document.querySelector('input[name="answer"]:checked');
+            if (!selected) {
+                alert("Please select an answer!");
+                return;
+            }
+
+            const choice = parseInt(selected.value);
+            selectedAnswers[currentQuestion] = choice;
+
+            if (choice === quizData[currentQuestion].correct) {
+                score++;
+            }
+
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                // Show result
+                quizContainer.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+                prevBtn.classList.add('hidden');
+                resultDiv.classList.remove('hidden');
+
+                scoreText.textContent = score;
+                if (score === 5) {
+                    feedback.textContent = "🎉 Brilliant! You're a true Water Hero – perfect score!";
+                    createConfetti();
+                } else if (score >= 3) {
+                    feedback.textContent = "Great job! You know a lot about saving water and recharging groundwater.";
+                } else {
+                    feedback.textContent = "Good effort! Review the concepts and try again to become a certified Water Hero.";
+                }
+            }
+        });
+
+        // Previous button (optional but nice)
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        });
+
+        // Confetti function (same as before)
+        function createConfetti() {
+            const container = document.getElementById('confetti-container');
+            for (let i = 0; i < 100; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti absolute w-3 h-3 rounded-full';
+                c.style.left = Math.random() * 100 + '%';
+                c.style.top = '-10px';
+                c.style.background = ['#0ea5e9', '#10b981', '#fbbf24', '#f87171', '#8b5cf6'][Math.floor(Math.random() * 5)];
+                c.style.animation = `confetti-fall ${Math.random() * 3 + 2}s linear forwards`;
+                container.appendChild(c);
+                setTimeout(() => c.remove(), 6000);
+            }
+        }
+
+        // Start quiz
+        renderQuestion();
+    </script>
+    <style type="text/css">
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(140vh) rotate(1080deg);
+                opacity: 0;
+            }
+        }
+
+        .confetti {
+            animation: confetti-fall 4s linear forwards;
+        }
+    </style>
+</main>
+
+<footer class="mt-16 py-10 bg-sky-900 text-white text-center">
+    <div class="container mx-auto px-6 sm:px-10 md:px-14 lg:px-20 xl:px-28 max-w-8xl">
+        <p class="text-lg">Water Quest &mdash; Chapter 4.3: Flow Restriction &amp; Water Saving</p>
+
+        <p class="mt-2 opacity-90">Small changes at the tap &rarr; big savings for everyone! 💧🌱</p>
+    </div>
+</footer>
+<script>
+    const colors = ['rgba(255,255,255,0.9)', 'rgba(200,240,255,0.8)', 'rgba(255,255,255,0.7)'];
+    document.addEventListener('mousemove', e => { if (Math.random() > .9) return; const b = document.createElement('div'); const s = Math.floor(Math.random() * 20) + 10; b.style.width = s + 'px'; b.style.height = s + 'px'; b.style.left = e.pageX + 'px'; b.style.top = e.pageY + 'px'; b.style.background = colors[Math.floor(Math.random() * colors.length)]; b.className = 'bubble'; b.style.animationDuration = (Math.random() * 3 + 2.5) + 's'; document.body.appendChild(b); setTimeout(() => b.remove(), 4000) });
+
+    const fs = document.getElementById('fullscreen-btn');
+    fs.addEventListener('click', () => { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(console.error) } else if (document.exitFullscreen) { document.exitFullscreen() } });
+    document.addEventListener('fullscreenchange', () => { document.body.classList.toggle('fullscreen', !!document.fullscreenElement) });
+
+    const btt = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => { btt.classList.toggle('visible', window.scrollY > 400) });
+    btt.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }) });
+
+    const pb = document.getElementById('progress-bar');
+    function up() { const t = window.scrollY; const h = document.documentElement.scrollHeight - window.innerHeight; pb.style.height = h > 0 ? (t / h * 100) + '%' : '0%' }
+    window.addEventListener('scroll', up); window.addEventListener('resize', up); up();
+
+    const nb = document.getElementById('notes-btn'), np = document.getElementById('notes-panel'), nc = document.getElementById('notes-close'), na = document.getElementById('notes-textarea'), ns = document.getElementById('notes-saved'), cl = document.getElementById('clearNotes'), dl = document.getElementById('downloadNotes'), sk = 'waterQuestPageNotes';
+    na.value = localStorage.getItem(sk) || '';
+    function ust() { const n = new Date(); ns.textContent = `Last saved: ${n.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` } ust();
+    let st; na.addEventListener('input', () => { clearTimeout(st); st = setTimeout(() => { localStorage.setItem(sk, na.value); ust() }, 700) });
+    nb.addEventListener('click', () => np.classList.toggle('open'));
+    nc.addEventListener('click', () => np.classList.remove('open'));
+    document.addEventListener('click', e => { if (!np.contains(e.target) && !nb.contains(e.target)) np.classList.remove('open') });
+    cl.addEventListener('click', () => { if (confirm("Clear all notes? This cannot be undone.")) { na.value = ""; localStorage.removeItem(sk); ust() } });
+    dl.addEventListener('click', () => { const c = na.value || "No notes yet."; const b = new Blob([c], { type: 'application/msword' }); const u = URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = 'My_Water_Quest_Notes.doc'; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(u) });
+</script>

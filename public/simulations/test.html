@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Water Quest – Chapter 1.3 Activity: Data Oracle (No %)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(180deg, #7dd3fc 0%, #e6f6ff 40%, #ffffff 100%);
+      min-height: 100vh;
+      margin: 0;
+      position: relative;
+      overflow-x: hidden;
+    }
+    .wave {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 140px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.85" d="M0,192L48,197.3C96,203,192,213,288,213.3C384,213,480,203,576,208C672,213,768,203,864,192C960,181,1056,171,1152,160C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x bottom;
+      animation: wave 18s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes wave {
+      0% { background-position-x: 0; }
+      100% { background-position-x: -1440px; }
+    }
+    .bubble {
+      position: absolute;
+      background: rgba(255,255,255,0.6);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float 12s infinite ease-in-out;
+      box-shadow: 0 0 12px white;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0) scale(1); opacity: 0.7; }
+      50% { transform: translateY(-180px) scale(0.7); opacity: 0.4; }
+    }
+    .oracle {
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle at 40% 40%, #a5f3fc, #0ea5e9 40%, #0369a1 80%);
+      border-radius: 50%;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 50px #7dd3fc88, inset 0 0 40px rgba(255,255,255,0.5);
+    }
+    .reveal-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.125rem;
+      line-height: 1.45;
+      padding: 1.5rem;
+      text-align: center;
+      opacity: 0;
+      animation: fadeIn 2.2s forwards 1s;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    .water-level {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 0;
+      background: linear-gradient(to top, #60a5fa, #7dd3fc);
+      transition: height 2.8s ease-out;
+      z-index: 1;
+    }
+    .choice {
+      transition: all 0.35s ease;
+    }
+    .choice:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+    }
+    .choice:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .oracle-small { width: 220px; height: 220px; }
+  </style>
+</head>
+<body class="relative">
+  <div class="wave"></div>
+
+  <!-- Bubbles -->
+  <div class="bubble w-10 h-10 top-[12%] left-[8%] animate-[float_12s_infinite]"></div>
+  <div class="bubble w-7 h-7 top-[38%] right-[14%] animate-[float_10s_infinite_1.6s]"></div>
+  <div class="bubble w-14 h-14 bottom-[20%] left-[20%] animate-[float_14s_infinite_3s]"></div>
+  <div class="bubble w-9 h-9 top-[65%] right-[16%] animate-[float_11s_infinite_0.9s]"></div>
+
+  <div class="container mx-auto px-5 py-12 max-w-4xl relative z-10">
+    <h1 class="text-5xl md:text-6xl font-bold text-sky-900 text-center mb-4 font-['Baloo_2'] drop-shadow-lg">
+      Data Oracle
+    </h1>
+    <p class="text-center text-lg text-slate-700 mb-12">
+      Ask the oracle 3 questions about the future.<br>
+      Choose wisely — your answers shape the village's water tomorrow.
+    </p>
+
+    <!-- Oracle (main one during questions) -->
+    <div class="relative w-72 h-72 mx-auto mb-12">
+      <div class="oracle rounded-full overflow-hidden shadow-2xl relative">
+        <div class="water-level" id="water-level"></div>
+        <div id="oracle-text" class="reveal-text font-medium"></div>
+      </div>
+    </div>
+
+    <!-- Questions – 3 questions kept -->
+    <div id="questions-container" class="space-y-16">
+      <!-- Q1 -->
+      <div class="question bg-white soft-card p-8 rounded-3xl shadow-xl">
+        <h3 class="text-2xl font-semibold text-sky-900 mb-5 text-center">Question 1</h3>
+        <p class="text-lg text-slate-700 mb-6 text-center">
+          The data shows next year will have 30% less rain. What will the farmers do?
+        </p>
+        <div class="grid md:grid-cols-3 gap-6">
+          <button class="choice bg-emerald-50 hover:bg-emerald-100 p-6 rounded-2xl text-center border-2 border-emerald-300" data-points="30">
+            <p class="font-medium">Switch to drought-resistant crops</p>
+          </button>
+          <button class="choice bg-amber-50 hover:bg-amber-100 p-6 rounded-2xl text-center border-2 border-amber-300" data-points="10">
+            <p class="font-medium">Plant the same crops and hope</p>
+          </button>
+          <button class="choice bg-red-50 hover:bg-red-100 p-6 rounded-2xl text-center border-2 border-red-300" data-points="0">
+            <p class="font-medium">Use even more water to force growth</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="question bg-white soft-card p-8 rounded-3xl shadow-xl">
+        <h3 class="text-2xl font-semibold text-sky-900 mb-5 text-center">Question 2</h3>
+        <p class="text-lg text-slate-700 mb-6 text-center">
+          School data shows 40% of water is wasted in toilets. What should the headmaster do?
+        </p>
+        <div class="grid md:grid-cols-3 gap-6">
+          <button class="choice bg-emerald-50 hover:bg-emerald-100 p-6 rounded-2xl text-center border-2 border-emerald-300" data-points="25">
+            <p class="font-medium">Install sensor taps + teach students</p>
+          </button>
+          <button class="choice bg-amber-50 hover:bg-amber-100 p-6 rounded-2xl text-center border-2 border-amber-300" data-points="10">
+            <p class="font-medium">Just tell students to be careful</p>
+          </button>
+          <button class="choice bg-red-50 hover:bg-red-100 p-6 rounded-2xl text-center border-2 border-red-300" data-points="0">
+            <p class="font-medium">Do nothing — children will learn eventually</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- Q3 (kept) -->
+      <div class="question bg-white soft-card p-8 rounded-3xl shadow-xl">
+        <h3 class="text-2xl font-semibold text-sky-900 mb-5 text-center">Question 3</h3>
+        <p class="text-lg text-slate-700 mb-6 text-center">
+          Village water tank data shows leaks lose 800 L/day. What should the council decide?
+        </p>
+        <div class="grid md:grid-cols-3 gap-6">
+          <button class="choice bg-emerald-50 hover:bg-emerald-100 p-6 rounded-2xl text-center border-2 border-emerald-300" data-points="35">
+            <p class="font-medium">Repair leaks + start rainwater harvesting</p>
+          </button>
+          <button class="choice bg-amber-50 hover:bg-amber-100 p-6 rounded-2xl text-center border-2 border-amber-300" data-points="15">
+            <p class="font-medium">Buy more water from outside</p>
+          </button>
+          <button class="choice bg-red-50 hover:bg-red-100 p-6 rounded-2xl text-center border-2 border-red-300" data-points="0">
+            <p class="font-medium">Wait until next monsoon fills it</p>
+          </button>
+        </div>
+      </div>
+    </div>
+
+<!-- Result: TWO oracles in a single row – left has NO water fill -->
+<div id="result-screen" class="hidden mt-16">
+  <div class="grid md:grid-cols-2 gap-10 items-center max-w-5xl mx-auto">
+    <!-- Left: No water fill – just text message -->
+    <div class="text-center">
+      <h3 class="text-xl font-semibold text-sky-900 mb-4">Your Choices So Far</h3>
+      <div class="relative w-72 h-72 mx-auto">
+        <div class="oracle rounded-full overflow-hidden shadow-2xl relative bg-gradient-to-br from-cyan-500 to-blue-400">
+          <!-- No water-level div here -->
+          <div id="oracle-text-left" class="absolute inset-0 flex items-center justify-center text-white font-medium drop-shadow-2xl p-4 text-base sm:text-lg leading-relaxed text-center"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Full "The Oracle Speaks" oracle with water fill -->
+    <div class="text-center">
+      <h3 class="text-2xl font-semibold text-sky-900 mb-4">The Oracle Speaks</h3>
+      <div class="relative w-80 h-80 mx-auto">
+        <div class="oracle rounded-full overflow-hidden shadow-2xl relative">
+          <div class="water-level bg-gradient-to-t from-cyan-400 to-blue-500 transition-all duration-3000" id="water-fill"></div>
+          <div id="oracle-text" class="absolute inset-0 flex items-center justify-center text-white font-medium drop-shadow-2xl p-6 sm:p-8 leading-relaxed text-base sm:text-lg text-center"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-12">
+    <button onclick="location.reload()" class="px-10 py-5 bg-emerald-500 hover:bg-emerald-600 text-white text-xl font-bold rounded-full shadow-xl transition">
+      Ask the Oracle Again
+    </button>
+  </div>
+</div>
+
+  <script>
+    let totalPoints = 0;
+    let answeredCount = 0;
+
+    document.querySelectorAll('.choice').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const questionDiv = btn.closest('.question');
+        if (!questionDiv) return;
+
+        questionDiv.querySelectorAll('.choice').forEach(b => {
+          b.disabled = true;
+          b.classList.add('opacity-70', 'cursor-not-allowed');
+        });
+
+        btn.classList.remove('opacity-70');
+        btn.classList.add('bg-emerald-200', 'border-emerald-500', 'scale-105');
+
+        totalPoints += parseInt(btn.dataset.points || 0);
+        answeredCount++;
+
+        // Changed to 3 questions → trigger after 3 answers
+        if (answeredCount === 3) {
+          setTimeout(revealFuture, 700);
+        }
+      });
+    });
+
+   function revealFuture() {
+  // Hide questions section
+  document.getElementById('questions-container').classList.add('hidden');
+  // Hide the main oracle that was visible during questions
+  document.querySelector('.relative.w-72.h-72.mx-auto.mb-12').classList.add('hidden');
+
+  // Show result with two oracles
+  document.getElementById('result-screen').classList.remove('hidden');
+
+  // Calculate final score (0–100)
+  const finalScore = Math.min(Math.max(totalPoints, 0), 100);
+
+  // Only right oracle gets water fill animation
+  document.getElementById('water-fill').style.height = finalScore + '%';
+
+  let title = "";
+  let message = "";
+
+  if (finalScore >= 80) {
+    title = "The waters shine bright";
+    message = "Your wise choices bring abundance for many seasons.<br>The village sings your name in gratitude.";
+  } else if (finalScore >= 40) {
+    title = "The stream begins to rise";
+    message = "A good path, yet the journey continues.<br>Listen closely to the data — more can be saved.";
+  } else {
+    title = "The waters remain low";
+    message = "The land still thirsts.<br>Return to the oracle with wiser eyes next time.";
+  }
+
+  const fullMessage = `${title}<br><br>${message}`;
+
+  // Both oracles show the SAME title + message (as text)
+  document.getElementById('oracle-text-left').innerHTML = fullMessage;
+  document.getElementById('oracle-text').innerHTML = fullMessage;
+}
+  </script>
+
+  <style>
+    .oracle { animation: glow 5s infinite alternate; }
+    @keyframes glow {
+      0% { box-shadow: 0 0 40px #7dd3fc88, inset 0 0 30px white; }
+      100% { box-shadow: 0 0 80px #7dd3fcff, inset 0 0 50px white; }
+    }
+  </style>
+</body>
+</html>

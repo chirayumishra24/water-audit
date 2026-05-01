@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Water Quest — Chapter 1.2 Quiz</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(180deg, #7dd3fc 0%, #e6f6ff 40%, #ffffff 100%);
+      min-height: 100vh;
+      margin: 0;
+      position: relative;
+      overflow-x: hidden;
+    }
+    .wave {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 140px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.85" d="M0,192L48,197.3C96,203,192,213,288,213.3C384,213,480,203,576,197.3C672,192,768,192,864,197.3C960,203,1056,213,1152,213.3C1248,213,1344,203,1392,197.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x bottom;
+      animation: wave 16s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes wave {
+      0% { background-position-x: 0; }
+      100% { background-position-x: -1440px; }
+    }
+    .bubble {
+      position: absolute;
+      background: rgba(255,255,255,0.75);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float 9s infinite ease-in-out;
+      box-shadow: 0 0 15px white;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0) scale(1); opacity: 0.8; }
+      50%     { transform: translateY(-220px) scale(0.6); opacity: 0.3; }
+    }
+    .option {
+      transition: all 0.3s ease;
+    }
+    .option:hover {
+      transform: scale(1.03);
+    }
+    .correct { background-color: #86efac !important; border-color: #15803d !important; }
+    .wrong   { background-color: #fda4af !important; border-color: #e11d48 !important; }
+  </style>
+</head>
+<body class="relative">
+
+  <div class="wave"></div>
+
+  <!-- Bubbles -->
+  <div class="bubble w-12 h-12 top-[15%] left-[10%] animate-[float_11s_infinite]"></div>
+  <div class="bubble w-8 h-8 top-[40%] right-[18%] animate-[float_13s_infinite_1.2s]"></div>
+  <div class="bubble w-14 h-14 bottom-[25%] left-[25%] animate-[float_10s_infinite_2.5s]"></div>
+  <div class="bubble w-10 h-10 top-[70%] right-[12%] animate-[float_12s_infinite_0.8s]"></div>
+
+  <div class="container mx-auto px-6 py-12 max-w-4xl relative z-10">
+
+    <h1 class="text-5xl md:text-6xl font-bold text-sky-900 text-center mb-3 font-['Baloo_2'] drop-shadow-lg">
+      Water Audit Quiz
+    </h1>
+    <p class="text-center text-xl text-slate-700 mb-10">Test how well you know the steps of a Water Audit!</p>
+
+    <!-- Progress -->
+    <div class="flex justify-between items-center mb-8 text-sm font-medium text-slate-600">
+      <div>Question <span id="q-current">1</span>/6</div>
+      <div class="w-48 h-2 bg-sky-200 rounded-full overflow-hidden">
+        <div id="progress" class="h-full bg-sky-600 w-1/6 transition-all"></div>
+      </div>
+    </div>
+
+    <!-- Question Area -->
+    <div id="question-card" class="bg-white soft-card p-10 rounded-3xl shadow-2xl min-h-[380px]">
+
+      <h2 id="question-text" class="text-2xl md:text-3xl font-semibold text-sky-900 mb-10 text-center leading-tight"></h2>
+
+      <div id="options" class="grid grid-cols-1 gap-4"></div>
+
+      <!-- Feedback -->
+      <div id="feedback-area" class="mt-10 hidden text-center">
+        <div id="feedback-text" class="text-2xl font-bold mb-6"></div>
+        <button id="next-btn" class="px-10 py-4 bg-sky-600 hover:bg-sky-700 text-white text-xl font-bold rounded-full shadow-xl transition">
+          Next Question →
+        </button>
+      </div>
+    </div>
+
+    <!-- Final Result -->
+    <div id="final-screen" class="hidden text-center mt-12">
+      <h2 id="final-title" class="text-5xl font-bold mb-6"></h2>
+      <div id="final-score" class="text-6xl font-bold text-emerald-600 mb-8"></div>
+      <div id="confetti-container" class="relative h-40 mx-auto"></div>
+      <button onclick="location.reload()" class="mt-8 px-12 py-5 bg-emerald-500 hover:bg-emerald-600 text-white text-2xl font-bold rounded-full shadow-2xl transition">
+        Play Again
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        q: "What is the very first step of a water audit?",
+        options: ["Measure flow rates", "Preliminary Survey", "Technical Analysis", "Improvement Plan"],
+        answer: 1
+      },
+      {
+        q: "What does 'water balance' mean in an audit?",
+        options: ["Input = Output", "Input > Output", "Only measuring drinking water", "Checking electricity bills"],
+        answer: 0
+      },
+      {
+        q: "Which is an example of 'Apparent Loss'?",
+        options: ["Evaporation from tank", "Meter reading error or theft", "Pipe leakage", "Over-irrigation"],
+        answer: 1
+      },
+      {
+        q: "Why is data integrity important in a water audit?",
+        options: ["To make it look good", "So results are reliable and trustworthy", "To impress the teacher", "To make the report longer"],
+        answer: 1
+      },
+      {
+        q: "What is the final step of a water audit?",
+        options: ["Preliminary Survey", "Improvement Plan & Recommendations", "Measuring usage", "Finding leaks"],
+        answer: 1
+      },
+      {
+        q: "According to Jal Jeevan Mission, rural areas should get how much water per person per day?",
+        options: ["35 L", "55 L", "100 L", "135 L"],
+        answer: 1
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById('question-text').innerHTML = q.q;
+      document.getElementById('q-current').textContent = currentQuestion + 1;
+
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = '';
+
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = `option w-full text-left p-5 bg-white border-2 border-sky-300 hover:border-sky-500 rounded-2xl text-lg transition-all`;
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(i);
+        optionsDiv.appendChild(btn);
+      });
+
+      document.getElementById('feedback-area').classList.add('hidden');
+    }
+
+    function checkAnswer(selected) {
+      const q = questions[currentQuestion];
+      const isCorrect = selected === q.answer;
+
+      const buttons = document.querySelectorAll('#options button');
+      buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === q.answer) btn.classList.add('correct');
+        if (i === selected && !isCorrect) btn.classList.add('wrong');
+      });
+
+      const feedbackArea = document.getElementById('feedback-area');
+      const feedbackText = document.getElementById('feedback-text');
+
+      if (isCorrect) {
+        score++;
+        feedbackText.innerHTML = `<span class="text-emerald-600">✅ Correct!</span>`;
+      } else {
+        feedbackText.innerHTML = `<span class="text-red-600">❌ Wrong. The correct answer is: ${q.options[q.answer]}</span>`;
+      }
+
+      feedbackArea.classList.remove('hidden');
+
+      document.getElementById('next-btn').onclick = nextQuestion;
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        loadQuestion();
+      } else {
+        showFinalResult();
+      }
+    }
+
+    function showFinalResult() {
+      document.getElementById('question-card').classList.add('hidden');
+
+      const finalScreen = document.getElementById('final-screen');
+      finalScreen.classList.remove('hidden');
+
+      const percent = Math.round((score / questions.length) * 100);
+
+      if (percent === 100) {
+        document.getElementById('final-title').innerHTML = `🎉 PERFECT!<br>You are a Water Audit Champion!`;
+        document.getElementById('final-score').innerHTML = `100% • ${score}/${questions.length}`;
+
+        // Confetti + bouncing badge
+        createConfetti();
+        createBouncingBadge();
+      } else {
+        document.getElementById('final-title').innerHTML = `Good Effort!<br>Keep Practicing`;
+        document.getElementById('final-score').innerHTML = `${percent}% • ${score}/${questions.length}`;
+      }
+    }
+
+    function createConfetti() {
+      for (let i = 0; i < 80; i++) {
+        const c = document.createElement('div');
+        c.className = 'particle absolute';
+        c.style.left = Math.random() * 100 + '%';
+        c.style.top = '-20px';
+        c.style.background = ['#7dd3fc', '#60a5fa', '#34d399'][Math.floor(Math.random()*3)];
+        document.body.appendChild(c);
+
+        const duration = 2 + Math.random() * 3;
+        c.style.animation = `confetti-fall ${duration}s linear forwards`;
+        setTimeout(() => c.remove(), duration * 1000);
+      }
+    }
+
+    function createBouncingBadge() {
+      const badge = document.createElement('div');
+      badge.innerHTML = `🏆<br><span class="text-4xl">Audit Master</span>`;
+      badge.className = `absolute left-1/2 bottom-12 -translate-x-1/2 bg-white text-center px-10 py-6 rounded-3xl shadow-2xl text-6xl font-bold text-emerald-700 border-8 border-emerald-400`;
+      badge.style.animation = 'bounce 1.8s infinite alternate';
+      document.getElementById('final-screen').appendChild(badge);
+    }
+
+    // Add keyframe for confetti and bounce
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes confetti-fall {
+        to { transform: translateY(120vh) rotate(720deg); opacity: 0; }
+      }
+      @keyframes bounce {
+        from { transform: translate(-50%, 0) scale(1); }
+        to   { transform: translate(-50%, -30px) scale(1.08); }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Start quiz
+    loadQuestion();
+  </script>
+</body>
+</html>

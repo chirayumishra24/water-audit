@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kitchen Water Timer – Water Quest Ch.3</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(180deg, #7dd3fc 0%, #e6f6ff 40%, white 100%);
+      min-height: 100vh;
+      margin: 0;
+      position: relative;
+      overflow-x: hidden;
+    }
+    .wave {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 140px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.85" d="M0,192L48,197.3C96,203,192,213,288,213.3C384,213,480,203,576,208C672,213,768,203,864,192C960,181,1056,171,1152,160C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x bottom;
+      animation: wave 18s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes wave {
+      0% { background-position-x: 0; }
+      100% { background-position-x: -1440px; }
+    }
+    .bubble {
+      position: absolute;
+      background: rgba(255,255,255,0.7);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float 8s infinite ease-in-out;
+      box-shadow: 0 0 12px white;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0) scale(1); opacity: 0.8; }
+      50%     { transform: translateY(-180px) scale(0.7); opacity: 0.3; }
+    }
+    #tank {
+      width: 220px;
+      height: 320px;
+      margin: 0 auto;
+      background: #f1f5f9;
+      border: 5px solid #0ea5e9;
+      border-radius: 1.5rem 1.5rem 0 0;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    #fill {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, #60a5fa, #7dd3fc);
+      transition: height 0.8s ease-out;
+    }
+    .particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: white;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: rise 1.6s forwards;
+    }
+    @keyframes rise {
+      0%   { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-200px) scale(0); opacity: 0; }
+    }
+    .btn {
+      transition: all 0.25s ease;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body class="relative">
+
+  <div class="wave"></div>
+
+  <!-- Bubbles -->
+  <div class="bubble w-10 h-10 top-[12%] left-[8%] animate-[float_12s_infinite]"></div>
+  <div class="bubble w-7 h-7 top-[38%] right-[14%] animate-[float_10s_infinite_1.6s]"></div>
+  <div class="bubble w-14 h-14 bottom-[20%] left-[20%] animate-[float_14s_infinite_3s]"></div>
+  <div class="bubble w-9 h-9 top-[65%] right-[16%] animate-[float_11s_infinite_0.9s]"></div>
+
+  <div class="container mx-auto px-5 py-12 max-w-4xl relative z-10">
+
+    <h1 class="text-4xl md:text-5xl font-bold text-sky-900 text-center mb-3 font-['Baloo_2'] drop-shadow-md">
+      Kitchen Water Timer
+    </h1>
+
+    <p class="text-center text-base text-slate-700 mb-6">
+      Pick an activity → click “Start” every time you would fill the container → watch the tank fill!
+    </p>
+
+    <!-- Controls -->
+    <div class="flex flex-wrap justify-center gap-4 mb-10">
+      <select id="activity" class="p-3 bg-white border-2 border-sky-300 rounded-xl text-base focus:outline-none focus:border-sky-500">
+        <option value="bottle|0.75">Drinking water (refillable bottle ≈ 750 mL)</option>
+        <option value="mug|0.3">Making tea / brushing teeth (mug ≈ 300 mL)</option>
+        <option value="soda|2">Washing dishes (2 L soda bottle)</option>
+        <option value="bucket|10">Mopping floor / car wash (bucket ≈ 10 L)</option>
+        <option value="bathtub|150">Filling a bathtub (~150 L)</option>
+      </select>
+
+      <button id="startBtn" class="btn px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white text-xl font-bold rounded-full shadow-lg">
+        Start
+      </button>
+
+      <button id="stopBtn" class="btn px-8 py-4 bg-amber-500 hover:bg-amber-600 text-white text-xl font-bold rounded-full shadow-lg hidden">
+        Stop & See Total
+      </button>
+
+      <button id="resetBtn" class="btn px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white text-lg rounded-full shadow-lg hidden">
+        Reset
+      </button>
+    </div>
+
+    <!-- Tank -->
+    <div id="tank" class="relative mb-12">
+      <div id="fill"></div>
+      <div class="absolute inset-0 flex items-center justify-center text-white text-2xl font-bold drop-shadow-lg pointer-events-none">
+        Water Used
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div id="result" class="text-center text-xl font-medium text-slate-800 min-h-[3rem]"></div>
+  </div>
+
+  <script>
+    const activitySelect = document.getElementById('activity');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const tankFill = document.getElementById('fill');
+    const result = document.getElementById('result');
+
+    let interval = null;
+    let totalVolume = 0;
+    let count = 0;
+
+    function startCounting() {
+      const [container, mlStr] = activitySelect.value.split('|');
+      const mlPerFill = parseFloat(mlStr) * 1000; // convert L to mL if needed
+
+      totalVolume = 0;
+      count = 0;
+      tankFill.style.height = '0%';
+      result.textContent = '';
+
+      startBtn.classList.add('hidden');
+      stopBtn.classList.remove('hidden');
+      resetBtn.classList.add('hidden');
+
+      interval = setInterval(() => {
+        count++;
+        totalVolume += mlPerFill;
+
+        const percent = Math.min((totalVolume / 50000) * 100, 100); // cap at 50 L for visual
+        tankFill.style.height = percent + '%';
+
+        // Bubbles
+        for (let i = 0; i < 3; i++) {
+          const b = document.createElement('div');
+          b.className = 'bubble';
+          b.style.width = b.style.height = (5 + Math.random()*7) + 'px';
+          b.style.left = Math.random() * 100 + '%';
+          b.style.bottom = '0';
+          document.getElementById('tank').appendChild(b);
+          setTimeout(() => b.remove(), 3000);
+        }
+      }, 800); // simulate one fill every 0.8 sec
+    }
+
+    function stopCounting() {
+      clearInterval(interval);
+      startBtn.classList.remove('hidden');
+      stopBtn.classList.add('hidden');
+      resetBtn.classList.remove('hidden');
+
+      const liters = (totalVolume / 1000).toFixed(1);
+      let comparison = '';
+
+      if (liters < 5) comparison = `${liters} L — that's just a few bottles!`;
+      else if (liters < 20) comparison = `${liters} L — like filling ${Math.round(liters / 2)} big soda bottles!`;
+      else if (liters < 100) comparison = `${liters} L — about ${Math.round(liters / 10)} cleaning buckets!`;
+      else comparison = `${liters} L — wow, that's a lot! Almost a small bathtub!`;
+
+      result.innerHTML = `
+        <span class="text-emerald-600 text-2xl font-bold block">Total: ${liters} liters</span>
+        <span class="text-base text-slate-700">${comparison}</span>
+      `;
+    }
+
+    function reset() {
+      clearInterval(interval);
+      totalVolume = 0;
+      count = 0;
+      tankFill.style.height = '0%';
+      result.textContent = '';
+      startBtn.classList.remove('hidden');
+      stopBtn.classList.add('hidden');
+      resetBtn.classList.add('hidden');
+    }
+
+    startBtn.onclick = startCounting;
+    stopBtn.onclick = stopCounting;
+    resetBtn.onclick = reset;
+  </script>
+</body>
+</html>

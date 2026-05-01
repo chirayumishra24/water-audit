@@ -1,0 +1,1483 @@
+<div>
+    <div>
+        <div>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </div>
+    </div>
+</div>
+<title></title>
+<link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&amp;family=Roboto:wght@400;500&amp;display=swap"
+    rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<style type="text/css">
+    :root {
+        --primary: #E0C36C;
+        --secondary: #3A6351;
+        --accent: #F7E9A0;
+        --font-display: clamp(2rem, 5vw, 3rem);
+        --font-chapter-title: clamp(1.625rem, 3vw, 3rem);
+        --font-card-title: clamp(1.25rem, 2.2vw, 1.625rem);
+        --font-subheading: clamp(1.0625rem, 1.8vw, 1.25rem);
+        --font-body: clamp(1rem, 1.5vw, 1.125rem);
+    }
+
+    .dark {
+        --primary: #F7E9A0;
+        --secondary: #E0C36C;
+        --accent: #3A6351;
+    }
+
+    body {
+        font-family: 'Roboto', sans-serif;
+        color: var(--secondary);
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+
+    /* === WAVE BACKGROUND === */
+    .bg-wave {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        opacity: 0.4;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    .wave {
+        position: absolute;
+        bottom: 0;
+        width: 200%;
+        height: 100px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        animation: wave 10s linear infinite;
+    }
+
+    .wave:nth-child(2) {
+        bottom: -20px;
+        opacity: 0.6;
+        animation: wave 15s linear infinite reverse;
+    }
+
+    .wave:nth-child(3) {
+        bottom: -40px;
+        opacity: 0.3;
+        animation: wave 12s linear infinite;
+    }
+
+    @keyframes wave {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    /* === COIN ANIMATIONS === */
+    .coin-animation-container {
+        position: absolute;
+        width: 150px;
+        height: 225px;
+        pointer-events: none;
+        opacity: 0.7;
+    }
+
+    .coin-container {
+        position: relative;
+        top: 22.5px;
+        height: 225px;
+        width: 142.5px;
+        transform: scale(0.5) translateX(0) scaleY(0.7);
+    }
+
+    .y-axis-container {
+        animation: bounce 2.6s infinite ease-in-out;
+    }
+
+    .coin-shadow {
+        animation: scaling 2.6s infinite ease-in-out;
+    }
+
+    .coin {
+        position: absolute;
+        height: 225px;
+        left: 0;
+        width: 127.5px;
+        background: gold;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .side-coin {
+        position: absolute;
+        left: 63.75px;
+        height: 225px;
+        width: 26.25px;
+        background: #f5b642;
+    }
+
+    .side {
+        position: absolute;
+        background: #f5b642;
+        left: 16.5px;
+        width: 123.75px;
+        height: 228px;
+        top: -1.5px;
+    }
+
+    .shine {
+        width: 300px;
+        height: 15px;
+        background: rgba(255, 255, 255, 0.65);
+        transform: rotate(25deg);
+        animation: shine 5s infinite;
+    }
+
+    .flash {
+        z-index: 200;
+        position: absolute;
+        width: 11.25px;
+        height: 11.25px;
+        background: white;
+        top: 22.5px;
+        right: 15px;
+        animation: flash 7s infinite;
+    }
+
+    .dai {
+        position: absolute;
+        width: 75px;
+        height: 75px;
+        background: #faf20a;
+        border: 1px solid white;
+        transform: rotate(53deg) skew(26deg);
+        top: 70.5px;
+        left: 26.25px;
+        overflow: hidden;
+    }
+
+    .cutout {
+        z-index: 20;
+        width: 150%;
+        height: 150%;
+        background: #ffee38;
+        transform: rotate(45deg);
+        position: absolute;
+        top: 21.75px;
+        left: 21.75px;
+    }
+
+    .dai-shadow {
+        z-index: 20;
+        width: 150%;
+        height: 150%;
+        background: rgba(0, 0, 0, 0.07);
+        transform: rotate(45deg);
+        position: absolute;
+        top: 21.75px;
+        right: 21.75px;
+    }
+
+    .inner-dai {
+        position: relative;
+        background: white;
+        height: 52.5px;
+        width: 52.5px;
+        top: 11.25px;
+        left: 11.25px;
+    }
+
+    .inner-inner-dai {
+        position: relative;
+        background: #ffee38;
+        width: 15px;
+        height: 15px;
+        top: 18.75px;
+        left: 18.75px;
+    }
+
+    .coin-shadow {
+        position: relative;
+        left: calc(50% - 45px);
+        top: -30px;
+        background: rgba(0, 0, 0, 0.2);
+        height: 22.5px;
+        width: 75px;
+        animation: scaling 2.6s infinite;
+        border-radius: 50%;
+    }
+
+    @keyframes bounce {
+        20% {
+            animation-timing-function: ease-out;
+            transform: translateY(-45px);
+        }
+
+        50% {
+            animation-timing-function: ease-out;
+            transform: translateY(-60px);
+        }
+    }
+
+    @keyframes scaling {
+        20% {
+            transform: scale(0.6);
+        }
+
+        50% {
+            transform: scale(0.5);
+        }
+    }
+
+    @keyframes flash {
+
+        0%,
+        8% {
+            transform: rotate(0deg) scale(0);
+        }
+
+        10% {
+            transform: rotate(150deg) scale(1.8);
+        }
+
+        15%,
+        100% {
+            transform: rotate(45deg) scale(0);
+        }
+    }
+
+    @keyframes shine {
+        20% {
+            transform: rotate(25deg) translateY(300px);
+        }
+
+        100% {
+            transform: rotate(25deg) translateY(300px);
+        }
+    }
+
+    /* Progress Bar */
+    .progress-container {
+        position: fixed;
+        top: 33.33vh;
+        right: 10px;
+        width: 8px;
+        height: 33.33vh;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+        z-index: 20;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 0;
+        background: var(--primary);
+        border-radius: 4px;
+        transition: height 0.3s ease;
+    }
+
+    /* Header */
+    .header-bg {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        color: var(--secondary);
+        text-align: center;
+        width: 95%;
+        max-width: 1800px;
+        margin: 2rem auto 1.5rem;
+    }
+
+    .header-bg h1,
+    .header-bg h2 {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        font-size: var(--font-display);
+        line-height: 1.2;
+        letter-spacing: 0;
+        font-weight: 800;
+    }
+
+    /* Fade-in */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+
+    .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Title Card */
+    .title-card {
+        position: relative;
+        background: var(--accent);
+        border-radius: 12px;
+        padding: 1.5rem;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+        cursor: default;
+    }
+
+    .title-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(224, 195, 108, 0.3);
+    }
+
+    .title-card h2 {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        font-size: var(--font-card-title);
+        line-height: 1.3;
+        color: var(--secondary);
+        font-weight: 600;
+    }
+
+    /* Topic Cards */
+    .topic {
+        background: white;
+        margin: clamp(10px, 2vw, 14px) 0;
+        padding: clamp(20px, 2vw, 24px);
+        border-radius: 16px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        max-width: 95%;
+        width: 95%;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.6s ease-out, box-shadow 0.3s;
+        position: relative;
+        z-index: 1;
+    }
+
+    .dark .topic {
+        background: #2d2d2d;
+        color: #e0e0e0;
+    }
+
+    .topic:hover {
+        box-shadow: 0px 6px 20px rgba(224, 195, 108, 0.4);
+        transform: scale(1.02);
+        z-index: 10;
+    }
+
+    .topic.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Timeline */
+    .timeline {
+        position: relative;
+        padding: 40px 0;
+        width: 100%;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--primary);
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .timeline-item {
+        position: relative;
+        margin: 40px 0;
+        width: 50%;
+        cursor: pointer;
+    }
+
+    .timeline-item.left {
+        left: 0;
+    }
+
+    .timeline-item.right {
+        left: 50%;
+    }
+
+    .timeline-content {
+        background: var(--accent);
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        position: relative;
+        transition: all 0.4s ease;
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .timeline-content:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(224, 195, 108, 0.2);
+    }
+
+    .timeline-content::before {
+        content: '';
+        position: absolute;
+        top: 30px;
+        width: 0;
+        height: 0;
+        border: 12px solid transparent;
+    }
+
+    .timeline-item.left .timeline-content::before {
+        right: -24px;
+        border-left-color: var(--accent);
+    }
+
+    .timeline-item.right .timeline-content::before {
+        left: -24px;
+        border-right-color: var(--accent);
+    }
+
+    .timeline-dot {
+        width: 24px;
+        height: 24px;
+        background: var(--secondary);
+        border-radius: 50%;
+        position: absolute;
+        top: 30px;
+        z-index: 10;
+        box-shadow: 0 0 0 4px white;
+    }
+
+    .timeline-item.left .timeline-dot {
+        right: -12px;
+    }
+
+    .timeline-item.right .timeline-dot {
+        left: -12px;
+    }
+
+    .timeline-title {
+        font-weight: bold;
+        font-size: var(--font-chapter-title);
+        line-height: 1.25;
+        color: var(--secondary);
+        margin-bottom: 8px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .timeline-subtitle {
+        font-size: var(--font-body);
+        line-height: 1.6;
+        color: #4a5568;
+        font-style: italic;
+    }
+
+    .timeline-details {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.6s ease, padding 0.6s ease;
+        opacity: 0;
+        padding-top: 0;
+    }
+
+    .timeline-details.open {
+        max-height: 800px;
+        padding-top: 16px;
+        opacity: 1;
+    }
+
+    /* Chapter Cards */
+    .chapter-card {
+        background: var(--primary);
+        color: var(--secondary);
+        border-radius: 10px;
+        padding: 0.75rem;
+        text-align: center;
+        font-weight: 500;
+        font-size: var(--font-card-title);
+        line-height: 1.35;
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .chapter-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(224, 195, 108, 0.3);
+    }
+
+    .grid-3rows {
+        display: grid;
+        grid-template-rows: repeat(3, 1fr);
+        gap: 10px;
+        height: 220px;
+    }
+
+    .grid-4rows {
+        display: grid;
+        grid-template-rows: repeat(4, 1fr);
+        gap: 10px;
+        height: 290px;
+    }
+
+    .grid-1row {
+        display: grid;
+        grid-template-rows: 1fr;
+        gap: 10px;
+        height: 70px;
+    }
+
+    /* Key Points */
+    .key-point {
+        background: var(--accent);
+        border: 2px solid var(--primary);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        border-radius: 8px;
+        margin: 0.5rem 0;
+        font-size: var(--font-body);
+        line-height: 1.6;
+    }
+
+    .topic-content p,
+    .topic-content li,
+    .text-lg,
+    .learn-section,
+    .activity-example,
+    .reflective-q,
+    .new-footer p {
+        font-size: var(--font-body);
+        line-height: 1.6;
+    }
+
+    .learn-section > strong,
+    .activity-example strong,
+    .reflective-q strong,
+    .quiz-badge,
+    .new-footer h4 {
+        font-family: 'Poppins', sans-serif;
+        font-size: var(--font-subheading);
+        line-height: 1.4;
+        font-weight: 600;
+    }
+
+    /* Footer */
+    .new-footer {
+        background: var(--secondary);
+        color: var(--accent);
+        text-align: center;
+        padding: 2rem;
+        margin-top: 1rem;
+        border-radius: 20px 20px 0 0;
+        box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.2);
+        width: 95%;
+        max-width: 1800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* =====================================
+   GUSTORA FULLSCREEN BUTTON
+===================================== */
+    #gustoraFullscreenBtn {
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        z-index: 99999;
+        width: 68px;
+        height: 68px;
+        background: linear-gradient(135deg, var(--primary), #c9a100);
+        border: 4px solid white;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 30px rgba(170, 138, 0, 0.5), 0 0 30px rgba(255, 215, 0, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.4);
+        backdrop-filter: blur(12px);
+        transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+        animation: gentlePulse 4s infinite ease-in-out;
+    }
+
+    #gustoraFullscreenBtn:hover {
+        transform: scale(1.18) rotate(8deg);
+        box-shadow: 0 20px 50px rgba(170, 138, 0, 0.7), 0 0 50px rgba(255, 215, 0, 0.6), 0 0 60px rgba(225, 37, 27, 0.3);
+        border-color: #e53e3e;
+    }
+
+    #gustoraFullscreenBtn svg {
+        width: 38px;
+        height: 38px;
+        stroke: #000;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    @keyframes gentlePulse {
+
+        0%,
+        100% {
+            box-shadow: 0 10px 30px rgba(170, 138, 0, 0.5), 0 0 30px rgba(255, 215, 0, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.4);
+        }
+
+        50% {
+            box-shadow: 0 15px 40px rgba(170, 138, 0, 0.6), 0 0 40px rgba(225, 37, 27, 0.3), inset 0 0 25px rgba(255, 255, 255, 0.5);
+        }
+    }
+
+    #gustoraFullscreenBtn:active {
+        transform: scale(0.95);
+    }
+
+    /* =====================================
+   NOTES PANEL - Exact from previous chapters
+===================================== */
+    #notesBtn,
+    #notesPanel {
+        position: fixed !important;
+        isolation: isolate;
+    }
+
+    #notesBtn {
+        bottom: 24px;
+        left: 24px;
+        z-index: 2147483647;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        border: none;
+        background: #fff;
+        font-size: 22px;
+        cursor: pointer;
+        box-shadow: 0 0 25px rgba(250, 204, 21, 0.9);
+    }
+
+    #notesPanel {
+        bottom: 96px;
+        left: 24px;
+        width: 320px;
+        max-width: 90vw;
+        background: rgba(15, 23, 42, 0.96);
+        color: #fff;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        z-index: 2147483646;
+        display: none;
+        flex-direction: column;
+        backdrop-filter: blur(14px);
+    }
+
+    .notes-header {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    #notesArea {
+        background: transparent;
+        border: none;
+        color: white;
+        padding: 14px;
+        height: 150px;
+        resize: none;
+        outline: none;
+    }
+
+    .notes-actions {
+        display: flex;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .notes-actions button {
+        flex: 1;
+        border: none;
+        border-radius: 8px;
+        padding: 8px;
+        cursor: pointer;
+    }
+
+    /* Global Safety */
+    html,
+    body {
+        overflow-x: hidden !important;
+    }
+
+    * {
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+
+    /* Mobile App View Fixes */
+    @media (max-width: 768px) {
+        .header-bg {
+            width: 95% !important;
+            padding: 1rem !important;
+        }
+
+        .header-bg h1,
+        .header-bg h2 {
+            font-size: 1.875rem !important;
+            line-height: 1.25 !important;
+        }
+
+        .title-card {
+            height: auto;
+            padding: 1rem;
+        }
+
+        .title-card h2 {
+            font-size: 1.25rem !important;
+            line-height: 1.3 !important;
+        }
+
+        .topic {
+            width: 95% !important;
+            padding: 1rem !important;
+        }
+
+        .timeline::before {
+            left: 20px !important;
+        }
+
+        .timeline-item {
+            width: 100% !important;
+            left: 0 !important;
+            margin-bottom: 40px;
+        }
+
+        .timeline-content {
+            margin-left: 50px;
+            padding: 1rem;
+        }
+
+        .timeline-title {
+            font-size: 1.5rem !important;
+            line-height: 1.3 !important;
+            margin-bottom: 0.75rem !important;
+        }
+
+        .timeline-subtitle,
+        .key-point,
+        .topic-content p,
+        .topic-content li,
+        .text-lg,
+        .learn-section,
+        .activity-example,
+        .reflective-q,
+        .new-footer p {
+            font-size: 1rem !important;
+            line-height: 1.6 !important;
+        }
+
+        .learn-section > strong,
+        .activity-example strong,
+        .reflective-q strong,
+        .quiz-badge,
+        .new-footer h4 {
+            font-size: 1.125rem !important;
+            line-height: 1.45 !important;
+        }
+
+        .timeline-dot {
+            left: 10px !important;
+        }
+
+        .timeline-content::before {
+            left: -20px !important;
+            border-right-color: var(--accent) !important;
+        }
+
+        .grid-3rows,
+        .grid-4rows,
+        .grid-1row {
+            display: flex !important;
+            flex-direction: column !important;
+            height: auto !important;
+            gap: 8px;
+        }
+
+        .chapter-card {
+            font-size: 1.125rem !important;
+            line-height: 1.35 !important;
+            padding: 10px;
+        }
+
+        .progress-container {
+            display: none;
+        }
+
+        .coin-animation-container {
+            display: none !important;
+        }
+
+        .bg-wave {
+            opacity: 0.2;
+        }
+
+        .wave {
+            height: 60px;
+        }
+    }
+
+    
+    /* Heading Responsiveness */
+    @media (min-width: 1024px) {
+        .header-bg h2, .header-bg h1 {
+            font-size: var(--font-display) !important;
+            line-height: 1.2 !important;
+            letter-spacing: 0 !important;
+            font-weight: 800 !important;
+        }
+        .title-card h2 {
+            font-size: var(--font-card-title) !important;
+            line-height: 1.3 !important;
+        }
+        .topic h3, .text-3xl, .timeline-title {
+            font-size: var(--font-chapter-title) !important;
+            line-height: 1.25 !important;
+            margin-bottom: 1rem !important;
+            font-weight: 700 !important;
+        }
+        .text-lg {
+            font-size: var(--font-body) !important;
+            line-height: 1.6 !important;
+        }
+    }
+    @media (min-width: 769px) and (max-width: 1023px) {
+        .header-bg h2, .header-bg h1 {
+            font-size: clamp(2rem, 4vw, 2.75rem) !important;
+            line-height: 1.2 !important;
+        }
+        .title-card h2 {
+            font-size: clamp(1.25rem, 2vw, 1.5rem) !important;
+            line-height: 1.3 !important;
+        }
+        .topic h3, .text-3xl, .timeline-title {
+            font-size: clamp(1.75rem, 2.8vw, 2.25rem) !important;
+            line-height: 1.25 !important;
+        }
+        .timeline-subtitle,
+        .key-point,
+        .topic-content p,
+        .topic-content li,
+        .text-lg,
+        .learn-section,
+        .activity-example,
+        .reflective-q,
+        .new-footer p {
+            font-size: clamp(1rem, 1.4vw, 1.125rem) !important;
+            line-height: 1.6 !important;
+        }
+        .learn-section > strong,
+        .activity-example strong,
+        .reflective-q strong,
+        .quiz-badge,
+        .new-footer h4 {
+            font-size: clamp(1.0625rem, 1.6vw, 1.25rem) !important;
+            line-height: 1.4 !important;
+        }
+        .chapter-card {
+            font-size: clamp(1.125rem, 1.8vw, 1.375rem) !important;
+            line-height: 1.35 !important;
+        }
+    }
+    </style>
+<!-- Animated Wave Background -->
+<div class="bg-wave">
+    <div class="wave">&nbsp;</div>
+
+    <div class="wave">&nbsp;</div>
+
+    <div class="wave">&nbsp;</div>
+</div>
+<!-- Animated Coins (All 8 coins preserved exactly) -->
+
+<div class="fixed inset-0 pointer-events-none z-0" id="coins-container"><!-- Coin 1 -->
+    <div class="coin-animation-container" style="left: 56.3906%; top: 51.8201%; animation-delay: 1.18761s;">
+        <div class="y-axis-container">
+            <div class="coin-container">
+                <div class="flash">&nbsp;</div>
+
+                <div class="coin side">
+                    <div class="shine" style="transform:rotate(-30deg);">&nbsp;</div>
+                </div>
+
+                <div class="side-coin">&nbsp;</div>
+
+                <div class="coin">
+                    <div class="dai">
+                        <div class="inner-dai">
+                            <div class="inner-inner-dai">&nbsp;</div>
+                        </div>
+
+                        <div class="cutout">&nbsp;</div>
+
+                        <div class="dai-shadow">&nbsp;</div>
+                    </div>
+
+                    <div class="shine">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="coin-shadow">&nbsp;</div>
+    </div>
+    <!-- Coin 2 -->
+
+    <div class="coin-animation-container" style="left: 7.76018%; top: 5.85845%; animation-delay: 0.526714s;">
+        <div class="y-axis-container">
+            <div class="coin-container">
+                <div class="flash">&nbsp;</div>
+
+                <div class="coin side">
+                    <div class="shine" style="transform:rotate(-30deg);">&nbsp;</div>
+                </div>
+
+                <div class="side-coin">&nbsp;</div>
+
+                <div class="coin">
+                    <div class="dai">
+                        <div class="inner-dai">
+                            <div class="inner-inner-dai">&nbsp;</div>
+                        </div>
+
+                        <div class="cutout">&nbsp;</div>
+
+                        <div class="dai-shadow">&nbsp;</div>
+                    </div>
+
+                    <div class="shine">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="coin-shadow">&nbsp;</div>
+    </div>
+    <!-- Coin 3 -->
+
+    <div class="coin-animation-container" style="left: 62.3306%; top: 12.7767%; animation-delay: 1.2508s;">
+        <div class="y-axis-container">
+            <div class="coin-container">
+                <div class="flash">&nbsp;</div>
+
+                <div class="coin side">
+                    <div class="shine" style="transform:rotate(-30deg);">&nbsp;</div>
+                </div>
+
+                <div class="side-coin">&nbsp;</div>
+
+                <div class="coin">
+                    <div class="dai">
+                        <div class="inner-dai">
+                            <div class="inner-inner-dai">&nbsp;</div>
+                        </div>
+
+                        <div class="cutout">&nbsp;</div>
+
+                        <div class="dai-shadow">&nbsp;</div>
+                    </div>
+
+                    <div class="shine">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="coin-shadow">&nbsp;</div>
+    </div>
+    <!-- Coin 4 -->
+
+    <div class="coin-animation-container" style="left: 53.5679%; top: 2.17621%; animation-delay: 0.731578s;">
+        <div class="y-axis-container">
+            <div class="coin-container">
+                <div class="flash">&nbsp;</div>
+
+                <div class="coin side">
+                    <div class="shine" style="transform:rotate(-30deg);">&nbsp;</div>
+                </div>
+
+                <div class="side-coin">&nbsp;</div>
+
+                <div class="coin">
+                    <div class="dai">
+                        <div class="inner-dai">
+                            <div class="inner-inner-dai">&nbsp;</div>
+                        </div>
+
+                        <div class="cutout">&nbsp;</div>
+
+                        <div class="dai-shadow">&nbsp;</div>
+                    </div>
+
+                    <div class="shine">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="coin-shadow">&nbsp;</div>
+    </div>
+    <!-- Coin 5 -->
+
+    <div class="coin-animation-container" style="left: 49.9861%; top: 21.4652%; animation-delay: 1.22214s;">
+        <div class="y-axis-container">
+            <div class="coin-container">
+                <div class="flash">&nbsp;</div>
+
+                <div class="coin side">
+                    <div class="shine" style="transform:rotate(-30deg);">&nbsp;</div>
+                </div>
+
+                <div class="side-coin">&nbsp;</div>
+
+                <div class="coin">
+                    <div class="dai">
+                        <div class="inner-dai">
+                            <div class="inner-inner-dai">&nbsp;</div>
+                        </div>
+
+                        <div class="cutout">&nbsp;</div>
+
+                        <div class="dai-shadow">&nbsp;</div>
+                    </div>
+
+                    <div class="shine">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="coin-shadow">&nbsp;</div>
+    </div>
+    <!-- Coin 6 -->
+
+    <div class="coin-animation-container" style="left: 20.2226%; top: 57.0333%; animation-delay: 0.292042s;">
+        <div class="y-axis-container">
+            <div class="coin-container">
+                <div class="flash">&nbsp;</div>
+
+                <div class="coin side">
+                    <div class="shine" style="transform:rotate(-30deg);">&nbsp;</div>
+                </div>
+
+                <div class="side-coin">&nbsp;</div>
+
+                <div class="coin">
+                    <div class="dai">
+                        <div class="inner-dai">
+                            <div class="inner-inner-dai">&nbsp;</div>
+                        </div>
+
+                        <div class="cutout">&nbsp;</div>
+
+                        <div class="dai-shadow">&nbsp;</div>
+                    </div>
+
+                    <div class="shine">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="coin-shadow">&nbsp;</div>
+    </div>
+    <!-- Coin 7 -->
+
+    <div class="coin-animation-container" style="left: 55.0446%; top: 23.0024%; animation-delay: 0.836516s;">
+        <div class="y-axis-container">
+            <div class="coin-container">
+                <div class="flash">&nbsp;</div>
+
+                <div class="coin side">
+                    <div class="shine" style="transform:rotate(-30deg);">&nbsp;</div>
+                </div>
+
+                <div class="side-coin">&nbsp;</div>
+
+                <div class="coin">
+                    <div class="dai">
+                        <div class="inner-dai">
+                            <div class="inner-inner-dai">&nbsp;</div>
+                        </div>
+
+                        <div class="cutout">&nbsp;</div>
+
+                        <div class="dai-shadow">&nbsp;</div>
+                    </div>
+
+                    <div class="shine">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="coin-shadow">&nbsp;</div>
+    </div>
+    <!-- Coin 8 -->
+
+    <div class="coin-animation-container" style="left: 41.1114%; top: 23.5881%; animation-delay: 1.93873s;">
+        <div class="y-axis-container">
+            <div class="coin-container">
+                <div class="flash">&nbsp;</div>
+
+                <div class="coin side">
+                    <div class="shine" style="transform:rotate(-30deg);">&nbsp;</div>
+                </div>
+
+                <div class="side-coin">&nbsp;</div>
+
+                <div class="coin">
+                    <div class="dai">
+                        <div class="inner-dai">
+                            <div class="inner-inner-dai">&nbsp;</div>
+                        </div>
+
+                        <div class="cutout">&nbsp;</div>
+
+                        <div class="dai-shadow">&nbsp;</div>
+                    </div>
+
+                    <div class="shine">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="coin-shadow">&nbsp;</div>
+    </div>
+</div>
+<!-- Progress Bar -->
+
+<div class="progress-container">
+    <div class="progress-bar" id="progress-bar">&nbsp;</div>
+</div>
+<!-- Gustora Fullscreen Button -->
+
+<div id="gustoraFullscreenBtn"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+        stroke-width="2.6" viewbox="0 0 24 24">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+    </svg></div>
+<!-- Header -->
+
+<header class="header-bg fade-in visible">
+    <h1 style="translate: none; rotate: none; scale: none; opacity: 1; transform: translate(0px, 0px);">Course Overview
+        &ndash; Your Journey to Becoming a Budget Boss!</h1>
+</header>
+<!-- Notes Button & Panel -->
+
+<p><button id="notesBtn">📝</button></p>
+
+<div id="notesPanel">
+    <div class="notes-header"><span>My Notes</span><button id="closeNotes">✕</button></div>
+    <textarea id="notesArea" placeholder="Write notes here..."></textarea>
+
+    <div class="notes-actions"><button id="downloadNotes">Download</button><button id="clearNotes">Clear</button></div>
+</div>
+<!-- Synthesia Video -->
+
+<div style="width: 95%; max-width: 1200px; margin: 2.5rem auto 2rem; text-align: center;">
+    <div
+        style="position: relative; overflow: hidden; aspect-ratio: 1920/1080; border-radius: 20px; box-shadow: 0 14px 36px rgba(224,195,108,0.3); border: 5px solid var(--primary); background: white; transition: all 0.4s ease;">
+        <iframe allow="encrypted-media; fullscreen; microphone;" allowfullscreen="" loading="lazy"
+            src="https://share.synthesia.io/embeds/videos/27bcac50-cc7d-4be9-8932-9a9e6d3f4367"
+            style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0; margin: 0; overflow: hidden; border-radius: 16px;"
+            title="Synthesia video player - Budget Boss Overview Video"></iframe></div>
+
+    <p
+        style="margin-top: 1.2rem; font-size: clamp(18px, 1.8vw, 22px); color: var(--secondary); font-weight: 600; font-family: 'Poppins', sans-serif;">
+        Watch Your Budget Boss Journey Begin!</p>
+</div>
+
+<main class="max-w-6xl mx-auto px-4 space-y-8 relative z-10"><!-- Timeline Section -->
+    <div class="topic fade-in visible" id="timeline-topic"
+        style="translate: none; rotate: none; scale: none; opacity: 1; transform: translate(0px, 0px);">
+        <div class="title-card">
+            <h2>Your Learning Journey</h2>
+        </div>
+
+        <div class="topic-content">
+            <div class="timeline"><!-- Module 1 -->
+                <div class="timeline-item left" onclick="toggleTimeline(this)">
+                    <div class="timeline-dot">&nbsp;</div>
+
+                    <div class="timeline-content">
+                        <div class="timeline-title">Module 1 &ndash; Concept, Value and Types of Money</div>
+
+                        <div class="timeline-subtitle">Understand the origin, evolution, and value of money &mdash; from
+                            ancient barter to digital payments and cryptocurrencies.</div>
+
+                        <div class="timeline-details">
+                            <div class="grid-3rows">
+                                <div class="chapter-card">Basic Concepts about Money</div>
+
+                                <div class="chapter-card">Types of Money</div>
+
+                                <div class="chapter-card">Cryptocurrency</div>
+                            </div>
+
+                            <div class="quiz-badge">Quiz &ndash; Module 1</div>
+
+                            <div class="learn-section"><strong>You&rsquo;ll Learn:</strong>
+
+                                <p>&bull; What money is and why it&rsquo;s valuable.</p>
+
+                                <p>&bull; The types of money &mdash; commodity, fiat, digital, and fiduciary.</p>
+
+                                <p>&bull; How cryptocurrencies like Bitcoin and Ethereum work.</p>
+
+                                <p>&bull; The role of money as a medium of exchange, store of value, and unit of
+                                    account.</p>
+                            </div>
+
+                            <p><strong>Goal:</strong> Build a strong foundation of how money evolved, how it works, and
+                                why it&rsquo;s important in our daily lives.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Module 2 -->
+
+                <div class="timeline-item right" onclick="toggleTimeline(this)">
+                    <div class="timeline-dot">&nbsp;</div>
+
+                    <div class="timeline-content">
+                        <div class="timeline-title">Module 2 &ndash; Basics of Budgeting, Saving, and Investment</div>
+
+                        <div class="timeline-subtitle">Learn how to plan, save, and invest like a pro &mdash; making
+                            smart money choices for real-life situations.</div>
+
+                        <div class="timeline-details">
+                            <div class="grid-4rows">
+                                <div class="chapter-card">Basics of Budgeting</div>
+
+                                <div class="chapter-card">Basics of Saving</div>
+
+                                <div class="chapter-card">Basics of Investment</div>
+
+                                <div class="chapter-card">Profit &amp; Loss</div>
+                            </div>
+
+                            <div class="quiz-badge">Quiz &ndash; Module 2</div>
+
+                            <div class="learn-section"><strong>You&rsquo;ll Learn:</strong>
+
+                                <p>&bull; How to plan budgets for needs, wants, and savings goals.</p>
+
+                                <p>&bull; The importance of saving and how interest helps your money grow.</p>
+
+                                <p>&bull; How to invest in stocks, bonds, mutual funds, or skills that build value.</p>
+
+                                <p>&bull; Understanding profit and loss &mdash; how income, expenses, and returns shape
+                                    financial outcomes.</p>
+                            </div>
+
+                            <div class="activity-example"><strong>Activity Example:</strong> Plan your dream birthday
+                                party under ₹5,000 &mdash; balancing fun and finance!</div>
+
+                            <p><strong>Goal:</strong> Develop practical money skills &mdash; budgeting, saving,
+                                investing, and tracking performance.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Module 3 -->
+
+                <div class="timeline-item left" onclick="toggleTimeline(this)">
+                    <div class="timeline-dot">&nbsp;</div>
+
+                    <div class="timeline-content">
+                        <div class="timeline-title">Module 3 &ndash; Final Capstone Project</div>
+
+                        <div class="timeline-subtitle">Put everything you&rsquo;ve learned into action using an
+                            interactive simulator that shows how your money grows over time.</div>
+
+                        <div class="timeline-details">
+                            <div class="grid-1row">
+                                <div class="chapter-card">Compound Interest &amp; Investment Simulator</div>
+                            </div>
+
+                            <div class="learn-section"><strong>You&rsquo;ll Learn:</strong>
+
+                                <p>&bull; How compound interest multiplies your savings.</p>
+
+                                <p>&bull; How different investments perform over time (stocks, gold, mutual funds,
+                                    etc.).</p>
+
+                                <p>&bull; How to adjust risk levels and rebalance portfolios.</p>
+                            </div>
+
+                            <p class="reflective-q"><strong>Reflective Questions:</strong></p>
+
+                            <p class="reflective-q">&bull; Which investment grows fastest and why?</p>
+
+                            <p class="reflective-q">&bull; How does time affect growth?</p>
+
+                            <p class="reflective-q">&bull; How would you balance risk and reward?</p>
+
+                            <p><strong>Goal:</strong> Apply your learning in a real-world simulation and become a true
+                                &ldquo;Budget Boss.&rdquo;</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Key Outcomes -->
+
+    <div class="topic fade-in"
+        style="translate: none; rotate: none; scale: none; opacity: 0.9303; transform: translate3d(0px, 3.4848px, 0px);">
+        <div class="title-card">
+            <h2>You&rsquo;ll Learn To</h2>
+        </div>
+
+        <div class="topic-content">
+            <div class="space-y-4">
+                <div class="key-point">Understand the value and evolution of money</div>
+
+                <div class="key-point">Manage and plan budgets efficiently</div>
+
+                <div class="key-point">Build strong saving and investing habits</div>
+
+                <div class="key-point">Calculate profit, loss, and returns confidently</div>
+
+                <div class="key-point">Make smart financial decisions using real-world data</div>
+            </div>
+        </div>
+    </div>
+    <!-- Why This Matters -->
+
+    <div class="topic fade-in"
+        style="translate: none; rotate: none; scale: none; opacity: 0.5591; transform: translate3d(0px, 22.0448px, 0px);">
+        <div class="title-card">
+            <h2>Why This Matters</h2>
+        </div>
+
+        <div class="topic-content">
+            <p class="text-lg">This course helps students build essential life skills in financial literacy &mdash;
+                empowering them to think critically, manage money wisely, and plan for the future.</p>
+        </div>
+    </div>
+    <!-- Certificate Prerequisite -->
+
+    <div class="topic fade-in"
+        style="translate: none; rotate: none; scale: none; opacity: 0; transform: translate(0px, 50px);">
+        <div class="title-card">
+            <h2>Certificate Prerequisite</h2>
+        </div>
+
+        <div class="topic-content">
+            <p class="text-lg">To get the certificate of this course you have to complete the following!</p>
+
+            <ul>
+                <li class="key-point">Complete the Quizzes</li>
+                <li class="key-point">Complete the Capstone Project</li>
+            </ul>
+        </div>
+    </div>
+</main>
+<!-- Footer -->
+
+<footer class="new-footer">
+    <h4>Budget Boss</h4>
+
+    <p>SkilliZee.io</p>
+</footer>
+<script>
+    // Gustora Fullscreen Button
+    document.getElementById('gustoraFullscreenBtn').addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen?.() ||
+                document.documentElement.webkitRequestFullscreen?.() ||
+                document.documentElement.msRequestFullscreen?.();
+        } else {
+            document.exitFullscreen?.() ||
+                document.webkitExitFullscreen?.() ||
+                document.msExitFullscreen?.();
+        }
+    });
+
+    // Notes Panel (Exact functionality from previous chapters)
+    document.addEventListener("DOMContentLoaded", () => {
+        const btn = document.getElementById("notesBtn");
+        const panel = document.getElementById("notesPanel");
+        const close = document.getElementById("closeNotes");
+        const area = document.getElementById("notesArea");
+        const clearBtn = document.getElementById("clearNotes");
+        const downloadBtn = document.getElementById("downloadNotes");
+        const STORAGE_KEY = "user_notes_cache";
+
+        document.body.appendChild(panel);
+        document.body.appendChild(btn);
+
+        area.value = localStorage.getItem(STORAGE_KEY) || "";
+
+        btn.onclick = () => {
+            panel.style.display = (panel.style.display === "flex") ? "none" : "flex";
+        };
+        close.onclick = () => panel.style.display = "none";
+
+        area.addEventListener("input", () => {
+            localStorage.setItem(STORAGE_KEY, area.value);
+        });
+
+        clearBtn.onclick = () => {
+            if (confirm("Clear all notes?")) {
+                area.value = "";
+                localStorage.removeItem(STORAGE_KEY);
+            }
+        };
+
+        downloadBtn.onclick = () => {
+            const blob = new Blob([area.value], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "my-notes.txt";
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+    });
+
+    // Progress Bar
+    const progressBar = document.getElementById("progress-bar");
+    window.addEventListener("scroll", () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        progressBar.style.height = `${scrollPercent}%`;
+    });
+
+    // GSAP Entry Animation
+    window.onload = () => {
+        gsap.fromTo("h1", { y: -50, opacity: 0 }, { y: 0, opacity: 1, duration: 1, delay: 0.5 });
+        gsap.fromTo(".topic", { y: 50, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.2, delay: 1 });
+    };
+
+    // Fade-in Observer
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Timeline Toggle
+    function toggleTimeline(item) {
+        const details = item.querySelector('.timeline-details');
+        details.classList.toggle('open');
+    }
+</script>

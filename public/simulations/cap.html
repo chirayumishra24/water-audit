@@ -1,0 +1,983 @@
+<div><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></div>
+<title></title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&amp;family=Roboto:wght@400;500&amp;display=swap" rel="stylesheet" /><script src="https://cdn.tailwindcss.com"></script><script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style type="text/css">:root {
+            --primary: #E0C36C;
+            --secondary: #3A6351;
+            --accent: #F7E9A0;
+            --profit: #22c55e;
+            --loss: #ef4444;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--secondary);
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Wave Background */
+        .bg-wave {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .wave {
+            position: absolute;
+            bottom: 0;
+            width: 200%;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            animation: wave 10s linear infinite;
+        }
+        .wave:nth-child(2) { bottom: -20px; opacity: 0.6; animation: wave 15s linear infinite reverse; }
+        .wave:nth-child(3) { bottom: -40px; opacity: 0.3; animation: wave 12s linear infinite; }
+        @keyframes wave { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* Header */
+        .header-bg {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            width: 95%;
+            max-width: 1200px;
+            margin: 1.5rem auto;
+            text-align: center;
+        }
+
+        /* Topic Cards */
+        .topic {
+            background: white;
+            margin: clamp(12px, 2vw, 20px) auto;
+            padding: clamp(20px, 3vw, 28px);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 95%;
+            max-width: 1200px;
+        }
+        .capstone-card {
+            background: var(--accent);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .capstone-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(224,195,108,0.4);
+        }
+
+        /* Table & Inputs */
+        .investment-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .investment-table th, .investment-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .investment-table th {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: var(--secondary);
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn:hover {
+            background: var(--secondary);
+            color: var(--accent);
+        }
+
+        /* Progress & Fullscreen */
+        .progress-container {
+            position: fixed;
+            top: 33.33vh;
+            right: 10px;
+            width: 8px;
+            height: 33.33vh;
+            background: rgba(0,0,0,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            z-index: 20;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 0;
+            background: var(--primary);
+            transition: height 0.3s ease;
+        }
+
+        #gustoraFullscreenBtn {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 99999;
+            width: 68px;
+            height: 68px;
+            background: linear-gradient(135deg, var(--primary), #c9a100);
+            border: 4px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(170,138,0,0.5), inset 0 0 20px rgba(255,255,255,0.4);
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+            animation: gentlePulse 4s infinite ease-in-out;
+        }
+        #gustoraFullscreenBtn:hover {
+            transform: scale(1.18) rotate(8deg);
+        }
+        @keyframes gentlePulse {
+            0%, 100% { box-shadow: 0 10px 30px rgba(170,138,0,0.5), inset 0 0 20px rgba(255,255,255,0.4); }
+            50% { box-shadow: 0 15px 40px rgba(170,138,0,0.6); }
+        }
+
+        /* Notes Panel */
+        #notesBtn {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 2147483647;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: white;
+            font-size: 24px;
+            box-shadow: 0 0 25px rgba(250,204,21,0.9);
+        }
+        #notesPanel {
+            position: fixed;
+            bottom: 96px;
+            left: 24px;
+            width: 320px;
+            max-width: 90vw;
+            background: rgba(15,23,42,0.96);
+            color: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            z-index: 2147483646;
+            display: none;
+            flex-direction: column;
+        }
+
+        .fade-in { opacity: 0; transform: translateY(20px); transition: all 0.6s ease-out; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* Mobile Responsive Fixes */
+        @media (max-width: 768px) {
+            .header-bg { padding: 1.25rem; }
+            .header-bg h2 span { font-size: 22px !important; }
+            .topic, .capstone-card { padding: 1.25rem; }
+            .desktop-table { display: none !important; }
+            .slider-container { 
+                display: flex !important; 
+                overflow-x: auto; 
+                scroll-snap-type: x mandatory; 
+                padding: 1rem 0;
+                gap: 1rem;
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .slider-container::-webkit-scrollbar { display: none; }
+            .slider-card {
+                min-width: 85%;
+                background: white;
+                border-radius: 16px;
+                padding: 1.5rem;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                scroll-snap-align: center;
+                flex-shrink: 0;
+            }
+            .slider-dots {
+                display: flex !important;
+                justify-content: center;
+                gap: 8px;
+                margin-top: 1rem;
+                margin-bottom: 2rem;
+            }
+            .dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: #cbd5e1;
+                transition: all 0.3s;
+            }
+            .dot.active {
+                background: var(--primary);
+                width: 20px;
+                border-radius: 4px;
+            }
+            .nav-btn {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                background: white;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                color: var(--secondary);
+                font-weight: bold;
+                transition: all 0.2s;
+                border: 1px solid #e2e8f0;
+            }
+            .nav-btn:active { transform: scale(0.9); background: #f8fafc; }
+            #coins-container { display: none !important; }
+            .progress-container { display: none; }
+        }
+
+        .slider-container, .slider-dots, .nav-btn { display: none; }
+
+        * { box-sizing: border-box; max-width: 100%; }
+        html, body { overflow-x: hidden !important; }
+</style>
+<!-- Wave Background -->
+<div class="bg-wave">
+<div class="wave">&nbsp;</div>
+
+<div class="wave">&nbsp;</div>
+
+<div class="wave">&nbsp;</div>
+</div>
+<!-- Coins Background -->
+
+<div class="fixed inset-0 pointer-events-none z-0" id="coins-container"><!-- Your 25 coin blocks go here (kept exactly as you provided) --><!-- Paste all the <div class="coin-animation-container"> ... </div> from your original code here --></div>
+<!-- Progress Bar -->
+
+<div class="progress-container">
+<div class="progress-bar" id="progress-bar" style="height: 55.3821%;">&nbsp;</div>
+</div>
+<!-- Gustora Fullscreen Button -->
+
+<div id="gustoraFullscreenBtn"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6" viewbox="0 0 24 24"> <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path> </svg></div>
+<!-- Header -->
+
+<header class="text-center py-4 fade-in visible">
+<div class="header-bg max-w-4xl mx-auto">
+<h2 class="text-2xl font-roboto mt-2 text-[var(--secondary)]"><strong><span>Compound Interest &amp; Investment Simulator</span></strong></h2>
+</div>
+</header>
+<!-- Notes Button -->
+
+<p><button id="notesBtn">📝</button><!-- Notes Panel --></p>
+
+<div id="notesPanel">
+<div class="p-4 border-b border-white/20 flex justify-between items-center"><span class="font-medium">My Notes</span><button class="text-xl" id="closeNotes">✕</button></div>
+<textarea class="w-full p-4 bg-slate-800 text-white h-40 resize-y outline-none" id="notesArea" placeholder="Write your notes here..."></textarea>
+
+<div class="p-4 flex gap-3"><button class="flex-1 bg-emerald-600 py-3 rounded-xl text-white" id="downloadNotes">Download</button><button class="flex-1 bg-red-600 py-3 rounded-xl text-white" id="clearNotes">Clear</button></div>
+</div>
+
+<main class="max-w-6xl mx-auto px-4 space-y-6 relative z-10"><!-- Your Mission -->
+<section class="topic fade-in">
+<h3 class="text-3xl font-semibold mb-6 text-[var(--primary)]">Your Mission</h3>
+
+<div class="capstone-card">
+<p class="text-lg mb-4"><strong>You have ₹10,000</strong> to invest!</p>
+
+<p class="text-lg mb-4">Use the simulator below to:</p>
+
+<ul class="list-disc pl-6 space-y-2 text-lg">
+	<li>Allocate money across 5 investment types</li>
+	<li>Set investment period (months or years)</li>
+	<li>Choose compounding frequency (1, 4, or 12)</li>
+	<li>See future value using <strong>compound interest</strong></li>
+</ul>
+</div>
+
+<div class="flex justify-center">
+<div class="image-container-large"><img alt="Investment Growth" class="capstone-image-large" src="https://images.unsplash.com/photo-1579621970588-a35d0e7ab9b6?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=800&amp;q=80" /></div>
+</div>
+</section>
+
+<section class="bg-white p-4 rounded-lg shadow-lg fade-in">
+<h3 class="text-3xl font-poppins mb-6 text-[var(--primary)] hover-scale">Investment Simulator</h3>
+
+<div class="capstone-card">
+<p class="mb-4"><strong>Initial Amount: ₹10,000</strong></p>
+
+<p class="mb-4">Enter amounts, total &le; ₹10,000. Choose compounding frequency!</p>
+</div>
+
+<div class="desktop-table overflow-x-auto">
+<table class="investment-table" id="investmentTable">
+	<thead>
+		<tr>
+			<th>Investment Type</th>
+			<th>Amount Invested (₹)</th>
+			<th>Annual Return (%)</th>
+			<th>Rate in decimals</th>
+			<th>Period (Months)</th>
+			<th>Period (Years)</th>
+			<th>n (per year)</th>
+			<th>Compound interest after total years</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr data-type="stocks">
+			<td><strong>Stocks</strong></td>
+			<td><input max="10000" min="0" oninput="calculateAll()" type="number" value="0" /></td>
+			<td class="rate-pct">12</td>
+			<td class="rate-dec">0.12</td>
+			<td><input min="0" oninput="updateYears(this)" type="number" value="12" /></td>
+			<td><input min="0" oninput="updateMonths(this)" step="0.01" type="number" value="1" /></td>
+			<td><select onchange="calculateAll()"><option value="1">1 (Yearly)</option><option value="4">4 (Quarterly)</option><option selected="selected" value="12">12 (Monthly)</option></select></td>
+			<td class="result">₹0.00</td>
+		</tr>
+		<tr data-type="mutual">
+			<td><strong>Mutual Funds</strong></td>
+			<td><input max="10000" min="0" oninput="calculateAll()" type="number" value="0" /></td>
+			<td class="rate-pct">10</td>
+			<td class="rate-dec">0.10</td>
+			<td><input min="0" oninput="updateYears(this)" type="number" value="12" /></td>
+			<td><input min="0" oninput="updateMonths(this)" step="0.01" type="number" value="1" /></td>
+			<td><select onchange="calculateAll()"><option value="1">1</option><option value="4">4</option><option selected="selected" value="12">12</option></select></td>
+			<td class="result">₹0.00</td>
+		</tr>
+		<tr data-type="fd">
+			<td><strong>Fixed Deposit</strong></td>
+			<td><input max="10000" min="0" oninput="calculateAll()" type="number" value="0" /></td>
+			<td class="rate-pct">6</td>
+			<td class="rate-dec">0.06</td>
+			<td><input min="0" oninput="updateYears(this)" type="number" value="12" /></td>
+			<td><input min="0" oninput="updateMonths(this)" step="0.01" type="number" value="1" /></td>
+			<td><select onchange="calculateAll()"><option value="1">1</option><option selected="selected" value="4">4</option><option value="12">12</option></select></td>
+			<td class="result">₹0.00</td>
+		</tr>
+		<tr data-type="gold">
+			<td><strong>Gold</strong></td>
+			<td><input max="10000" min="0" oninput="calculateAll()" type="number" value="0" /></td>
+			<td class="rate-pct">7</td>
+			<td class="rate-dec">0.07</td>
+			<td><input min="0" oninput="updateYears(this)" type="number" value="12" /></td>
+			<td><input min="0" oninput="updateMonths(this)" step="0.01" type="number" value="1" /></td>
+			<td><select onchange="calculateAll()"><option selected="selected" value="1">1</option><option value="4">4</option><option value="12">12</option></select></td>
+			<td class="result">₹0.00</td>
+		</tr>
+		<tr data-type="savings">
+			<td><strong>Savings</strong></td>
+			<td><input max="10000" min="0" oninput="calculateAll()" type="number" value="0" /></td>
+			<td class="rate-pct">3</td>
+			<td class="rate-dec">0.03</td>
+			<td><input min="0" oninput="updateYears(this)" type="number" value="12" /></td>
+			<td><input min="0" oninput="updateMonths(this)" step="0.01" type="number" value="1" /></td>
+			<td><select onchange="calculateAll()"><option value="1">1</option><option value="4">4</option><option selected="selected" value="12">12</option></select></td>
+			<td class="result">₹0.00</td>
+		</tr>
+	</tbody>
+</table>
+</div>
+
+<!-- Mobile Slider View -->
+<div class="slider-container" id="mobileSlider">
+    <!-- Cards will be generated here for better maintenance or can be hardcoded -->
+    <div class="slider-card" data-index="0">
+        <h4 class="text-xl font-bold mb-3 text-[var(--secondary)]">Stocks</h4>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm text-gray-600 mb-1">Amount Invested (₹)</label>
+                <input type="number" class="w-full p-3 border rounded-xl" value="0" oninput="syncInputs(0, 'amount', this.value)">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">Months</label>
+                    <input type="number" class="w-full p-3 border rounded-xl" value="12" oninput="syncInputs(0, 'months', this.value)">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">Years</label>
+                    <input type="number" class="w-full p-3 border rounded-xl" step="0.01" value="1" oninput="syncInputs(0, 'years', this.value)">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm text-gray-600 mb-1">Compounding (n)</label>
+                <select class="w-full p-3 border rounded-xl bg-white" onchange="syncInputs(0, 'n', this.value)">
+                    <option value="1">1 (Yearly)</option>
+                    <option value="4">4 (Quarterly)</option>
+                    <option selected value="12">12 (Monthly)</option>
+                </select>
+            </div>
+            <div class="pt-3 border-t flex justify-between items-center">
+                <span class="text-sm font-medium text-gray-500">Future Value:</span>
+                <div class="text-xl font-bold text-[var(--profit)] mobile-result">₹0.00</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slider-card" data-index="1">
+        <h4 class="text-xl font-bold mb-3 text-[var(--secondary)]">Mutual Funds</h4>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm text-gray-600 mb-1">Amount Invested (₹)</label>
+                <input type="number" class="w-full p-3 border rounded-xl" value="0" oninput="syncInputs(1, 'amount', this.value)">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">Months</label>
+                    <input type="number" class="w-full p-3 border rounded-xl" value="12" oninput="syncInputs(1, 'months', this.value)">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">Years</label>
+                    <input type="number" class="w-full p-3 border rounded-xl" step="0.01" value="1" oninput="syncInputs(1, 'years', this.value)">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm text-gray-600 mb-1">Compounding (n)</label>
+                <select class="w-full p-3 border rounded-xl bg-white" onchange="syncInputs(1, 'n', this.value)">
+                    <option value="1">1</option>
+                    <option value="4">4</option>
+                    <option selected value="12">12</option>
+                </select>
+            </div>
+            <div class="pt-3 border-t flex justify-between items-center">
+                <span class="text-sm font-medium text-gray-500">Future Value:</span>
+                <div class="text-xl font-bold text-[var(--profit)] mobile-result">₹0.00</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slider-card" data-index="2">
+        <h4 class="text-xl font-bold mb-3 text-[var(--secondary)]">Fixed Deposit</h4>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm text-gray-600 mb-1">Amount Invested (₹)</label>
+                <input type="number" class="w-full p-3 border rounded-xl" value="0" oninput="syncInputs(2, 'amount', this.value)">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">Months</label>
+                    <input type="number" class="w-full p-3 border rounded-xl" value="12" oninput="syncInputs(2, 'months', this.value)">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">Years</label>
+                    <input type="number" class="w-full p-3 border rounded-xl" step="0.01" value="1" oninput="syncInputs(2, 'years', this.value)">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm text-gray-600 mb-1">Compounding (n)</label>
+                <select class="w-full p-3 border rounded-xl bg-white" onchange="syncInputs(2, 'n', this.value)">
+                    <option value="1">1</option>
+                    <option selected value="4">4</option>
+                    <option value="12">12</option>
+                </select>
+            </div>
+            <div class="pt-3 border-t flex justify-between items-center">
+                <span class="text-sm font-medium text-gray-500">Future Value:</span>
+                <div class="text-xl font-bold text-[var(--profit)] mobile-result">₹0.00</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slider-card" data-index="3">
+        <h4 class="text-xl font-bold mb-3 text-[var(--secondary)]">Gold</h4>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm text-gray-600 mb-1">Amount Invested (₹)</label>
+                <input type="number" class="w-full p-3 border rounded-xl" value="0" oninput="syncInputs(3, 'amount', this.value)">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">Months</label>
+                    <input type="number" class="w-full p-3 border rounded-xl" value="12" oninput="syncInputs(3, 'months', this.value)">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">Years</label>
+                    <input type="number" class="w-full p-3 border rounded-xl" step="0.01" value="1" oninput="syncInputs(3, 'years', this.value)">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm text-gray-600 mb-1">Compounding (n)</label>
+                <select class="w-full p-3 border rounded-xl bg-white" onchange="syncInputs(3, 'n', this.value)">
+                    <option selected value="1">1</option>
+                    <option value="4">4</option>
+                    <option value="12">12</option>
+                </select>
+            </div>
+            <div class="pt-3 border-t flex justify-between items-center">
+                <span class="text-sm font-medium text-gray-500">Future Value:</span>
+                <div class="text-xl font-bold text-[var(--profit)] mobile-result">₹0.00</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slider-card" data-index="4">
+        <h4 class="text-xl font-bold mb-3 text-[var(--secondary)]">Savings</h4>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm text-gray-600 mb-1">Amount Invested (₹)</label>
+                <input type="number" class="w-full p-3 border rounded-xl" value="0" oninput="syncInputs(4, 'amount', this.value)">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">Months</label>
+                    <input type="number" class="w-full p-3 border rounded-xl" value="12" oninput="syncInputs(4, 'months', this.value)">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">Years</label>
+                    <input type="number" class="w-full p-3 border rounded-xl" step="0.01" value="1" oninput="syncInputs(4, 'years', this.value)">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm text-gray-600 mb-1">Compounding (n)</label>
+                <select class="w-full p-3 border rounded-xl bg-white" onchange="syncInputs(4, 'n', this.value)">
+                    <option value="1">1</option>
+                    <option value="4">4</option>
+                    <option selected value="12">12</option>
+                </select>
+            </div>
+            <div class="pt-3 border-t flex justify-between items-center">
+                <span class="text-sm font-medium text-gray-500">Future Value:</span>
+                <div class="text-xl font-bold text-[var(--profit)] mobile-result">₹0.00</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="flex justify-center items-center gap-4 px-4 mt-2 md:hidden">
+    <button onclick="prevCard()" class="nav-btn" aria-label="Previous">◀</button>
+    <div class="slider-dots !mt-0 !mb-0" id="sliderDots">
+        <div class="dot active" onclick="scrollToCard(0)"></div>
+        <div class="dot" onclick="scrollToCard(1)"></div>
+        <div class="dot" onclick="scrollToCard(2)"></div>
+        <div class="dot" onclick="scrollToCard(3)"></div>
+        <div class="dot" onclick="scrollToCard(4)"></div>
+    </div>
+    <button onclick="nextCard()" class="nav-btn" aria-label="Next">▶</button>
+</div>
+
+<div class="mt-6 flex flex-wrap gap-3 justify-center items-center"><button class="btn" onclick="calculateAll()">Calculate Returns</button><button class="btn btn-reset" onclick="resetAll()">Reset</button><button class="btn btn-toggle" onclick="toggleConfetti()">Confetti: ON</button><button class="btn" onclick="downloadCSV()">Download CSV</button></div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+<div class="summary-card">
+<p class="text-sm">Total Invested</p>
+
+<p class="text-2xl font-bold" id="totalInvested">₹0.00</p>
+</div>
+
+<div class="summary-card">
+<p class="text-sm">Total Return</p>
+
+<p class="text-2xl font-bold text-[var(--profit)]" id="totalReturn">₹0.00</p>
+</div>
+
+<div class="summary-card">
+<p class="text-sm">Net Profit</p>
+
+<p class="total-return" id="netProfit" style="color: var(--loss);">₹0.00</p>
+</div>
+</div>
+
+<div class="chart-container" id="chartWrapper"><canvas id="returnChart" style="display: none;"></canvas>
+
+<p class="text-center text-[var(--secondary)] hidden" id="noDataMsg" style="display: block;">Enter investments to see the chart!</p>
+</div>
+
+<div class="formula-box">Future Value = P &times; (1 + r/n)^(n&times;t) | P = Principal, r = rate, t = years, n = compounding frequency</div>
+</section>
+
+<section class="bg-white p-4 rounded-lg shadow-lg fade-in">
+<h3 class="text-3xl font-poppins mb-6 text-[var(--primary)] hover-scale">Think &amp; Reflect</h3>
+
+<div class="capstone-card">
+<p class="mb-3"><strong>1. Which investment grew the most?</strong></p>
+
+<p class="mb-3"><strong>2. Why do higher returns come with more risk?</strong></p>
+
+<p class="mb-3"><strong>3. How would your money grow in 10 years?</strong></p>
+
+<p class="font-bold text-[var(--profit)]">The magic of compounding: Small investments + time = BIG wealth!</p>
+</div>
+</section>
+</main>
+
+<footer>
+<h4 class="text-xl font-poppins mb-2">Budget Boss</h4>
+
+<p class="text-sm">SkilliZee.io</p>
+</footer>
+<script>
+    // === Gustora Fullscreen Button ===
+    document.getElementById('gustoraFullscreenBtn').addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen?.() ||
+            document.documentElement.webkitRequestFullscreen?.() ||
+            document.documentElement.msRequestFullscreen?.();
+        } else {
+            document.exitFullscreen?.() ||
+            document.webkitExitFullscreen?.() ||
+            document.msExitFullscreen?.();
+        }
+    });
+
+    // === Notes Panel (Consistent with Overview) ===
+    document.addEventListener("DOMContentLoaded", () => {
+        const btn = document.getElementById("notesBtn");
+        const panel = document.getElementById("notesPanel");
+        const close = document.getElementById("closeNotes");
+        const area = document.getElementById("notesArea");
+        const clearBtn = document.getElementById("clearNotes");
+        const downloadBtn = document.getElementById("downloadNotes");
+        const STORAGE_KEY = "chapter_compound_notes";
+
+        if (!btn || !panel || !area) return;
+
+        area.value = localStorage.getItem(STORAGE_KEY) || "";
+
+        btn.onclick = () => {
+            panel.style.display = (panel.style.display === "flex") ? "none" : "flex";
+        };
+        close.onclick = () => panel.style.display = "none";
+
+        area.addEventListener("input", () => {
+            localStorage.setItem(STORAGE_KEY, area.value);
+        });
+
+        clearBtn.onclick = () => {
+            if (confirm("Clear all notes?")) {
+                area.value = "";
+                localStorage.removeItem(STORAGE_KEY);
+            }
+        };
+
+        downloadBtn.onclick = () => {
+            const blob = new Blob([area.value], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "compound-interest-notes.txt";
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+    });
+
+    // === Progress Bar ===
+    window.addEventListener("scroll", () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        const progressBar = document.getElementById("progress-bar");
+        if (progressBar) progressBar.style.height = `${scrollPercent}%`;
+    });
+
+    // === Fade-in Observer ===
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // === Main Simulator Logic ===
+    let chart = null;
+    let confettiEnabled = true;
+
+    function compoundInterest(P, r, n, t) {
+        if (P <= 0 || t <= 0) return P;
+        return P * Math.pow(1 + r / n, n * t);
+    }
+
+    function updateYears(input) {
+        const months = Math.max(0, parseFloat(input.value) || 0);
+        input.value = months;
+        const yearsInput = input.parentElement.nextElementSibling.querySelector('input');
+        if (yearsInput) yearsInput.value = (months / 12).toFixed(2);
+        
+        // Sync to mobile if needed
+        const row = input.closest('tr');
+        if (row) {
+            const index = Array.from(row.parentNode.children).indexOf(row);
+            syncMobileView(index);
+        }
+        calculateAll();
+    }
+
+    function updateMonths(input) {
+        const years = Math.max(0, parseFloat(input.value) || 0);
+        input.value = years;
+        const monthsInput = input.parentElement.previousElementSibling.querySelector('input');
+        if (monthsInput) monthsInput.value = Math.round(years * 12);
+
+        // Sync to mobile if needed
+        const row = input.closest('tr');
+        if (row) {
+            const index = Array.from(row.parentNode.children).indexOf(row);
+            syncMobileView(index);
+        }
+        calculateAll();
+    }
+
+    function syncInputs(index, field, value) {
+        const tableRows = document.querySelectorAll('#investmentTable tbody tr');
+        const row = tableRows[index];
+        if (!row) return;
+
+        if (field === 'amount') {
+            row.cells[1].querySelector('input').value = value;
+        } else if (field === 'months') {
+            row.cells[4].querySelector('input').value = value;
+            const yearsVal = (parseFloat(value) / 12).toFixed(2);
+            row.cells[5].querySelector('input').value = yearsVal;
+        } else if (field === 'years') {
+            row.cells[5].querySelector('input').value = value;
+            row.cells[4].querySelector('input').value = Math.round(parseFloat(value) * 12);
+        } else if (field === 'n') {
+            row.cells[6].querySelector('select').value = value;
+        }
+
+        syncMobileView(index);
+        calculateAll();
+    }
+
+    function syncMobileView(index) {
+        const tableRows = document.querySelectorAll('#investmentTable tbody tr');
+        const row = tableRows[index];
+        const card = document.querySelector(`.slider-card[data-index="${index}"]`);
+        if (!row || !card) return;
+
+        const amountInput = card.querySelector('input[oninput*="amount"]');
+        const monthsInput = card.querySelector('input[oninput*="months"]');
+        const yearsInput = card.querySelector('input[oninput*="years"]');
+        const nSelect = card.querySelector('select');
+
+        if (amountInput) amountInput.value = row.cells[1].querySelector('input').value;
+        if (monthsInput) monthsInput.value = row.cells[4].querySelector('input').value;
+        if (yearsInput) yearsInput.value = row.cells[5].querySelector('input').value;
+        if (nSelect) nSelect.value = row.cells[6].querySelector('select').value;
+    }
+
+    function calculateAll() {
+        let totalInvested = 0;
+        let totalFuture = 0;
+        let labels = [];
+        let data = [];
+
+        document.querySelectorAll('#investmentTable tbody tr').forEach(row => {
+            const amountInput = row.cells[1].querySelector('input');
+            const ratePct = parseFloat(row.cells[2].textContent) || 0;
+            const rateDec = ratePct / 100;
+            const monthsInput = row.cells[4].querySelector('input');
+            const yearsInput = row.cells[5].querySelector('input');
+            const nSelect = row.cells[6].querySelector('select');
+            const fvCell = row.cells[7];
+
+            let P = Math.max(0, parseFloat(amountInput.value) || 0);
+            amountInput.value = P;
+            totalInvested += P;
+
+            const t = Math.max(0, parseFloat(yearsInput.value) || 0);
+            const n = parseFloat(nSelect.value) || 12;
+
+            const FV = compoundInterest(P, rateDec, n, t);
+            totalFuture += FV;
+
+            fvCell.textContent = `₹${FV.toFixed(2)}`;
+
+            if (P > 0) {
+                const typeName = row.cells[0].textContent.trim();
+                labels.push(typeName);
+                data.push(FV);
+            }
+        });
+
+        // Update Mobile Results
+        const mobileResults = document.querySelectorAll('.mobile-result');
+        document.querySelectorAll('#investmentTable tbody tr').forEach((row, i) => {
+            if (mobileResults[i]) mobileResults[i].textContent = row.cells[7].textContent;
+        });
+
+        // Cap at ₹10,000
+        if (totalInvested > 10000) {
+            alert("Total invested cannot exceed ₹10,000!");
+            return;
+        }
+
+        const netProfit = totalFuture - totalInvested;
+
+        document.getElementById('totalInvested').textContent = `₹${totalInvested.toFixed(2)}`;
+        document.getElementById('totalReturn').textContent = `₹${totalFuture.toFixed(2)}`;
+        document.getElementById('netProfit').textContent = `₹${netProfit.toFixed(2)}`;
+        document.getElementById('netProfit').style.color = netProfit >= 0 ? 'var(--profit)' : 'var(--loss)';
+
+        // Update Chart
+        updateChart(labels, data);
+
+        // Confetti on good profit
+        if (confettiEnabled && netProfit > 1000) {
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
+    }
+
+    function updateChart(labels, data) {
+        const ctx = document.getElementById('returnChart');
+        const noDataMsg = document.getElementById('noDataMsg');
+
+        if (!labels.length || data.length === 0) {
+            if (chart) chart.destroy();
+            ctx.style.display = 'none';
+            noDataMsg.style.display = 'block';
+            return;
+        }
+
+        noDataMsg.style.display = 'none';
+        ctx.style.display = 'block';
+
+        if (chart) chart.destroy();
+
+        chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Future Value (₹)',
+                    data: data,
+                    backgroundColor: ['#f59e0b', '#10b981', '#3b82f6', '#f97316', '#8b5cf6'],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
+
+    function resetAll() {
+        document.querySelectorAll('#investmentTable input[type="number"]').forEach(input => {
+            if (input.parentElement.cellIndex === 1) input.value = 0;
+            else if (input.parentElement.cellIndex === 4) input.value = 12;
+            else if (input.parentElement.cellIndex === 5) input.value = 1;
+        });
+        // Sync mobile cards
+        for (let i = 0; i < 5; i++) syncMobileView(i);
+        calculateAll();
+    }
+
+    function toggleConfetti() {
+        confettiEnabled = !confettiEnabled;
+        const toggleBtn = document.querySelector('.btn-toggle');
+        if (toggleBtn) toggleBtn.textContent = `Confetti: ${confettiEnabled ? 'ON' : 'OFF'}`;
+    }
+
+    function downloadCSV() {
+        const name = prompt("Enter your name:", "Student") || "Student";
+        let csvContent = `Investment Report - ${name}\n\n`;
+        csvContent += "Investment Type,Amount Invested (₹),Annual Return (%),Period (Years),Future Value (₹)\n";
+
+        document.querySelectorAll('#investmentTable tbody tr').forEach(row => {
+            const type = row.cells[0].textContent.trim();
+            const amount = row.cells[1].querySelector('input').value;
+            const rate = row.cells[2].textContent;
+            const years = row.cells[5].querySelector('input').value;
+            const fv = row.cells[7].textContent.replace('₹', '').trim();
+            if (parseFloat(amount) > 0) {
+                csvContent += `${type},${amount},${rate},${years},${fv}\n`;
+            }
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${name}_Investment_Simulator.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // Auto clear default values on focus (mobile friendly)
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            const defaultVal = input.value;
+            input.addEventListener('focus', function() {
+                if (this.value === defaultVal || this.value === '0') this.value = '';
+            });
+            input.addEventListener('blur', function() {
+                if (this.value === '') this.value = defaultVal;
+            });
+        });
+
+        // Initial calculation
+        calculateAll();
+
+        // Slider Dots Logic
+        const slider = document.getElementById('mobileSlider');
+        const dots = document.querySelectorAll('.dot');
+        if (slider) {
+            slider.addEventListener('scroll', () => {
+                const scrollLeft = slider.scrollLeft;
+                const cardWidth = slider.querySelector('.slider-card').offsetWidth + 16; 
+                const index = Math.round(scrollLeft / cardWidth);
+                dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+            });
+        }
+    });
+
+    function scrollToCard(index) {
+        const slider = document.getElementById('mobileSlider');
+        if (!slider) return;
+        const cardWidth = slider.querySelector('.slider-card').offsetWidth + 16;
+        slider.scrollTo({
+            left: index * cardWidth,
+            behavior: 'smooth'
+        });
+    }
+
+    function nextCard() {
+        const slider = document.getElementById('mobileSlider');
+        const dots = document.querySelectorAll('.dot');
+        let currentIndex = 0;
+        dots.forEach((dot, i) => { if (dot.classList.contains('active')) currentIndex = i; });
+        if (currentIndex < dots.length - 1) scrollToCard(currentIndex + 1);
+        else scrollToCard(0); // Loop back
+    }
+
+    function prevCard() {
+        const slider = document.getElementById('mobileSlider');
+        const dots = document.querySelectorAll('.dot');
+        let currentIndex = 0;
+        dots.forEach((dot, i) => { if (dot.classList.contains('active')) currentIndex = i; });
+        if (currentIndex > 0) scrollToCard(currentIndex - 1);
+        else scrollToCard(dots.length - 1); // Loop to end
+    }
+
+    // Scroll confetti trigger
+    let fired = false;
+    window.addEventListener('scroll', () => {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && !fired && confettiEnabled) {
+            confetti({ particleCount: 80, spread: 70 });
+            fired = true;
+        }
+    });
+</script>

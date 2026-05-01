@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Water Quest • Chapter 1 Quiz – Tabulating Data</title>
+
+  <style>
+    :root {
+      --primary: #0ea5e9;
+      --primary-dark: #0284c7;
+      --light: #e0f2fe;
+      --success: #10b981;
+      --danger: #ef4444;
+      --gray: #64748b;
+      --dark: #1e293b;
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      color: var(--dark);
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--primary-dark);
+      font-size: 2.4rem;
+      margin-bottom: 0.4em;
+    }
+
+    .quiz-box {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      min-height: 300px;
+      position: relative;
+    }
+
+    .question-number {
+      font-size: 1.1rem;
+      color: var(--gray);
+      margin-bottom: 1rem;
+    }
+
+    .question h3 {
+      font-size: 1.3rem;
+      margin: 0 0 1.2rem;
+      color: #334155;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 14px 18px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    input[type="radio"] {
+      accent-color: var(--primary);
+      width: 18px;
+      height: 18px;
+    }
+
+    label:hover {
+      background: #f1f5f9;
+      border-color: var(--primary-light);
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+      gap: 1rem;
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1.05rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex: 1;
+    }
+
+    button:hover:not(:disabled) {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    button:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    #resetBtn {
+      background: #6b7280;
+      flex: none;
+      width: auto;
+      padding: 12px 28px;
+    }
+    #resetBtn:hover {
+      background: #4b5563;
+    }
+
+    #fullscreen-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 9999;
+      width: 48px;
+      height: 48px;
+      background: rgba(14,165,233,0.9);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    #fullscreen-btn:hover {
+      background: #0284c7;
+      transform: scale(1.1);
+    }
+
+    #fullscreen-btn img {
+      width: 28px;
+      height: 28px;
+      transition: opacity 0.3s;
+    }
+
+    #fullscreen-btn .exit {
+      opacity: 0;
+      position: absolute;
+    }
+
+    body.fullscreen #fullscreen-btn .enter {
+      opacity: 0;
+    }
+
+    body.fullscreen #fullscreen-btn .exit {
+      opacity: 1;
+    }
+
+    #result {
+      text-align: center;
+      font-size: 1.4rem;
+      margin: 2rem 0;
+      padding: 2rem;
+      border-radius: 16px;
+      background: white;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    .score {
+      font-size: 3.5rem;
+      font-weight: bold;
+      margin: 1rem 0;
+    }
+
+    .correct { color: var(--success); }
+    .wrong   { color: var(--danger); }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <h1>Chapter 1 Quiz: Tabulating Data</h1>
+    <p style="color:#475569; margin-top:0.5rem;">Test your understanding of organizing water measurements!</p>
+  </header>
+
+  <!-- Fullscreen Button – Top Right Corner -->
+  <button aria-label="Toggle Fullscreen" id="fullscreen-btn">
+    <img class="enter" src="https://img.icons8.com/ios-filled/50/ffffff/full-screen.png" alt="Enter Fullscreen" />
+    <img class="exit" src="https://img.icons8.com/ios-filled/50/ffffff/exit-full-screen.png" alt="Exit Fullscreen" />
+  </button>
+
+  <div class="quiz-box" id="quiz">
+    <div id="questionContent"></div>
+
+    <div class="nav-buttons">
+      <button id="prevBtn" disabled>← Previous</button>
+      <button id="nextBtn">Next →</button>
+    </div>
+  </div>
+
+  <div id="result" style="display:none;"></div>
+
+  <div style="text-align:center; margin-top:2rem;">
+    <button id="resetBtn">Reset Quiz</button>
+  </div>
+
+</div>
+
+<script>
+// ────────────────────────────────────────────────
+// Quiz Data (10 questions)
+// ────────────────────────────────────────────────
+const questions = [
+  {
+    question: "What is the main purpose of tabulating data in a water audit?",
+    options: [
+      "To make numbers look beautiful",
+      "To organize measurements so patterns and totals become clear",
+      "To delete old data",
+      "To impress your friends"
+    ],
+    correct: 1 // index of correct answer
+  },
+  {
+    question: "Which unit is most commonly used to show tap flow rate?",
+    options: ["mL", "L/min", "m³", "kg"],
+    correct: 1
+  },
+  {
+    question: "What columns should every row in your master table have?",
+    options: [
+      "Only total daily use",
+      "Activity, volume per use, frequency, daily total",
+      "Date and weather only",
+      "Pictures of buckets"
+    ],
+    correct: 1
+  },
+  {
+    question: "If you use 18 L to wash clothes 3 times a week, what is your weekly total?",
+    options: ["18 L", "54 L", "126 L", "Not enough info"],
+    correct: 1
+  },
+  {
+    question: "How do you calculate per-person daily water use?",
+    options: [
+      "Total use × number of people",
+      "Total daily use ÷ number of people",
+      "Ignore family size",
+      "Ask your neighbor"
+    ],
+    correct: 1
+  },
+  {
+    question: "Which chart best shows the percentage each activity uses?",
+    options: ["Line chart", "Pie chart", "Bar chart only", "Table"],
+    correct: 1
+  },
+  {
+    question: "Your family uses 420 L/day with 6 people. Per-person use is:",
+    options: ["70 L", "60 L", "84 L", "252 L"],
+    correct: 0
+  },
+  {
+    question: "Why do we calculate totals and averages in tabulation?",
+    options: [
+      "To waste time",
+      "To spot patterns and compare with standards",
+      "To make the table longer",
+      "To confuse ourselves"
+    ],
+    correct: 1
+  },
+  {
+    question: "If one activity uses 55% of your total water, what should you do?",
+    options: [
+      "Ignore it",
+      "Investigate and try to reduce it",
+      "Blame someone",
+      "Use more water"
+    ],
+    correct: 1
+  },
+  {
+    question: "The biggest benefit of good tabulation is:",
+    options: [
+      "A colorful table",
+      "Clear understanding of water use patterns and where to save",
+      "More homework",
+      "Nothing useful"
+    ],
+    correct: 1
+  }
+];
+
+// Shuffle array function
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// ────────────────────────────────────────────────
+// Shuffle questions + randomize correct answer position
+// ────────────────────────────────────────────────
+let shuffledQuestions = [...questions];
+shuffleArray(shuffledQuestions);
+
+// For each question, shuffle options and adjust correct index
+shuffledQuestions = shuffledQuestions.map(q => {
+  const correctText = q.options[q.correct];
+  let options = [...q.options];
+  shuffleArray(options);
+  const newCorrectIndex = options.indexOf(correctText);
+  return {
+    question: q.question,
+    options,
+    correct: newCorrectIndex
+  };
+});
+
+let currentQuestion = 0;
+let answers = new Array(shuffledQuestions.length).fill(null);
+
+// ────────────────────────────────────────────────
+// Render current question
+// ────────────────────────────────────────────────
+function renderQuestion() {
+  const q = shuffledQuestions[currentQuestion];
+  const content = document.getElementById("questionContent");
+
+  content.innerHTML = `
+    <div class="question-number">Question ${currentQuestion + 1} of ${shuffledQuestions.length}</div>
+    <h3>${q.question}</h3>
+    <div class="options">
+      ${q.options.map((opt, i) => `
+        <label>
+          <input type="radio" name="q${currentQuestion}" value="${i}" ${answers[currentQuestion] === i ? 'checked' : ''}>
+          ${opt}
+        </label>
+      `).join("")}
+    </div>
+  `;
+
+  document.getElementById("prevBtn").disabled = currentQuestion === 0;
+  document.getElementById("nextBtn").textContent = currentQuestion === shuffledQuestions.length - 1 ? "Submit Quiz" : "Next →";
+}
+
+// ────────────────────────────────────────────────
+// Save answer when radio changes
+// ────────────────────────────────────────────────
+document.addEventListener("change", (e) => {
+  if (e.target.name.startsWith("q")) {
+    const qIndex = parseInt(e.target.name.replace("q", ""));
+    answers[qIndex] = parseInt(e.target.value);
+  }
+});
+
+// ────────────────────────────────────────────────
+// Navigation
+// ────────────────────────────────────────────────
+document.getElementById("prevBtn").addEventListener("click", () => {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    renderQuestion();
+  }
+});
+
+document.getElementById("nextBtn").addEventListener("click", () => {
+  if (currentQuestion < shuffledQuestions.length - 1) {
+    currentQuestion++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+});
+
+// ────────────────────────────────────────────────
+// Show final results
+// ────────────────────────────────────────────────
+function showResults() {
+  let score = 0;
+  let feedback = "";
+
+  shuffledQuestions.forEach((q, i) => {
+    const userAns = answers[i];
+    if (userAns === q.correct) {
+      score++;
+      feedback += `<p class="correct">Q${i+1}: Correct!</p>`;
+    } else {
+      feedback += `<p class="wrong">Q${i+1}: Incorrect.</p>`;
+    }
+  });
+
+  document.getElementById("quiz").style.display = "none";
+  document.getElementById("result").style.display = "block";
+  document.getElementById("result").innerHTML = `
+    <h2>Your Final Score</h2>
+    <div class="score">${score} / ${shuffledQuestions.length}</div>
+    <p>${score === shuffledQuestions.length ? "Perfect! You're a Tabulation Master!" : 
+       score >= 8 ? "Excellent work!" : 
+       score >= 5 ? "Good effort!" : 
+       "Keep practicing!"}</p>
+    <div style="margin-top:1.5rem; text-align:left;">${feedback}</div>
+    <button id="restartBtn">Restart Quiz</button>
+  `;
+
+  document.getElementById("restartBtn").addEventListener("click", () => {
+    currentQuestion = 0;
+    answers.fill(null);
+    shuffledQuestions = [...questions];
+    shuffleArray(shuffledQuestions);
+    shuffledQuestions = shuffledQuestions.map(q => {
+      const correctText = q.options[q.correct];
+      let options = [...q.options];
+      shuffleArray(options);
+      const newCorrectIndex = options.indexOf(correctText);
+      return { question: q.question, options, correct: newCorrectIndex };
+    });
+    document.getElementById("quiz").style.display = "block";
+    document.getElementById("result").style.display = "none";
+    renderQuestion();
+  });
+}
+
+// ────────────────────────────────────────────────
+// Fullscreen toggle
+// ────────────────────────────────────────────────
+const fullscreenBtn = document.getElementById("fullscreen-btn");
+fullscreenBtn.addEventListener("click", () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(err => console.log(err));
+  } else {
+    document.exitFullscreen().catch(err => console.log(err));
+  }
+});
+
+document.addEventListener("fullscreenchange", () => {
+  document.body.classList.toggle("fullscreen", !!document.fullscreenElement);
+});
+
+// ────────────────────────────────────────────────
+// Start quiz
+// ────────────────────────────────────────────────
+renderQuestion();
+  </script>
+
+</body>
+</html>
