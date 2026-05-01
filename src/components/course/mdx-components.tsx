@@ -50,7 +50,7 @@ function InlineLink({ href, ...props }: ComponentPropsWithoutRef<"a">) {
   return <a href={href} rel="noreferrer" target="_blank" {...props} />;
 }
 
-const PracticalActivity = ({ title, items }: { title: string; items: string[] }) => {
+const PracticalActivity = ({ title, items = [] }: { title: string; items?: string[] }) => {
   return (
     <div className="bg-emerald-50/50 backdrop-blur-md p-8 md:p-10 rounded-[2.5rem] border-2 border-emerald-100/50 my-16 shadow-xl shadow-emerald-900/5">
       <div className="flex items-center gap-4 mb-8">
@@ -63,7 +63,7 @@ const PracticalActivity = ({ title, items }: { title: string; items: string[] })
       </div>
       
       <div className="space-y-6">
-        {items.map((item, index) => (
+        {items?.map((item, index) => (
           <div key={index} className="group">
             <div className="flex items-start gap-4 mb-3">
               <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-black text-sm shrink-0 border border-emerald-200 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 transition-all duration-300">
