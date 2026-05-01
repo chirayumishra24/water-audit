@@ -34,9 +34,6 @@ export function ChapterContent({ chapter }: ChapterContentProps) {
       
       {/* Top right buttons (Motion, Expand) */}
       <div className="absolute -top-4 right-0 flex gap-3 z-50 hidden md:flex">
-        <button className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-full text-xs font-bold text-slate-800 shadow-sm hover:bg-white transition-colors border border-white">
-          Motion: Full
-        </button>
         <button 
           onClick={toggleFullscreen}
           className="bg-white/90 backdrop-blur-md p-2 rounded-full text-slate-800 shadow-sm hover:bg-white transition-colors border border-white"
