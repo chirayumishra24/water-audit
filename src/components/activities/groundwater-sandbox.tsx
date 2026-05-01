@@ -201,7 +201,7 @@ export function GroundwaterSandbox() {
       const rate = (intensity * (structures.length + 1) * 0.01) * delta;
       setSaturation(prev => Math.min(1, prev + rate));
     }
-  }, [isRaining, intensity, structures]);
+  });
 
   const toggleStructure = (id: string) => {
     setStructures(prev => prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]);
@@ -281,7 +281,7 @@ export function GroundwaterSandbox() {
                 isRaining ? 'bg-white text-slate-900' : 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
               }`}
             >
-              {isRaining ? <Pause size={24} /> : <Play size={24} />}
+              {isRaining ? <CloudRain size={24} /> : <Droplets size={24} />}
             </button>
             
             <div className="flex flex-col gap-2">
