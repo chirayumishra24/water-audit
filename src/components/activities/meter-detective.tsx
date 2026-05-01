@@ -42,8 +42,8 @@ function MeterDial({ value, index }: { value: number, index: number }) {
 
   return (
     <group position={[index * 0.8 - 1.2, 0, 0]} ref={dialRef}>
-      <mesh>
-        <cylinderGeometry args={[0.35, 0.35, 0.1, 32]} rotation={[Math.PI / 2, 0, 0]} />
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.35, 0.35, 0.1, 32]} />
         <meshStandardMaterial color="#f8fafc" roughness={0.3} metalness={0.2} />
       </mesh>
       

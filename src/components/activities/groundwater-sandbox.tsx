@@ -125,8 +125,8 @@ function TerrainSection({
           <Cylinder args={[0.3, 0.3, 4.5]} position={[0, -2.25, 0]}>
             <meshStandardMaterial color="#334155" metalness={0.9} roughness={0.1} transparent opacity={0.6} />
           </Cylinder>
-          <mesh position={[0, 0.1, 0]}>
-            <torusGeometry args={[0.4, 0.1, 16, 32]} rotation={[Math.PI / 2, 0, 0]} />
+          <mesh position={[0, 0.1, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <torusGeometry args={[0.4, 0.1, 16, 32]} />
             <meshStandardMaterial color="#0f172a" />
           </mesh>
           <Text label="BOREWELL" pos={[0, 0.5, 0]} />
