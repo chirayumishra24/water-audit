@@ -1,37 +1,31 @@
 ---
 title: "Understanding the Crisis"
-summary: "An introduction to the global and national water challenges."
+summary: "Explore India's water crisis through data—from groundwater depletion to contamination—and learn why data integrity is the foundation for solutions."
 moduleSlug: "foundations"
 order: 1
-readingTime: "5 min read"
+readingTime: "10 min read"
 objectives:
-  - "Understand the scale of the water crisis in India."
-  - "Learn the difference between primary and secondary data."
-practicalTitle: "Discussion"
+  - "Understand the scale of India's water crisis with key statistics."
+  - "Distinguish between primary and secondary data sources."
+  - "Explain what data integrity means and why it matters for water management."
+practicalTitle: "Data Sources"
 practicalItems:
-  - "Reflect on personal water usage."
+  - "Identify one primary and one secondary data source for your local area."
+  - "Evaluate the integrity of a given water statistic."
 keyTakeaways:
-  - "India has 4% of the world's freshwater for 18% of the global population."
-  - "Human actions drive the crisis."
-  - "Data integrity is critical for solutions."
-relatedSlugs: []
+  - "India holds only 4% of the world's freshwater for 18% of the global population."
+  - "Data—both primary and secondary—is our most strategic asset for solving the crisis."
+  - "Data integrity requires correctness, authenticity, reliability, and consistency."
+relatedSlugs:
+  - "defining-a-water-audit"
+  - "the-power-of-data"
 ---
 
-### Overview
+<div className="my-8">
+  <YoutubeEmbed url="https://youtu.be/TVBh9BuKP98" title="Children in India Climb 40 Foot Well During Water Shortage | National Geographic" />
+</div>
 
-<ExternalSimulation 
-  url="https://madebyevan.com/webgl-water/" 
-  title="The Fluidity of Water (Physics Interaction)"
-/>
-
-<p className="text-sm text-slate-500 mb-12 text-center italic max-w-2xl mx-auto">
-
-  Before we look at the numbers, take a moment to interact with the resource we are auditing. Click and drag to create ripples, move the sphere, and observe the refraction of light. 
-</p>
-
-<YoutubeEmbed url="https://youtu.be/TVBh9BuKP98" title="Children in India Climb 40 Foot Well During Water Shortage | National Geographic" />
-
-<img src="https://login.skillizee.io/s/articles/69ef3fcfcf1df8147748719e/images/image-20260427162242-1.png" width="1280" height="720" alt="Video thumbnail" className="rounded-lg shadow-md my-4" />
+<img src="https://login.skillizee.io/s/articles/69f4365e41e01b23b9092850/images/image-20260501104831-69.png" width="1280" height="720" alt="India Water Crisis" className="rounded-2xl my-6 mx-auto shadow-md" />
 
 <Conversation>
 
@@ -41,11 +35,17 @@ Class, the video we just watched highlights India's "Big Challenge." We hold onl
 
 <Message speaker="Aisha">
 It's heartbreaking to see children risking their lives for a single bucket of water. How bad is the crisis?
-
-<YoutubeEmbed url="https://youtu.be/G3Vzm5M0c90" title="India Water Crisis: 21 cities to exhaust groundwater supply by 2020" />
-
-<img src="https://login.skillizee.io/s/articles/69ef3fcfcf1df8147748719e/images/image-20260427162242-2.png" width="930" height="930" alt="Water crisis map" className="rounded-lg shadow-md my-4" />
 </Message>
+
+</Conversation>
+
+<div className="my-8">
+  <YoutubeEmbed url="https://youtu.be/G3Vzm5M0c90" title="India Water Crisis: 21 cities to exhaust groundwater supply by 2020" />
+</div>
+
+<img src="https://login.skillizee.io/s/articles/69f4365e41e01b23b9092850/images/image-20260501104831-70.png" width="930" height="930" alt="India Water Crisis Statistics" className="rounded-2xl my-6 mx-auto shadow-md" />
+
+<Conversation>
 
 <Message speaker="Mr. Sharma">
 Severe. Nearly 600 million Indians face extreme water stress. By 2050, our per capita water availability will shrink to barely livable levels. Worse, 75% of our households lack access to safe drinking water, leading to 200,000 deaths annually.
@@ -53,11 +53,17 @@ Severe. Nearly 600 million Indians face extreme water stress. By 2050, our per c
 
 <Message speaker="Rohan">
 And we're pumping out groundwater faster than it can refill, right?
-
-<YoutubeEmbed url="https://youtu.be/50aMqyIfiIk" title="Explained: India's Deepening Groundwater Crisis | IndiaSpend" />
-
-<img src="https://login.skillizee.io/s/articles/69ef3fcfcf1df8147748719e/images/image-20260427162242-3.png" width="600" height="449" alt="Groundwater crisis" className="rounded-lg shadow-md my-4" />
 </Message>
+
+</Conversation>
+
+<div className="my-8">
+  <YoutubeEmbed url="https://youtu.be/50aMqyIfiIk" title="Explained: India's Deepening Groundwater Crisis | IndiaSpend" />
+</div>
+
+<img src="https://login.skillizee.io/s/articles/69f4365e41e01b23b9092850/images/image-20260501104831-71.png" width="600" height="449" alt="Groundwater Crisis" className="rounded-2xl my-6 mx-auto shadow-md" />
+
+<Conversation>
 
 <Message speaker="Mr. Sharma">
 Exactly. We are the world's largest user of groundwater, yet 70% of it is contaminated. Out of 122 countries, India ranks 120th in water quality.
@@ -85,9 +91,14 @@ Where does this data come from?
 
 <Message speaker="Mr. Sharma">
 Two main sources:
-*   **Primary Data:** First-hand collection, like surveying village wells or running field tests.
-*   **Secondary Data:** Existing reliable sources, like government reports.
 </Message>
+
+</Conversation>
+
+- **Primary Data:** First-hand collection, like surveying village wells or running field tests.
+- **Secondary Data:** Existing reliable sources, like government reports.
+
+<Conversation>
 
 <Message speaker="Kavya">
 How do we know the numbers are actually trustworthy?
@@ -98,10 +109,3 @@ That requires Data Integrity. To be useful, data must be correct, authentic, rel
 </Message>
 
 </Conversation>
-
-### Interactive Activity: Explorer the Crisis
-Use this 3D map to explore the groundwater depletion hotspots across India and understand the scale of the challenge we face.
-
-### Practice: Interactive Activity
-
-<WaterMapExplorer />

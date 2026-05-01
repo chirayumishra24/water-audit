@@ -45,30 +45,30 @@ export type ChapterPageData = ChapterMeta & {
 export const courseModuleDefinitions: CourseModuleDefinition[] = [
   {
     slug: "foundations",
-    title: "Foundations of Water Auditing",
+    title: "Introduction to Water Challenges and Data Collection",
     summary:
-      "Establish what a water audit is, why it matters, and how to define the operating boundaries before any data collection starts.",
+      "Understand India's water crisis, define what a water audit is, and learn the foundations of data integrity for evidence-based solutions.",
     order: 1,
   },
   {
     slug: "measurement",
-    title: "Measurement and Loss Detection",
+    title: "Practical Water Measurement and Fieldwork",
     summary:
-      "Translate facility data into a usable water balance, then connect field observations to measurable losses and inefficiencies.",
+      "Master volume measurement, flow rate calculation, household data collection, and community interaction to build a complete water picture.",
     order: 2,
   },
   {
     slug: "reporting-action",
-    title: "Reporting and Action Planning",
+    title: "Strategies for Water Conservation and Maintenance",
     summary:
-      "Turn observations into prioritized recommendations, implementation pathways, and a practical plan for the site team.",
+      "Identify wastage, learn repair techniques, explore groundwater recharge and greywater reuse, and design a long-term water legacy.",
     order: 3,
   },
   {
     slug: "future-planning",
-    title: "Future Planning & Forecasting",
+    title: "Future Planning, Community Action & Career",
     summary:
-      "Use data modeling to predict future water requirements for growing communities and plan sustainable infrastructure.",
+      "Forecast future water needs, advocate for change through formal communication, and explore career paths in water management.",
     order: 4,
   },
 ];
