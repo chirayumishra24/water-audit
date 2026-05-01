@@ -71,4 +71,10 @@ export const courseModuleDefinitions: CourseModuleDefinition[] = [
       "Forecast future water needs, advocate for change through formal communication, and explore career paths in water management.",
     order: 4,
   },
+  {
+    slug: "capstone",
+    title: "Capstone Projects",
+    summary: "Apply your knowledge by completing a comprehensive digital project to solve real-world water challenges.",
+    order: 5,
+  },
 ];
