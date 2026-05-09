@@ -276,7 +276,7 @@ export function MonsoonSimulator() {
                   min="0.1" max="1" step="0.05" 
                   value={intensity}
                   onChange={(e) => setIntensity(parseFloat(e.target.value))}
-                  className="w-full h-2 bg-slate-200 rounded-full appearance-none cursor-pointer accent-blue-600"
+                  className="w-full h-2 bg-slate-200 rounded-full appearance-none cursor-pointer accent-blue-600 no-print"
                 />
               </div>
 
@@ -296,15 +296,15 @@ export function MonsoonSimulator() {
                   min="5" max="120" step="5" 
                   value={duration}
                   onChange={(e) => setDuration(parseInt(e.target.value))}
-                  className="w-full h-2 bg-slate-200 rounded-full appearance-none cursor-pointer accent-blue-600"
+                  className="w-full h-2 bg-slate-200 rounded-full appearance-none cursor-pointer accent-blue-600 no-print"
                 />
               </div>
             </div>
 
-            <div className="flex gap-4 mt-10">
+            <div className="flex gap-4 mt-10 no-print">
               <button 
                 onClick={() => setIsSimulating(!isSimulating)}
-                className={`flex-1 flex items-center justify-center gap-3 py-6 rounded-[2rem] font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 ${
+                className={`flex-1 flex items-center justify-center gap-3 py-6 rounded-[2rem] font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 cursor-pointer ${
                   isSimulating 
                     ? 'bg-rose-500 text-white hover:bg-rose-600 shadow-rose-200' 
                     : 'bg-slate-900 text-white hover:bg-blue-600 shadow-slate-200'
@@ -315,7 +315,7 @@ export function MonsoonSimulator() {
               
               <button 
                 onClick={reset}
-                className="w-20 bg-white border border-slate-200 text-slate-400 rounded-[2rem] flex items-center justify-center hover:bg-rose-50 hover:text-rose-500 hover:border-rose-100 transition-all shadow-sm active:scale-95"
+                className="w-20 bg-white border border-slate-200 text-slate-400 rounded-[2rem] flex items-center justify-center hover:bg-rose-50 hover:text-rose-500 hover:border-rose-100 transition-all shadow-sm active:scale-95 cursor-pointer"
               >
                 <RotateCcw className="w-6 h-6" />
               </button>
@@ -382,7 +382,8 @@ export function MonsoonSimulator() {
           </div>
 
           <button 
-            className="w-full flex items-center justify-center gap-3 py-6 rounded-[2rem] bg-slate-900 text-white font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl hover:bg-blue-600 shadow-slate-200 active:scale-95"
+            onClick={() => window.print()}
+            className="w-full flex items-center justify-center gap-3 py-6 rounded-[2rem] bg-slate-900 text-white font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl hover:bg-blue-600 shadow-slate-200 active:scale-95 no-print cursor-pointer"
           >
             Export Climate Report
             <ArrowRight className="w-4 h-4" />

@@ -278,7 +278,7 @@ export function BucketLab() {
             <div className="flex gap-4 mb-6">
               <button 
                 onClick={() => setIsRunning(!isRunning)}
-                className={`flex-1 flex items-center justify-center gap-3 py-6 rounded-[2rem] font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 ${
+                className={`flex-1 flex items-center justify-center gap-3 py-6 rounded-[2rem] font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 no-print cursor-pointer ${
                   isRunning 
                     ? 'bg-rose-500 text-white hover:bg-rose-600 shadow-rose-200' 
                     : 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-200'
@@ -289,7 +289,7 @@ export function BucketLab() {
               
               <button 
                 onClick={handleReset}
-                className="w-20 bg-white border border-slate-200 text-slate-400 rounded-[2rem] flex items-center justify-center hover:bg-rose-50 hover:text-rose-500 hover:border-rose-100 transition-all shadow-sm active:scale-95"
+                className="w-20 bg-white border border-slate-200 text-slate-400 rounded-[2rem] flex items-center justify-center hover:bg-rose-50 hover:text-rose-500 hover:border-rose-100 transition-all shadow-sm active:scale-95 no-print cursor-pointer"
               >
                 <RotateCcw className="w-6 h-6" />
               </button>
@@ -298,7 +298,7 @@ export function BucketLab() {
             <button 
               onClick={handleCapture}
               disabled={!isRunning && level === 0}
-              className="w-full py-4 bg-white border border-slate-200 text-slate-900 font-black text-[10px] uppercase tracking-widest rounded-2xl flex items-center justify-center gap-3 hover:bg-slate-900 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              className="w-full py-4 bg-white border border-slate-200 text-slate-900 font-black text-[10px] uppercase tracking-widest rounded-2xl flex items-center justify-center gap-3 hover:bg-slate-900 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed no-print cursor-pointer"
             >
               <ClipboardList className="w-4 h-4" />
               Capture Data Point
@@ -365,9 +365,9 @@ export function BucketLab() {
           </div>
 
           <button 
-            onClick={() => router.push('/2-2')}
+            onClick={() => window.print()}
             disabled={history.length === 0}
-            className={`w-full flex items-center justify-center gap-3 py-6 rounded-[2rem] font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl ${
+            className={`w-full flex items-center justify-center gap-3 py-6 rounded-[2rem] font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl no-print cursor-pointer ${
               history.length > 0 
                 ? 'bg-slate-900 text-white hover:bg-blue-600 shadow-slate-200 active:scale-95' 
                 : 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none'
