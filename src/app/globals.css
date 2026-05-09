@@ -210,3 +210,35 @@ select {
     margin-top: 2.1rem;
   }
 }
+@media print {
+  .no-print, nav, footer, aside, button, .breadcrumbs {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .mx-auto {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .bg-sky-50, .bg-white {
+    background: white !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: none !important;
+  }
+
+  .text-sky-900 {
+    color: black !important;
+  }
+
+  /* Force background colors to print if needed */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

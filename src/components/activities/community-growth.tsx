@@ -207,15 +207,15 @@ export function CommunityGrowth() {
                 </div>
                 <Users className="w-6 h-6 text-slate-200 mb-1" />
               </div>
-              <input 
-                type="range" 
-                min="50" 
-                max="1000" 
-                step="50"
-                value={population}
-                onChange={(e) => setPopulation(Number(e.target.value))}
-                className="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer accent-blue-600"
-              />
+                <input 
+                  type="range" 
+                  min="50" 
+                  max="1000" 
+                  step="50"
+                  value={population}
+                  onChange={(e) => setPopulation(Number(e.target.value))}
+                  className="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer accent-blue-600 no-print"
+                />
             </div>
 
             <div className="space-y-4">
@@ -274,7 +274,7 @@ export function CommunityGrowth() {
         </div>
 
         <div className="mt-auto space-y-6">
-          <div className="flex items-start gap-4 p-6 bg-slate-50 rounded-3xl border border-slate-100">
+          <div className="flex items-start gap-4 p-6 bg-slate-50 rounded-3xl border border-slate-100 no-print">
             <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shrink-0 shadow-sm">
               <Info className="w-5 h-5 text-blue-600" />
             </div>
@@ -283,11 +283,14 @@ export function CommunityGrowth() {
             </p>
           </div>
 
-          <div className="flex gap-4">
-            <button onClick={reset} className="flex-1 py-5 bg-white border border-slate-200 rounded-2xl text-slate-400 font-black text-[10px] uppercase tracking-widest hover:text-blue-600 transition-all flex items-center justify-center gap-2">
+          <div className="flex gap-4 no-print">
+            <button onClick={reset} className="flex-1 py-5 bg-white border border-slate-200 rounded-2xl text-slate-400 font-black text-[10px] uppercase tracking-widest hover:text-blue-600 transition-all flex items-center justify-center gap-2 cursor-pointer">
               <RotateCcw className="w-4 h-4" /> Reset
             </button>
-            <button className="flex-[2] py-5 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl flex items-center justify-center gap-3">
+            <button 
+              onClick={() => window.print()}
+              className="flex-[2] py-5 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl flex items-center justify-center gap-3 cursor-pointer"
+            >
               Generate Report <ArrowRight className="w-4 h-4" />
             </button>
           </div>

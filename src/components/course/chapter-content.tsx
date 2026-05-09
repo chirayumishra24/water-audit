@@ -67,9 +67,9 @@ export function ChapterContent({ chapter }: ChapterContentProps) {
               </h1>
               
               {/* Summary Text (Fixed Legibility) */}
-              <p className="text-base md:text-lg text-slate-800 font-semibold leading-relaxed bg-white/60 p-3.5 md:p-4 rounded-xl border border-white/50">
+              <div className="text-base md:text-lg text-slate-800 font-semibold leading-relaxed bg-white/60 p-3.5 md:p-4 rounded-xl border border-white/50">
                 {chapter.summary}
-              </p>
+              </div>
             </div>
 
           </div>
