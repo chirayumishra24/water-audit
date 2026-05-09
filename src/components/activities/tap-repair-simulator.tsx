@@ -43,10 +43,19 @@ function TapModel({
 }: { 
   step: number, 
   activeTool: string | null,
+  xRay: boolean,
+  isLeaking: boolean,
   onPartClick: (part: string) => void 
 }) {
   const [hovered, setHovered] = useState<string | null>(null);
   useCursor(!!hovered);
+
+  const geyserParticles = useMemo(() => {
+    return Array.from({ length: 50 }).map((_, i) => ({
+      position: [0, 0, 0] as [number, number, number],
+      velocity: [(Math.random() - 0.5) * 0.1, Math.random() * 0.5, (Math.random() - 0.5) * 0.1] as [number, number, number]
+    }));
+  }, []);
 
   return (
     <group position={[0, -0.5, 0]}>
@@ -59,13 +68,27 @@ function TapModel({
       {/* Tap Body - Fixed Base */}
       <mesh castShadow position={[0, 0.4, 0]}>
         <cylinderGeometry args={[0.15, 0.2, 0.8, 32]} />
-        <meshStandardMaterial color="#e2e8f0" metalness={0.8} roughness={0.2} />
+        <meshStandardMaterial 
+          color={xRay ? "#38bdf8" : "#e2e8f0"} 
+          metalness={0.8} 
+          roughness={0.2} 
+          transparent={xRay}
+          opacity={xRay ? 0.3 : 1}
+        />
+        {xRay && <Edges color="#0ea5e9" />}
       </mesh>
       
       {/* Tap Spout */}
       <mesh castShadow position={[0.3, 0.7, 0]} rotation={[0, 0, -Math.PI / 2]}>
         <cylinderGeometry args={[0.1, 0.1, 0.6, 32]} />
-        <meshStandardMaterial color="#e2e8f0" metalness={0.8} roughness={0.2} />
+        <meshStandardMaterial 
+          color={xRay ? "#38bdf8" : "#e2e8f0"} 
+          metalness={0.8} 
+          roughness={0.2} 
+          transparent={xRay}
+          opacity={xRay ? 0.3 : 1}
+        />
+        {xRay && <Edges color="#0ea5e9" />}
       </mesh>
 
       {/* Internal: Spindle (Brass) - Visible when handle removed */}
@@ -151,8 +174,27 @@ function TapModel({
         </group>
       )}
 
-      {/* Water Drip Effect */}
-      {step === 0 && (
+      {/* Water Drip / Geyser Effect */}
+      {(step === 0 || isLeaking) && (
+        <group position={[0, 0.9, 0]}>
+          <Sparkles 
+            count={isLeaking ? 200 : 20} 
+            scale={isLeaking ? [0.5, 4, 0.5] : [0.1, 0.5, 0.1]} 
+            color="#60a5fa" 
+            size={isLeaking ? 10 : 3} 
+            speed={isLeaking ? 4 : 1} 
+          />
+          {isLeaking && (
+            <Html center position={[0, 3, 0]}>
+              <div className="bg-rose-600 text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl animate-bounce flex items-center gap-3">
+                <AlertCircle size={18} /> Safety Breach: Water Pressure Active!
+              </div>
+            </Html>
+          )}
+        </group>
+      )}
+
+      {step === 0 && !isLeaking && (
         <group position={[0.55, 0.5, 0]}>
           <Float speed={5} rotationIntensity={0} floatIntensity={1}>
             <mesh>
@@ -172,6 +214,8 @@ export function TapRepairSimulator() {
   const [step, setStep] = useState(0);
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [status, setStatus] = useState("Water Pressure: ON");
+  const [xRay, setXRay] = useState(false);
+  const [isLeaking, setIsLeaking] = useState(false);
   
   const steps = [
     { 
@@ -202,6 +246,13 @@ export function TapRepairSimulator() {
   ];
 
   const handlePartClick = (part: string) => {
+    // Failure State: Interacting with internals while water is ON
+    if (status.includes("ON") && step > 0) {
+      setIsLeaking(true);
+      setTimeout(() => setIsLeaking(false), 3000);
+      return;
+    }
+
     if (step === 1 && part === "handle" && activeTool === "screwdriver") {
       setStep(2);
       setActiveTool(null);
@@ -254,11 +305,30 @@ export function TapRepairSimulator() {
               cellColor="#e2e8f0"
             />
             
-            <TapModel step={step} activeTool={activeTool} onPartClick={handlePartClick} />
+            <TapModel 
+              step={step} 
+              activeTool={activeTool} 
+              xRay={xRay}
+              isLeaking={isLeaking}
+              onPartClick={handlePartClick} 
+            />
             <Environment preset="city" />
             <ContactShadows position={[0, -0.01, 0]} opacity={0.4} scale={20} blur={2.5} far={10} color="#000000" />
           </Suspense>
         </Canvas>
+
+        {/* X-Ray Toggle */}
+        <div className="absolute top-10 right-10">
+          <button 
+            onClick={() => setXRay(!xRay)}
+            className={`flex items-center gap-3 px-5 py-3 rounded-2xl border-2 transition-all font-black text-[10px] uppercase tracking-widest ${
+              xRay ? 'bg-blue-600 border-blue-400 text-white shadow-xl' : 'bg-white/80 backdrop-blur-md border-white/20 text-slate-600'
+            }`}
+          >
+            <Activity size={14} className={xRay ? "animate-pulse" : ""} />
+            X-Ray View {xRay ? 'ON' : 'OFF'}
+          </button>
+        </div>
 
         {/* HUD Elements */}
         <div className="absolute top-10 left-10 pointer-events-none">

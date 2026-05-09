@@ -47,15 +47,32 @@ function TerrainSection({
   structures: string[], 
   rainIntensity: number, 
   isRaining: boolean,
-  saturation: number 
+  saturation: number,
+  soilType: string,
+  isRunoff: boolean 
 }) {
   const rainRef = useRef<THREE.Group>(null);
+  const runoffRef = useRef<THREE.Group>(null);
+
+  const soilColor = useMemo(() => {
+    switch (soilType) {
+      case 'Sand': return '#d97706';
+      case 'Clay': return '#451a03';
+      default: return '#78350f';
+    }
+  }, [soilType]);
   
   useFrame((state, delta) => {
     if (isRaining && rainRef.current) {
       rainRef.current.children.forEach((child: any) => {
         child.position.y -= delta * 8 * rainIntensity;
         if (child.position.y < 0) child.position.y = 8;
+      });
+    }
+    if (isRunoff && runoffRef.current) {
+      runoffRef.current.children.forEach((child: any) => {
+        child.position.x += delta * 5;
+        if (child.position.x > 5) child.position.x = -5;
       });
     }
   });
@@ -70,7 +87,7 @@ function TerrainSection({
       {/* Earth Layers (Cross Section) */}
       <mesh position={[0, 2, 0]} receiveShadow>
         <boxGeometry args={[10, 4, 6]} />
-        <meshStandardMaterial color="#78350f" roughness={0.9} />
+        <meshStandardMaterial color={soilColor} roughness={0.9} />
         <Edges color="#451a03" />
       </mesh>
 
@@ -162,9 +179,26 @@ function TerrainSection({
           scale={[10, 4, 6]} 
           position={[0, 2, 0]} 
           color="#60a5fa" 
-          size={2} 
-          speed={0.5} 
+          size={soilType === 'Clay' ? 1 : soilType === 'Sand' ? 4 : 2} 
+          speed={soilType === 'Clay' ? 0.1 : soilType === 'Sand' ? 1 : 0.5} 
         />
+      )}
+
+      {/* Runoff Particles */}
+      {isRunoff && (
+        <group ref={runoffRef} position={[0, 4.2, 0]}>
+          {[...Array(50)].map((_, i) => (
+            <mesh key={i} position={[(Math.random() - 0.5) * 10, 0, (Math.random() - 0.5) * 6]}>
+              <sphereGeometry args={[0.05, 8, 8]} />
+              <meshBasicMaterial color="#3b82f6" transparent opacity={0.6} />
+            </mesh>
+          ))}
+          <Html center position={[0, 1, 0]}>
+            <div className="bg-rose-600 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-2xl animate-pulse">
+              Severe Surface Runoff
+            </div>
+          </Html>
+        </group>
       )}
     </group>
   );
@@ -182,15 +216,24 @@ function Text({ label, pos }: { label: string, pos: [number, number, number] }) 
 
 // --- Frame-loop updater (must be inside Canvas) ---
 
-function SaturationUpdater({ isRaining, intensity, structureCount, onUpdate }: {
+function SaturationUpdater({ isRaining, intensity, structureCount, soilType, onUpdate }: {
   isRaining: boolean;
   intensity: number;
   structureCount: number;
+  soilType: string;
   onUpdate: React.Dispatch<React.SetStateAction<number>>;
 }) {
+  const permeability = useMemo(() => {
+    switch (soilType) {
+      case 'Sand': return 2.5;
+      case 'Clay': return 0.2;
+      default: return 1.0;
+    }
+  }, [soilType]);
+
   useFrame((_, delta) => {
     if (isRaining) {
-      const rate = (intensity * (structureCount + 1) * 0.01) * delta;
+      const rate = (intensity * (structureCount + 1) * 0.01 * permeability) * delta;
       onUpdate(prev => Math.min(1, prev + rate));
     }
   });
@@ -212,6 +255,9 @@ export function GroundwaterSandbox() {
   const [isRaining, setIsRaining] = useState(false);
   const [intensity, setIntensity] = useState(1);
   const [saturation, setSaturation] = useState(0.2);
+  const [soilType, setSoilType] = useState('Loam');
+
+  const isRunoff = isRaining && intensity > 2 && structures.length < 2;
 
   const toggleStructure = (id: string) => {
     setStructures(prev => prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]);
@@ -222,6 +268,7 @@ export function GroundwaterSandbox() {
     setIsRaining(false);
     setIntensity(1);
     setSaturation(0.2);
+    setSoilType('Loam');
   };
 
   const isComplete = saturation >= 0.95;
@@ -250,6 +297,7 @@ export function GroundwaterSandbox() {
                 isRaining={isRaining} 
                 intensity={intensity} 
                 structureCount={structures.length} 
+                soilType={soilType}
                 onUpdate={setSaturation} 
               />
               <TerrainSection 
@@ -257,6 +305,8 @@ export function GroundwaterSandbox() {
                 isRaining={isRaining} 
                 rainIntensity={intensity} 
                 saturation={saturation}
+                soilType={soilType}
+                isRunoff={isRunoff}
               />
               <Environment preset="park" />
               <ContactShadows position={[0, -2, 0]} opacity={0.4} scale={25} blur={2.5} far={10} color="#000000" />
@@ -288,6 +338,23 @@ export function GroundwaterSandbox() {
                 <span className="text-[10px] font-black text-white uppercase tracking-widest">Recharge in Progress</span>
               </div>
             )}
+
+            {/* Soil Type Selector */}
+            <div className="absolute top-8 right-8">
+              <div className="bg-slate-900/80 backdrop-blur-xl p-2 rounded-2xl border border-white/10 flex flex-col gap-1">
+                {['Sand', 'Loam', 'Clay'].map(type => (
+                  <button
+                    key={type}
+                    onClick={() => setSoilType(type)}
+                    className={`px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all ${
+                      soilType === type ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6 bg-black/40 backdrop-blur-xl p-5 rounded-[2rem] border border-white/10">

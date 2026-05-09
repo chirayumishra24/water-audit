@@ -31,6 +31,27 @@ import {
   MousePointer2
 } from 'lucide-react';
 
+function MarkerModel({ position, type }: { position: [number, number, number], type: string }) {
+  const color = type === 'meter' ? '#3b82f6' : type === 'borewell' ? '#10b981' : '#f59e0b';
+  return (
+    <group position={position}>
+      <mesh position={[0, 0.5, 0]}>
+        <cylinderGeometry args={[0.05, 0.05, 1, 32]} />
+        <meshStandardMaterial color={color} />
+      </mesh>
+      <mesh position={[0, 1, 0]}>
+        <sphereGeometry args={[0.2, 16, 16]} />
+        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.5} />
+      </mesh>
+      <Html position={[0, 1.4, 0]} center>
+        <div className={`px-2 py-1 rounded text-[8px] font-black text-white uppercase tracking-widest bg-slate-900 border border-white/20`}>
+          {type}
+        </div>
+      </Html>
+    </group>
+  );
+}
+
 function LowPolyBuilding({ position, scale = [1, 1, 1], color = "#cbd5e1" }: { position: [number, number, number], scale?: [number, number, number], color?: string }) {
   return (
     <group position={position}>
@@ -110,6 +131,8 @@ export function BoundarySandbox() {
   const [currentPoint, setCurrentPoint] = useState<THREE.Vector3 | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
+  const [activeTool, setActiveTool] = useState<'boundary' | 'meter' | 'borewell' | 'tank'>('boundary');
+  const [markers, setMarkers] = useState<{ position: [number, number, number], type: string }[]>([]);
 
   const toGroundPoint = (point: THREE.Vector3) => new THREE.Vector3(point.x, 0, point.z);
 
@@ -117,9 +140,14 @@ export function BoundarySandbox() {
     if (confirmed) return;
     e.stopPropagation();
     const point = toGroundPoint(e.point);
-    setStartPoint(point);
-    setCurrentPoint(point);
-    setIsDrawing(true);
+
+    if (activeTool === 'boundary') {
+      setStartPoint(point);
+      setCurrentPoint(point);
+      setIsDrawing(true);
+    } else {
+      setMarkers(prev => [...prev, { position: [point.x, 0, point.z], type: activeTool }]);
+    }
   };
 
   const onPointerMove = (e: ThreeEvent<PointerEvent>) => {
@@ -142,6 +170,8 @@ export function BoundarySandbox() {
     setConfirmed(false);
     setStartPoint(null);
     setCurrentPoint(null);
+    setMarkers([]);
+    setActiveTool('boundary');
   };
 
   return (
@@ -178,6 +208,9 @@ export function BoundarySandbox() {
               onPointerUp={onPointerUp}
             />
             <SelectionBox start={startPoint} end={currentPoint} />
+            {markers.map((m, i) => (
+              <MarkerModel key={i} position={m.position} type={m.type} />
+            ))}
             <Environment preset="city" />
             <ContactShadows position={[0, -0.01, 0]} opacity={0.4} scale={25} blur={2.5} far={10} color="#000000" />
           </Suspense>
@@ -236,17 +269,35 @@ export function BoundarySandbox() {
             </div>
             
             <div className="space-y-6">
-              <div className="flex gap-4">
-                <div className="w-8 h-8 bg-white rounded-xl border border-slate-200 flex items-center justify-center shrink-0 font-black text-xs text-slate-900">1</div>
-                <p className="text-xs font-bold text-slate-600 leading-relaxed">
-                  Analyze the terrain to identify all shared water entry points (Municipal vs. Ground).
-                </p>
-              </div>
-              <div className="flex gap-4">
-                <div className="w-8 h-8 bg-white rounded-xl border border-slate-200 flex items-center justify-center shrink-0 font-black text-xs text-slate-900">2</div>
-                <p className="text-xs font-bold text-slate-600 leading-relaxed">
-                  Drag your cursor across the site to define the physical boundary for audit reconciliation.
-                </p>
+              <div className="grid grid-cols-2 gap-3">
+                <button 
+                  onClick={() => setActiveTool('boundary')}
+                  className={`p-4 rounded-2xl border flex flex-col items-center gap-2 transition-all ${activeTool === 'boundary' ? 'bg-blue-600 border-blue-600 text-white shadow-lg' : 'bg-white border-slate-100 text-slate-400 hover:border-blue-200'}`}
+                >
+                  <BoxSelect size={16} />
+                  <span className="text-[8px] font-black uppercase">Boundary</span>
+                </button>
+                <button 
+                  onClick={() => setActiveTool('meter')}
+                  className={`p-4 rounded-2xl border flex flex-col items-center gap-2 transition-all ${activeTool === 'meter' ? 'bg-blue-600 border-blue-600 text-white shadow-lg' : 'bg-white border-slate-100 text-slate-400 hover:border-blue-200'}`}
+                >
+                  <Activity size={16} />
+                  <span className="text-[8px] font-black uppercase">Main Meter</span>
+                </button>
+                <button 
+                  onClick={() => setActiveTool('borewell')}
+                  className={`p-4 rounded-2xl border flex flex-col items-center gap-2 transition-all ${activeTool === 'borewell' ? 'bg-blue-600 border-blue-600 text-white shadow-lg' : 'bg-white border-slate-100 text-slate-400 hover:border-blue-200'}`}
+                >
+                  <Droplets size={16} />
+                  <span className="text-[8px] font-black uppercase">Borewell</span>
+                </button>
+                <button 
+                  onClick={() => setActiveTool('tank')}
+                  className={`p-4 rounded-2xl border flex flex-col items-center gap-2 transition-all ${activeTool === 'tank' ? 'bg-blue-600 border-blue-600 text-white shadow-lg' : 'bg-white border-slate-100 text-slate-400 hover:border-blue-200'}`}
+                >
+                  <Layout size={16} />
+                  <span className="text-[8px] font-black uppercase">Water Tank</span>
+                </button>
               </div>
             </div>
           </div>
@@ -266,11 +317,11 @@ export function BoundarySandbox() {
               </div>
               <div className="p-6 bg-white border border-slate-100 rounded-[2rem] flex items-center justify-between hover:border-blue-200 transition-colors">
                 <div className="flex items-center gap-3">
-                  <Target className="w-4 h-4 text-slate-300" />
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Precision</span>
+                  <Map className="w-4 h-4 text-slate-300" />
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Points</span>
                 </div>
-                <span className="text-base font-black text-blue-600 tracking-tighter">
-                  {confirmed ? "94.2%" : startPoint ? "82.5%" : "0.0%"}
+                <span className="text-base font-black text-slate-900 tracking-tighter">
+                  {markers.length} POIs
                 </span>
               </div>
             </div>

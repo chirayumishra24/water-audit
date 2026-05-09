@@ -53,8 +53,8 @@ function Pipe({ position, rotation, color, flow = 0, label }: { position: [numbe
         {label}
       </Text>
 
-      {/* Main Pipe */}
-      <mesh>
+      {/* Main Pipe - Thickness based on flow */}
+      <mesh scale={[0.5 + (flow * 1.5), 1, 0.5 + (flow * 1.5)]}>
         <cylinderGeometry args={[0.15, 0.15, 3, 32]} />
         <MeshTransmissionMaterial 
           thickness={0.2}
@@ -143,9 +143,11 @@ function AuditHub({ balance, status }: { balance: number, status: 'balanced' | '
 // --- Main Activity ---
 
 const CATEGORIES = [
-  { id: "inputs", label: "Total Inputs", icon: Droplets, color: "#3b82f6", unit: "KL/day" },
+  { id: "inputs", label: "Municipal Supply", icon: Droplets, color: "#3b82f6", unit: "KL/day" },
+  { id: "rainwater", label: "Rainwater Harvesting", icon: Target, color: "#0ea5e9", unit: "KL/day" },
+  { id: "recycling", label: "Recycled Water", icon: RotateCcw, color: "#10b981", unit: "KL/day" },
   { id: "process", label: "Process Use", icon: Layers, color: "#8b5cf6", unit: "KL/day" },
-  { id: "domestic", label: "Domestic Use", icon: CheckCircle2, color: "#10b981", unit: "KL/day" },
+  { id: "domestic", label: "Domestic Use", icon: CheckCircle2, color: "#ec4899", unit: "KL/day" },
   { id: "discharge", label: "Discharge", icon: Target, color: "#f59e0b", unit: "KL/day" },
 ];
 
@@ -153,14 +155,17 @@ export function WaterBalanceBuilder() {
   const router = useRouter();
   const [values, setValues] = useState<Record<string, number>>({
     inputs: 100,
+    rainwater: 0,
+    recycling: 0,
     process: 40,
     domestic: 20,
     discharge: 30,
   });
 
+  const totalIn = values.inputs + values.rainwater + values.recycling;
   const totalOut = values.process + values.domestic + values.discharge;
-  const gap = values.inputs - totalOut;
-  const gapPercent = (Math.abs(gap) / values.inputs) * 100;
+  const gap = totalIn - totalOut;
+  const gapPercent = (Math.abs(gap) / Math.max(1, totalIn)) * 100;
   
   const status = useMemo(() => {
     if (Math.abs(gapPercent) < 2) return 'balanced';
@@ -193,11 +198,20 @@ export function WaterBalanceBuilder() {
             
             {/* Input Pipe */}
             <Pipe 
-              position={[-3.5, 0, 0]} 
+              position={[-3.5, 0.5, 0.5]} 
               rotation={[0, 0, Math.PI / 2]} 
               color="#3b82f6" 
               flow={values.inputs / 100}
-              label="Inputs"
+              label="Municipal"
+            />
+
+            {/* Rainwater Pipe */}
+            <Pipe 
+              position={[-3.5, -0.5, -0.5]} 
+              rotation={[0.2, 0, Math.PI / 2]} 
+              color="#0ea5e9" 
+              flow={values.rainwater / 100}
+              label="Rainwater"
             />
             
             {/* Process Pipe */}
@@ -213,7 +227,7 @@ export function WaterBalanceBuilder() {
             <Pipe 
               position={[2.5, 0, 0]} 
               rotation={[0, 0, -Math.PI / 2]} 
-              color="#10b981" 
+              color="#ec4899" 
               flow={values.domestic / 100}
               label="Domestic"
             />
@@ -340,7 +354,7 @@ export function WaterBalanceBuilder() {
             </button>
 
             <button 
-              onClick={() => setValues({ inputs: 100, process: 40, domestic: 20, discharge: 30 })}
+              onClick={() => setValues({ inputs: 100, rainwater: 0, recycling: 0, process: 40, domestic: 20, discharge: 30 })}
               className="flex items-center justify-center gap-2 text-[10px] font-bold text-slate-500 hover:text-white transition-colors uppercase tracking-[0.2em]"
             >
               <RotateCcw size={12} /> Reset Simulation

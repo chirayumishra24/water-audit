@@ -18,68 +18,59 @@ import Link from 'next/link';
 import { MapPin, AlertTriangle, Droplets, Info, Globe, ArrowRight } from 'lucide-react';
 
 const WATER_CRISIS_DATA = [
-  { name: "Delhi", coords: [77.2090, 28.6139], status: "Critical", depletion: "95%", info: "Groundwater expected to run out soon." },
-  { name: "Chennai", coords: [80.2707, 13.0827], status: "Zero Day", depletion: "99%", info: "Reached 'Zero Day' in 2019." },
-  { name: "Bangalore", coords: [77.5946, 12.9716], status: "Critical", depletion: "88%", info: "Vast majority of borewells have gone dry." },
-  { name: "Hyderabad", coords: [78.4867, 17.3850], status: "High Stress", depletion: "75%", info: "Rapid urbanization straining resources." },
-  { name: "Mumbai", coords: [72.8777, 19.0760], status: "High Stress", depletion: "60%", info: "Saltwater intrusion into groundwater." },
-  { name: "Kolkata", coords: [88.3639, 22.5726], status: "High Stress", depletion: "65%", info: "Arsenic contamination in deep aquifers." }
+  { name: "Delhi", coords: [77.2090, 28.6139], baselineDepletion: 65, growthRate: 1.2, info: "Groundwater depletion is critical due to massive urban demand and over-extraction." },
+  { name: "Chennai", coords: [80.2707, 13.0827], baselineDepletion: 85, growthRate: 0.5, info: "Faced 'Zero Day' in 2019; now relies on desalination and seasonal monsoon recharge." },
+  { name: "Bangalore", coords: [77.5946, 12.9716], baselineDepletion: 55, growthRate: 1.5, info: "The 'Silicon Valley' is losing its lakes and borewells at an alarming rate." },
+  { name: "Hyderabad", coords: [78.4867, 17.3850], baselineDepletion: 45, growthRate: 1.1, info: "Hard rock aquifers and rapid construction are straining the city's water table." },
+  { name: "Mumbai", coords: [72.8777, 19.0760], baselineDepletion: 30, growthRate: 0.9, info: "Coastal city facing saltwater intrusion and aging infrastructure leaks." },
+  { name: "Kolkata", coords: [88.3639, 22.5726], baselineDepletion: 40, growthRate: 0.7, info: "Deep aquifers face arsenic contamination risks as water levels drop." }
 ];
 
-// Convert Lat/Lon to 3D Cartesian on Sphere
 function latLonToVector3(lon: number, lat: number, radius: number) {
   const phi = (90 - lat) * (Math.PI / 180);
   const theta = (lon + 180) * (Math.PI / 180);
-
-  const x = -(radius * Math.sin(phi) * Math.cos(theta));
-  const z = radius * Math.sin(phi) * Math.sin(theta);
-  const y = radius * Math.cos(phi);
-
-  return new THREE.Vector3(x, y, z);
+  return new THREE.Vector3(
+    -radius * Math.sin(phi) * Math.cos(theta),
+    radius * Math.cos(phi),
+    radius * Math.sin(phi) * Math.sin(theta)
+  );
 }
 
 function Earth({ radius }: { radius: number }) {
-  const [colorMap, normalMap] = useTexture([
-    'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg',
-    'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_normal_2048.jpg'
-  ]);
-
   return (
     <group>
-      <mesh receiveShadow castShadow>
-        <sphereGeometry args={[radius, 64, 64]} />
+      <Sphere args={[radius, 64, 64]}>
         <meshStandardMaterial 
-          map={colorMap}
-          normalMap={normalMap}
-          roughness={0.7} 
-          metalness={0.2}
+          color="#1e293b" 
+          metalness={0.1} 
+          roughness={0.8}
+          wireframe={false}
         />
-      </mesh>
-      
-      {/* Atmosphere Glow */}
-      <mesh scale={[1.02, 1.02, 1.02]}>
-        <sphereGeometry args={[radius, 64, 64]} />
+      </Sphere>
+      <Sphere args={[radius + 0.05, 64, 64]}>
         <meshStandardMaterial 
-          color="#60a5fa" 
+          color="#3b82f6" 
           transparent 
-          opacity={0.15} 
-          side={THREE.BackSide}
-          blending={THREE.AdditiveBlending}
+          opacity={0.1} 
+          wireframe
         />
-      </mesh>
+      </Sphere>
     </group>
   );
 }
 
-function Marker({ data, radius, onSelect }: { data: typeof WATER_CRISIS_DATA[0], radius: number, onSelect: (d: any) => void }) {
+function Marker({ data, radius, onSelect, year }: { data: any, radius: number, onSelect: (d: any) => void, year: number }) {
   const pos = useMemo(() => latLonToVector3(data.coords[0], data.coords[1], radius), [data, radius]);
   const [hovered, setHovered] = useState(false);
   const mesh = useRef<THREE.Mesh>(null!);
 
+  const currentDepletion = Math.min(100, data.baselineDepletion + (year - 2000) * data.growthRate);
+  const isZeroDay = currentDepletion > 95;
+
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
     if (mesh.current) {
-      mesh.current.scale.setScalar(1 + Math.sin(t * 5) * 0.1);
+      mesh.current.scale.setScalar(isZeroDay ? 1.5 + Math.sin(t * 8) * 0.2 : 1 + Math.sin(t * 5) * 0.1);
     }
   });
 
@@ -89,20 +80,24 @@ function Marker({ data, radius, onSelect }: { data: typeof WATER_CRISIS_DATA[0],
         ref={mesh}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
-        onClick={() => onSelect(data)}
+        onClick={() => onSelect({ ...data, currentDepletion, isZeroDay })}
       >
-        <sphereGeometry args={[0.08, 16, 16]} />
+        <sphereGeometry args={[isZeroDay ? 0.12 : 0.08, 16, 16]} />
         <meshStandardMaterial 
-          color={data.status === "Zero Day" ? "#ef4444" : "#f59e0b"} 
-          emissive={data.status === "Zero Day" ? "#ef4444" : "#f59e0b"}
-          emissiveIntensity={hovered ? 3 : 1}
+          color={isZeroDay ? "#ef4444" : currentDepletion > 75 ? "#f59e0b" : "#3b82f6"} 
+          emissive={isZeroDay ? "#ef4444" : currentDepletion > 75 ? "#f59e0b" : "#3b82f6"}
+          emissiveIntensity={hovered ? 4 : isZeroDay ? 2 : 1}
         />
       </mesh>
-      {hovered && (
+      {(hovered || isZeroDay) && (
         <Html distanceFactor={10} zIndexRange={[100, 0]}>
-          <div className="bg-slate-900/90 backdrop-blur-md px-3 py-2 rounded-xl shadow-2xl border border-white/20 whitespace-nowrap pointer-events-none">
+          <div className={`backdrop-blur-md px-3 py-2 rounded-xl shadow-2xl border border-white/20 whitespace-nowrap pointer-events-none transition-all ${
+            isZeroDay ? 'bg-red-500/20 scale-110' : 'bg-slate-900/90'
+          }`}>
             <p className="text-[10px] font-black uppercase tracking-tighter text-white">{data.name}</p>
-            <p className={`text-[8px] font-bold ${data.status === "Zero Day" ? 'text-red-400' : 'text-orange-400'}`}>{data.status}</p>
+            <p className={`text-[8px] font-bold ${isZeroDay ? 'text-red-400' : currentDepletion > 75 ? 'text-orange-400' : 'text-blue-400'}`}>
+              {isZeroDay ? 'ZERO DAY' : `${currentDepletion.toFixed(0)}% Depleted`}
+            </p>
           </div>
         </Html>
       )}
@@ -111,11 +106,12 @@ function Marker({ data, radius, onSelect }: { data: typeof WATER_CRISIS_DATA[0],
 }
 
 export function WaterMapExplorer() {
-  const [selected, setSelected] = useState<typeof WATER_CRISIS_DATA[0] | null>(null);
+  const [selected, setSelected] = useState<any | null>(null);
+  const [year, setYear] = useState(2024);
   const globeRadius = 3;
 
   return (
-    <div className="w-full h-[700px] bg-[#020617] rounded-[3rem] overflow-hidden relative border-8 border-slate-900 shadow-2xl">
+    <div className="w-full h-[750px] bg-[#020617] rounded-[3rem] overflow-hidden relative border-8 border-slate-900 shadow-2xl">
       <Canvas shadows>
         <PerspectiveCamera makeDefault position={[0, 0, 8]} />
         <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
@@ -134,117 +130,108 @@ export function WaterMapExplorer() {
           <React.Suspense fallback={null}>
             <group rotation={[0, -Math.PI / 2, 0]}>
               <Earth radius={globeRadius} />
-              
-              {/* Markers */}
               <group>
                 {WATER_CRISIS_DATA.map((city, idx) => (
-                  <Marker key={idx} data={city} radius={globeRadius} onSelect={setSelected} />
+                  <Marker key={idx} data={city} radius={globeRadius} onSelect={setSelected} year={year} />
                 ))}
               </group>
             </group>
           </React.Suspense>
         </PresentationControls>
-
-        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.3} />
+        <OrbitControls enableZoom={false} enablePan={false} autoRotate={!selected} autoRotateSpeed={0.3} />
       </Canvas>
 
-      {/* UI Overlay: Title & Description */}
-      <div className="absolute top-8 left-8 pointer-events-none">
-        <h2 className="text-3xl font-black text-white leading-tight mb-1 drop-shadow-2xl italic tracking-tighter">
-          INDIA'S <span className="text-blue-500 not-italic">WATER</span> CRISIS
+      {/* Year Slider Overlay */}
+      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 w-full max-w-xl px-12 z-20">
+        <div className="bg-black/40 backdrop-blur-2xl p-8 rounded-[2.5rem] border border-white/10 shadow-2xl">
+          <div className="flex justify-between items-center mb-6">
+            <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em]">Timeline Forecast</span>
+            <span className="text-4xl font-black text-white italic tracking-tighter tabular-nums">{year}</span>
+          </div>
+          <input 
+            type="range" 
+            min="2000" 
+            max="2050" 
+            step="1" 
+            value={year}
+            onChange={(e) => setYear(parseInt(e.target.value))}
+            className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer accent-blue-500 hover:accent-blue-400 transition-all"
+          />
+          <div className="flex justify-between mt-3 px-1">
+            <span className="text-[8px] font-bold text-slate-500">2000</span>
+            <span className="text-[8px] font-bold text-slate-500">2025</span>
+            <span className="text-[8px] font-bold text-slate-500">2050</span>
+          </div>
+        </div>
+      </div>
+
+      {/* UI Overlay: Title */}
+      <div className="absolute top-8 left-10 pointer-events-none">
+        <h2 className="text-4xl font-black text-white leading-tight mb-2 drop-shadow-2xl italic tracking-tighter">
+          CRISIS <span className="text-blue-500 not-italic">FORECAST</span> 2050
         </h2>
-        <p className="text-slate-500 text-[10px] max-w-[200px] font-bold uppercase tracking-wider">
-          Spin the globe and click hotspots
+        <p className="text-slate-500 text-[10px] max-w-[250px] font-bold uppercase tracking-[0.2em] leading-relaxed">
+          Predicting groundwater depletion using time-series growth models
         </p>
       </div>
 
-      {/* UI Overlay: Stats Panel (Bottom Left - Compact) */}
-      <div className="absolute bottom-8 left-8 w-60">
-        <div className="bg-black/60 backdrop-blur-xl p-5 rounded-[2rem] border border-white/10 shadow-2xl">
-          <div className="flex items-center gap-2 mb-4">
-            <Globe className="w-4 h-4 text-blue-500" />
-            <span className="text-[9px] font-black text-white uppercase tracking-widest">National Status</span>
-          </div>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-[9px] text-slate-500 font-bold uppercase">Critical Cities</span>
-              <span className="text-white font-mono font-black text-sm">21</span>
+      {/* Stats Panel */}
+      {!selected && (
+        <div className="absolute top-8 right-10 w-64 space-y-4">
+          <div className="bg-black/60 backdrop-blur-xl p-6 rounded-[2rem] border border-white/10 shadow-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <AlertTriangle className="w-4 h-4 text-red-500" />
+              <span className="text-[9px] font-black text-white uppercase tracking-widest">National Risk</span>
             </div>
-            <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-              <div className="h-full bg-red-500 w-[85%]" />
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-[9px] text-slate-500 font-bold uppercase">Time to Zero</span>
-              <span className="text-red-500 font-mono font-black text-sm">2030</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* UI Overlay: Selected City (Right Sidebar - Compact) */}
-      {selected && (
-        <div className="absolute top-8 bottom-8 right-8 w-[320px] bg-white rounded-[2.5rem] p-8 shadow-[0_30px_100px_rgba(0,0,0,0.6)] flex flex-col animate-in slide-in-from-right duration-500 ease-out">
-          <button 
-            onClick={() => setSelected(null)}
-            className="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-slate-200"
-          >
-            ✕
-          </button>
-          
-          <div className="flex items-center gap-4 mb-8">
-            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${
-              selected.status === "Zero Day" ? 'bg-red-50' : 'bg-orange-50'
-            }`}>
-              <AlertTriangle className={`w-8 h-8 ${selected.status === "Zero Day" ? 'text-red-500' : 'text-orange-500'}`} />
-            </div>
-            <div>
-              <h3 className="text-2xl font-black text-slate-900 tracking-tighter mb-1">{selected.name}</h3>
-              <div className={`inline-flex px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${
-                selected.status === "Zero Day" ? 'bg-red-500 text-white' : 'bg-orange-500 text-white'
-              }`}>
-                {selected.status}
+            <div className="space-y-4">
+              <div>
+                <div className="flex justify-between items-baseline mb-1">
+                  <span className="text-[8px] text-slate-500 font-bold uppercase">Critical Zones</span>
+                  <span className="text-white font-mono font-black text-sm">{Math.floor((year - 2000) / 2)}</span>
+                </div>
+                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div className="h-full bg-red-500 transition-all duration-500" style={{ width: `${Math.min(100, (year - 2000) * 2)}%` }} />
+                </div>
               </div>
+              <p className="text-[9px] font-bold text-slate-400 leading-relaxed uppercase italic">
+                {year > 2030 ? "Severe nationwide scarcity predicted." : "Escalating groundwater stress in urban centers."}
+              </p>
             </div>
           </div>
-
-          <div className="grid grid-cols-2 gap-4 mb-8">
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
-              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Depletion</p>
-              <p className="text-xl font-black text-slate-900">{selected.depletion}</p>
-            </div>
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
-              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Risk</p>
-              <p className="text-xl font-black text-red-600 uppercase">Extreme</p>
-            </div>
-          </div>
-
-          <div className="bg-blue-50 p-6 rounded-[1.5rem] border border-blue-100 mb-6 flex-1">
-            <p className="text-slate-700 text-sm leading-relaxed font-medium italic">
-              "{selected.info}"
-            </p>
-          </div>
-
-          <Link 
-            href="/1-2"
-            className="w-full bg-slate-900 text-white font-black py-4 rounded-xl hover:bg-blue-600 transition-all shadow-lg flex items-center justify-center gap-2 group no-underline text-xs"
-          >
-            OPEN CASE STUDY
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
         </div>
       )}
 
-      {/* Legend (Top Right - Compact) */}
-      {!selected && (
-        <div className="absolute top-8 right-8 flex flex-col gap-2">
-          <div className="flex items-center gap-3 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-2xl">
-            <div className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.6)]" />
-            <span className="text-[8px] font-black text-white uppercase tracking-widest">Zero Day</span>
+      {/* Selected City Sidebar */}
+      {selected && (
+        <div className="absolute top-8 bottom-8 right-10 w-[380px] bg-white rounded-[3rem] p-10 shadow-[0_30px_100px_rgba(0,0,0,0.6)] flex flex-col animate-in slide-in-from-right duration-500 ease-out z-30">
+          <button onClick={() => setSelected(null)} className="absolute top-8 right-8 w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-slate-100 transition-colors">✕</button>
+          <div className="mb-8">
+            <div className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center mb-6 ${selected.isZeroDay ? 'bg-red-50 shadow-xl shadow-red-100' : 'bg-blue-50 shadow-xl shadow-blue-100'}`}>
+              <Droplets className={`w-8 h-8 ${selected.isZeroDay ? 'text-red-500' : 'text-blue-500'}`} />
+            </div>
+            <h3 className="text-3xl font-black text-slate-900 tracking-tighter mb-2">{selected.name}</h3>
+            <div className={`inline-flex px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${selected.isZeroDay ? 'bg-red-600 text-white' : 'bg-blue-600 text-white'}`}>
+              Year {year} Status: {selected.isZeroDay ? 'CRITICAL' : 'HIGH STRESS'}
+            </div>
           </div>
-          <div className="flex items-center gap-3 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-2xl">
-            <div className="w-2 h-2 rounded-full bg-orange-500 shadow-[0_0_10px_rgba(245,158,11,0.6)]" />
-            <span className="text-[8px] font-black text-white uppercase tracking-widest">Critical</span>
+          <div className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 mb-8">
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Groundwater Level</span>
+              <span className={`text-2xl font-black tabular-nums ${selected.isZeroDay ? 'text-red-600' : 'text-blue-600'}`}>
+                {selected.currentDepletion.toFixed(1)}%
+              </span>
+            </div>
+            <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+              <div 
+                className={`h-full transition-all duration-500 ${selected.isZeroDay ? 'bg-red-500' : 'bg-blue-500'}`} 
+                style={{ width: `${selected.currentDepletion}%` }} 
+              />
+            </div>
           </div>
+          <p className="text-slate-600 text-sm leading-relaxed font-medium italic border-l-4 border-blue-500 pl-6 mb-8">"{selected.info}"</p>
+          <Link href={`/chapters/scale-of-volume-and-audit`} className="mt-auto w-full bg-slate-900 text-white font-black py-5 rounded-2xl hover:bg-blue-600 transition-all shadow-xl flex items-center justify-center gap-3 no-underline text-xs tracking-widest uppercase">
+            ANALYZE SITE DATA <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       )}
     </div>

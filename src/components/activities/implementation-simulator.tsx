@@ -146,7 +146,15 @@ export function ImplementationSimulator() {
   const [currentWeek, setCurrentWeek] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [plannedActions, setPlannedActions] = useState<any[]>([]);
+  const [budget, setBudget] = useState(100000); // $100,000 Initial Capital
   const totalWeeks = 12;
+
+  const COSTS = {
+    1: 2000,   // Leak Repair
+    2: 15000,  // Cooling Tower
+    3: 45000,  // STP
+    4: 5000,   // Aerators
+  };
 
   React.useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -166,6 +174,14 @@ export function ImplementationSimulator() {
 
   const addAction = (action: typeof INTERVENTIONS[0]) => {
     if (plannedActions.some(a => a.id === action.id)) return;
+    const cost = COSTS[action.id as keyof typeof COSTS] || 0;
+    
+    if (budget < cost) {
+      alert("Insufficient Capital Budget for this intervention.");
+      return;
+    }
+
+    setBudget(prev => prev - cost);
     setPlannedActions([...plannedActions, { 
       ...action, 
       week: Math.floor(Math.random() * 8) + 2 
@@ -176,6 +192,7 @@ export function ImplementationSimulator() {
     setCurrentWeek(1);
     setIsPlaying(false);
     setPlannedActions([]);
+    setBudget(100000);
   };
 
   const activeSavings = plannedActions
@@ -224,11 +241,17 @@ export function ImplementationSimulator() {
 
             <div className="bg-black/40 backdrop-blur-xl p-6 rounded-[2rem] border border-white/10 shadow-2xl min-w-[200px]">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Efficiency GAIN</span>
-                <TrendingUp size={16} className="text-emerald-400" />
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Available Capital</span>
+                <DollarSign size={16} className="text-amber-400" />
               </div>
-              <div className="text-4xl font-black text-white leading-none">+{activeSavings}%</div>
-              <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Saved KL/Day</p>
+              <div className="text-3xl font-black text-white leading-none">${budget.toLocaleString()}</div>
+              <div className="mt-4 pt-4 border-t border-white/5">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Efficiency GAIN</span>
+                  <TrendingUp size={16} className="text-emerald-400" />
+                </div>
+                <div className="text-2xl font-black text-white leading-none">+{activeSavings}%</div>
+              </div>
             </div>
           </div>
 
@@ -284,7 +307,10 @@ export function ImplementationSimulator() {
                         <action.icon className={`w-6 h-6 ${isPlanned ? 'text-white' : action.color}`} />
                       </div>
                       <div className="flex-1 text-left">
-                        <h4 className="text-xs font-black uppercase tracking-tight">{action.name}</h4>
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-xs font-black uppercase tracking-tight">{action.name}</h4>
+                          <span className="text-[10px] font-black text-amber-600">${COSTS[action.id as keyof typeof COSTS]?.toLocaleString()}</span>
+                        </div>
                         <p className={`text-[10px] font-bold ${isPlanned ? 'text-white/60' : 'text-slate-400'}`}>{action.desc}</p>
                       </div>
                       {isPlanned ? <CheckCircle2 size={18} className="text-emerald-400" /> : <ChevronRight size={18} className="text-slate-200 group-hover:text-blue-400 transition-colors" />}

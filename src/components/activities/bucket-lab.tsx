@@ -120,28 +120,42 @@ export function BucketLab() {
   const router = useRouter();
   const [level, setLevel] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [pressure, setPressure] = useState(0.5); // 0.1 to 1.0
   const [elapsed, setElapsed] = useState(0);
-  const [history, setHistory] = useState<{ time: string, volume: string, rate: string }[]>([]);
+  const [history, setHistory] = useState<{ time: string, volume: string, rate: string, status: string }[]>([]);
+
+  // Simulation Physics: 1.0 level = 10L. 
+  // Max flow rate is 15 L/min at 1.0 pressure.
+  const activeFlowLMin = useMemo(() => pressure * 15, [pressure]);
+  const efficiencyStatus = useMemo(() => {
+    if (activeFlowLMin <= 6) return { label: 'ECO-EFFICIENT', color: 'text-emerald-500', bg: 'bg-emerald-500/10' };
+    if (activeFlowLMin <= 10) return { label: 'STANDARD FLOW', color: 'text-blue-500', bg: 'bg-blue-500/10' };
+    return { label: 'WASTEFUL FLOW', color: 'text-rose-500', bg: 'bg-rose-500/10' };
+  }, [activeFlowLMin]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isRunning) {
       interval = setInterval(() => {
         setElapsed(prev => prev + 0.1);
-        setLevel(prev => Math.min(1, prev + 0.005));
+        const litersPerSecond = activeFlowLMin / 60;
+        const litersInTick = litersPerSecond * 0.1;
+        setLevel(prev => Math.min(1, prev + (litersInTick / 10)));
       }, 100);
     }
     return () => clearInterval(interval);
-  }, [isRunning]);
+  }, [isRunning, activeFlowLMin]);
 
-  const flowRate = useMemo(() => {
-    if (elapsed === 0) return "0.00";
-    return ((level * 10) / elapsed).toFixed(2);
-  }, [level, elapsed]);
+  const flowRateDisplay = useMemo(() => activeFlowLMin.toFixed(1), [activeFlowLMin]);
 
   const handleCapture = () => {
     setHistory(prev => [
-      { time: elapsed.toFixed(1) + 's', volume: (level * 10).toFixed(1) + 'L', rate: flowRate + ' L/s' },
+      { 
+        time: elapsed.toFixed(1) + 's', 
+        volume: (level * 10).toFixed(1) + 'L', 
+        rate: flowRateDisplay + ' L/min',
+        status: efficiencyStatus.label
+      },
       ...prev.slice(0, 4)
     ]);
   };
@@ -195,17 +209,20 @@ export function BucketLab() {
                 <cylinderGeometry args={[0.15, 0.15, 0.5, 32]} />
                 <meshStandardMaterial color="#94a3b8" metalness={0.9} roughness={0.1} />
               </mesh>
-              {/* Valve Handle */}
-              <mesh position={[1, 0.2, 0]} rotation={[Math.PI / 2, 0, 0]}>
+              {/* Valve Handle - Rotates with pressure */}
+              <mesh 
+                position={[1, 0.2, 0]} 
+                rotation={[Math.PI / 2 + (pressure * Math.PI), 0, 0]}
+              >
                 <torusGeometry args={[0.2, 0.05, 16, 32]} />
-                <meshStandardMaterial color="#ef4444" metalness={0.5} roughness={0.5} />
+                <meshStandardMaterial color={pressure > 0.7 ? "#ef4444" : "#3b82f6"} metalness={0.5} roughness={0.5} />
               </mesh>
               
               {isRunning && (
                 <group>
-                  <Sparkles count={50} scale={[0.1, 4, 0.1]} size={2} speed={3} color="#3b82f6" />
+                  <Sparkles count={Math.floor(pressure * 100)} scale={[0.1 * pressure, 4, 0.1 * pressure]} size={2} speed={3} color="#3b82f6" />
                   <mesh position={[0, -2, 0]}>
-                    <cylinderGeometry args={[0.08, 0.12, 4, 16]} />
+                    <cylinderGeometry args={[0.04 + (pressure * 0.08), 0.08 + (pressure * 0.12), 4, 16]} />
                     <meshStandardMaterial 
                       color="#60a5fa" 
                       transparent 
@@ -216,7 +233,7 @@ export function BucketLab() {
                   </mesh>
                   {/* Splash effect at water level */}
                   <mesh position={[0, -4 + (level * 2), 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                    <ringGeometry args={[0.1, 0.4, 32]} />
+                    <ringGeometry args={[0.1, 0.2 + (pressure * 0.4), 32]} />
                     <meshStandardMaterial color="#93c5fd" transparent opacity={0.4} />
                   </mesh>
                 </group>
@@ -251,6 +268,11 @@ export function BucketLab() {
               </div>
               <div className="w-px h-8 bg-slate-200" />
               <div className="flex flex-col">
+                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Efficiency Status</span>
+                <span className={`text-xs font-black uppercase tracking-wider ${efficiencyStatus.color}`}>{efficiencyStatus.label}</span>
+              </div>
+              <div className="w-px h-8 bg-slate-200" />
+              <div className="flex flex-col">
                 <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Elapsed Time</span>
                 <span className="text-2xl font-black text-blue-600 tabular-nums">{elapsed.toFixed(1)} <span className="text-[10px]">S</span></span>
               </div>
@@ -269,10 +291,32 @@ export function BucketLab() {
             </div>
           </div>
 
-          <div className="bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100">
-            <div className="flex items-center gap-3 mb-6">
-              <Timer className="w-4 h-4 text-blue-600" />
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Simulation Controls</span>
+            <div className="bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <Timer className="w-4 h-4 text-blue-600" />
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Valve Control</span>
+              </div>
+              <span className={`text-[8px] font-black px-2 py-1 rounded-md ${efficiencyStatus.bg} ${efficiencyStatus.color}`}>
+                {activeFlowLMin.toFixed(1)} L/MIN
+              </span>
+            </div>
+
+            {/* Pressure Slider */}
+            <div className="mb-8">
+              <input 
+                type="range" 
+                min="0.1" 
+                max="1.0" 
+                step="0.05"
+                value={pressure}
+                onChange={(e) => setPressure(parseFloat(e.target.value))}
+                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+              />
+              <div className="flex justify-between mt-2 text-[8px] font-black text-slate-400 uppercase">
+                <span>Drip (Low)</span>
+                <span>Gush (High)</span>
+              </div>
             </div>
             
             <div className="flex gap-4 mb-6">
@@ -301,7 +345,7 @@ export function BucketLab() {
               className="w-full py-4 bg-white border border-slate-200 text-slate-900 font-black text-[10px] uppercase tracking-widest rounded-2xl flex items-center justify-center gap-3 hover:bg-slate-900 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed no-print cursor-pointer"
             >
               <ClipboardList className="w-4 h-4" />
-              Capture Data Point
+              Log Data Point
             </button>
           </div>
 
@@ -323,11 +367,11 @@ export function BucketLab() {
                     <span className="text-sm font-black text-slate-900">{h.volume}</span>
                   </div>
                   <div className="flex flex-col items-center">
-                    <span className="text-[8px] font-black text-slate-400 uppercase">T-Duration</span>
+                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-tighter">{h.status}</span>
                     <span className="text-sm font-bold text-slate-400 tabular-nums">{h.time}</span>
                   </div>
                   <div className="flex flex-col items-end">
-                    <span className="text-[8px] font-black text-slate-400 uppercase">Flow Rate</span>
+                    <span className="text-[8px] font-black text-slate-400 uppercase">Rate</span>
                     <span className="text-sm font-black text-blue-600">{h.rate}</span>
                   </div>
                 </div>
@@ -349,14 +393,14 @@ export function BucketLab() {
               <div>
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Instant Flow</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-black text-blue-400 tracking-tighter">{flowRate}</span>
-                  <span className="text-xs text-slate-500 font-black uppercase">L/S</span>
+                  <span className="text-3xl font-black text-blue-400 tracking-tighter">{flowRateDisplay}</span>
+                  <span className="text-xs text-slate-500 font-black uppercase">L/MIN</span>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Instrument Conf.</p>
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Eco Performance</p>
                 <div className="flex items-baseline justify-end gap-2">
-                  <span className="text-3xl font-black text-emerald-400 tracking-tighter">99.8</span>
+                  <span className="text-3xl font-black text-emerald-400 tracking-tighter">{((1 - pressure) * 100).toFixed(0)}</span>
                   <span className="text-xs text-slate-500 font-black uppercase">%</span>
                 </div>
               </div>
