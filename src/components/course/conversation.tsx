@@ -1,9 +1,36 @@
-import React, { ReactNode } from 'react';
+"use client";
+
+import React, { ReactNode, useState, Children } from 'react';
+import { ChevronRight } from "lucide-react";
 
 export function Conversation({ children }: { children: ReactNode }) {
+  const childrenArray = Children.toArray(children);
+  const [visibleCount, setVisibleCount] = useState(1);
+
+  const showNext = () => {
+    if (visibleCount < childrenArray.length) {
+      setVisibleCount(prev => prev + 1);
+    }
+  };
+
+  const isComplete = visibleCount === childrenArray.length;
+
   return (
-    <div className="flex flex-col gap-8 my-16 w-full max-w-4xl mx-auto font-sans">
-      {children}
+    <div className="flex flex-col gap-8 my-16 w-full max-w-4xl mx-auto font-sans relative">
+      <div className="flex flex-col gap-8">
+        {childrenArray.slice(0, visibleCount)}
+      </div>
+      
+      {!isComplete && (
+        <div className="flex justify-center mt-4">
+          <button 
+            onClick={showNext}
+            className="group flex items-center gap-3 px-8 py-4 bg-blue-600 text-white rounded-full font-black text-xs uppercase tracking-widest hover:bg-blue-700 hover:shadow-2xl transition-all animate-bounce hover:animate-none"
+          >
+            Next <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -20,7 +47,7 @@ export function Message({ speaker, children }: { speaker: string; children: Reac
   const avatar = AVATARS[speaker] || { bg: "bg-slate-500", icon: "👤", border: "border-slate-200" };
 
   return (
-    <div className={`flex gap-6 ${isTeacher ? 'flex-row' : 'flex-row-reverse'} items-start group`}>
+    <div className={`flex gap-6 ${isTeacher ? 'flex-row' : 'flex-row-reverse'} items-start group animate-message`}>
       {/* Avatar with Ring */}
       <div className={`flex-shrink-0 w-16 h-16 rounded-3xl flex items-center justify-center border-4 shadow-xl text-3xl ${avatar.bg} ${avatar.border} transform group-hover:rotate-6 transition-transform duration-500`}>
         <span role="img" aria-label={speaker}>{avatar.icon}</span>
