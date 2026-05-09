@@ -118,7 +118,13 @@ Precisely, Aisha. That brings us to the final and most important step: Implement
 
 ### Measuring Flow Rates
 
-**ACTIVITY:** The standard unit for residential water flow is **Liters per Minute (L/min)**.
+<div id="flow-rates-card" className="bg-sky-50/50 p-8 rounded-[2rem] border-2 border-sky-100 my-12 shadow-sm">
+  <h3 className="text-2xl font-black text-blue-600 mb-4 tracking-tight mt-0">Measuring Flow Rates</h3>
+  <p className="text-slate-700 font-bold mb-8">
+    <strong>ACTIVITY:</strong> The standard unit for residential water flow is <strong>Liters per Minute (L/min)</strong>.
+  </p>
+  <BucketLab />
+</div>
 
 ### The "Bucket and Stopwatch" Method
 
@@ -157,14 +163,6 @@ If it takes 20 seconds to fill a 5-liter bucket:
 </div>
 
 <div className="my-16">
-
-### Deep Dive: Virtual Bucket Lab — Flow Rate Measurement
-
-<section>
-  <BucketLab />
-</section>
-
-</div>
 
 <div className="my-16">
 
@@ -243,7 +241,7 @@ You can plan to collect data from a minimum of ten families. If you are working 
 
 ### Form to Collect Data on Water Usage from a Family
 
-<div className="bg-sky-50 p-8 rounded-3xl border-2 border-sky-100 my-12">
+<div id="survey-form" className="bg-sky-50 p-8 rounded-3xl border-2 border-sky-100 my-12">
   <h3 className="text-xl font-bold text-sky-900 mb-6">Family Water Usage Survey Form</h3>
   
   <div className="space-y-4 text-slate-700">
@@ -262,7 +260,7 @@ You can plan to collect data from a minimum of ten families. If you are working 
     <div className="flex gap-4 items-start"><strong className="min-w-[300px]">Do they receive a water bill? How much?</strong><div className="flex-1 h-10 bg-white border-2 border-sky-200 rounded-xl" /></div>
     <div className="flex gap-4 items-start"><strong className="min-w-[300px]">Any other observation on water availability?</strong><div className="flex-1 h-10 bg-white border-2 border-sky-200 rounded-xl" /></div>
   </div>
-  <DownloadForm />
+  <DownloadForm targetId="survey-form" />
 </div>
 
 The family will give you the estimates. You need to calculate the amount of water used in terms of the capacity of buckets, mugs, bottles, and so on. You will also need to calculate water flow from taps, showers, and water pipes in case of water usage for gardening for each home you visit. If a person uses water from an overhead tank, you need to talk to them and estimate water usage based on their lifestyle.
@@ -273,7 +271,7 @@ For example, taking a bath twice on a daily basis or washing two buckets of clot
 
 <img src="https://login.skillizee.io/s/articles/69f4365e41e01b23b9092850/images/image-20260501104946-87.png" width="661" height="287" alt="Data Tabulation Example" className="rounded-2xl my-6 mx-auto shadow-md" />
 
-<div className="bg-emerald-50 p-8 rounded-3xl border-2 border-emerald-100 my-12">
+<div id="analysis-questions" className="bg-emerald-50 p-8 rounded-3xl border-2 border-emerald-100 my-12">
   <h3 className="text-xl font-bold text-emerald-900 mb-6">Analysis Questions</h3>
   
   <ol className="space-y-6 text-slate-700">
@@ -285,6 +283,10 @@ For example, taking a bath twice on a daily basis or washing two buckets of clot
       <strong>2. Are there any families that are consuming more water than average? If yes, what is the reason?</strong>
       <div className="mt-2 h-16 bg-white border-2 border-emerald-200 rounded-xl" />
     </li>
+    <li>
+      <strong>4. Based on your learning about rainwater availability, suggest three things you can do collectively at community level?</strong>
+      <div className="mt-2 h-16 bg-white border-2 border-emerald-200 rounded-xl" />
+    </li>
   </ol>
+  <DownloadForm targetId="analysis-questions" />
 </div>
-

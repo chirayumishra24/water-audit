@@ -22,6 +22,7 @@ import { ExternalSimulation } from "../activities/external-simulation";
 import { FootprintDetective } from "../activities/footprint-detective";
 import { PresentationSimulator } from "../activities/presentation-simulator";
 import { TechChallengePicker } from "../activities/tech-challenge-picker";
+import { RainwaterDataForm } from "../activities/rainwater-data-form";
 import { Search, TrendingUp, Zap, ShieldCheck } from "lucide-react";
 import { DownloadForm } from "./download-form";
 
@@ -113,6 +114,7 @@ export const mdxComponents = {
   FootprintDetective,
   PresentationSimulator,
   TechChallengePicker,
+  RainwaterDataForm,
   Search,
   TrendingUp,
   Zap,
