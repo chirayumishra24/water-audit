@@ -157,7 +157,7 @@ export function VirtualSchoolAudit() {
   const progress = (foundCount / AUDIT_POINTS.length) * 100;
 
   return (
-    <div className="flex flex-col lg:flex-row w-full min-h-[800px] bg-white rounded-[4rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+    <div className="flex flex-col lg:flex-row w-full aspect-[16/9] min-h-[500px] max-h-[80vh] bg-white rounded-[4rem] overflow-hidden border border-slate-200 shadow-2xl relative">
       {/* LEFT: 3D SITE PANEL */}
       <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[500px]">
         <Canvas shadows className="w-full h-full">
@@ -185,20 +185,7 @@ export function VirtualSchoolAudit() {
           </Suspense>
         </Canvas>
 
-        {/* HUD */}
-        <div className="absolute top-10 left-10 pointer-events-none">
-          <div className="bg-slate-900/80 backdrop-blur-xl p-8 rounded-[3rem] border border-white/10 shadow-2xl">
-            <div className="flex items-center gap-5">
-              <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-blue-500/20">
-                <Wrench className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] block mb-1">Audit Protocol V2.0</span>
-                <h2 className="text-3xl font-black text-white uppercase tracking-tighter italic">Campus Diagnostics</h2>
-              </div>
-            </div>
-          </div>
-        </div>
+
 
         {measuring && (
           <div className="absolute inset-0 bg-blue-600/10 backdrop-blur-sm flex items-center justify-center z-20">
@@ -219,8 +206,20 @@ export function VirtualSchoolAudit() {
         )}
       </div>
 
-      {/* RIGHT: REGISTRY PANEL */}
       <div className="w-full lg:w-[480px] bg-white flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar">
+        {/* HEADER BLOCK */}
+        <div className="bg-slate-900 p-8 rounded-[3rem] border border-white/10 shadow-2xl">
+          <div className="flex items-center gap-5">
+            <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-blue-500/20">
+              <Wrench className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] block mb-1">Audit Protocol V2.0</span>
+              <h2 className="text-3xl font-black text-blue-400 uppercase tracking-tighter italic">Campus Diagnostics</h2>
+            </div>
+          </div>
+        </div>
+
         <div className="space-y-10">
           <div className="flex items-center justify-between">
             <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Facility Log</h3>

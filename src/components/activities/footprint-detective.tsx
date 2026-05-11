@@ -65,12 +65,12 @@ function WaterTank({ liters }: { liters: number }) {
         <group key={l} position={[1.1, (l / 150) * 2, 0]}>
           <mesh>
             <boxGeometry args={[0.1, 0.02, 0.02]} />
-            <meshStandardMaterial color="#94a3b8" />
+            <meshStandardMaterial color="#ffffff" />
           </mesh>
           <Text
             position={[0.3, 0, 0]}
             fontSize={0.1}
-            color="#94a3b8"
+            color="#ffffff"
             anchorX="left"
           >
             {l}L

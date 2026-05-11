@@ -42,7 +42,9 @@ function TerrainSection({
   structures, 
   rainIntensity, 
   isRaining,
-  saturation 
+  saturation,
+  soilType,
+  isRunoff 
 }: { 
   structures: string[], 
   rainIntensity: number, 
@@ -450,7 +452,7 @@ export function GroundwaterSandbox() {
               <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
                 <Trees size={20} className="text-emerald-400" />
               </div>
-              <p className="text-[11px] font-medium text-slate-400 leading-relaxed">
+              <p className="text-[11px] font-medium text-blue-200 leading-relaxed">
                 Groundwater is a "shared bank account." Augmentation structures allow us to "deposit" rainwater that would otherwise be lost to surface evaporation or runoff.
               </p>
             </div>

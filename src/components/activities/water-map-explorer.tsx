@@ -158,17 +158,17 @@ export function WaterMapExplorer() {
             className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer accent-blue-500 hover:accent-blue-400 transition-all"
           />
           <div className="flex justify-between mt-3 px-1">
-            <span className="text-[8px] font-bold text-slate-500">2000</span>
-            <span className="text-[8px] font-bold text-slate-500">2025</span>
-            <span className="text-[8px] font-bold text-slate-500">2050</span>
+            <span className="text-[8px] font-bold text-blue-300">2000</span>
+            <span className="text-[8px] font-bold text-blue-300">2025</span>
+            <span className="text-[8px] font-bold text-blue-300">2050</span>
           </div>
         </div>
       </div>
 
       {/* UI Overlay: Title */}
       <div className="absolute top-8 left-10 pointer-events-none">
-        <h2 className="text-4xl font-black text-white leading-tight mb-2 drop-shadow-2xl italic tracking-tighter">
-          CRISIS <span className="text-blue-500 not-italic">FORECAST</span> 2050
+        <h2 className="text-4xl font-black text-sky-400 leading-tight mb-2 drop-shadow-2xl italic tracking-tighter">
+          CRISIS <span className="text-sky-500 not-italic">FORECAST</span> 2050
         </h2>
         <p className="text-slate-500 text-[10px] max-w-[250px] font-bold uppercase tracking-[0.2em] leading-relaxed">
           Predicting groundwater depletion using time-series growth models

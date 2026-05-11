@@ -11,6 +11,7 @@ import {
   ContactShadows,
   Environment,
   Box,
+  Html,
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { 
@@ -28,7 +29,8 @@ import {
   ArrowRight,
   Shield,
   Layout,
-  MousePointer2
+  MousePointer2,
+  Droplets
 } from 'lucide-react';
 
 function MarkerModel({ position, type }: { position: [number, number, number], type: string }) {

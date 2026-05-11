@@ -536,7 +536,7 @@ export function TownHallSim() {
               <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0 border border-white/5">
                 <BarChart3 size={24} className="text-blue-400" />
               </div>
-              <p className="text-xs font-bold text-slate-400 leading-relaxed">
+              <p className="text-xs font-bold text-blue-300 leading-relaxed">
                 Strategic Note: {targetAudience.name} focuses on <strong>{targetAudience.focus}</strong>. Use high-impact evidence that aligns with these priorities.
               </p>
             </div>

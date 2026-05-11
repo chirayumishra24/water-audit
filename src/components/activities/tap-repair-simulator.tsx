@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, Suspense, useRef } from 'react';
+import React, { useState, Suspense, useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { 
   OrbitControls, 
@@ -13,7 +13,9 @@ import {
   Grid,
   RoundedBox,
   Cylinder,
-  Box
+  Box,
+  Sparkles,
+  Edges
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { 
@@ -39,6 +41,8 @@ import {
 function TapModel({ 
   step, 
   activeTool, 
+  xRay,
+  isLeaking,
   onPartClick 
 }: { 
   step: number, 
@@ -512,7 +516,7 @@ export function TapRepairSimulator() {
               <CheckCircle2 size={48} className="text-white" />
             </div>
             <h2 className="text-4xl font-black text-white mb-4 tracking-tighter uppercase leading-none">Repair Success</h2>
-            <p className="text-slate-400 mb-10 font-medium text-sm leading-relaxed">
+            <p className="text-blue-200 mb-10 font-medium text-sm leading-relaxed">
               You have successfully replaced the worn washer and reassembled the unit. You just saved 24 liters of water per day.
             </p>
             <div className="flex flex-col gap-4">

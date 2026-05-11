@@ -168,7 +168,7 @@ export function CommunityGrowth() {
                 <Building className="w-6 h-6 text-white" />
               </div>
               <div>
-                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">Simulator</span>
+                <span className="text-[8px] font-black text-blue-400 uppercase tracking-widest block">Simulator</span>
                 <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Urban Demand</h2>
               </div>
             </div>
@@ -278,13 +278,13 @@ export function CommunityGrowth() {
             <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shrink-0 shadow-sm">
               <Info className="w-5 h-5 text-blue-600" />
             </div>
-            <p className="text-xs font-bold text-slate-500 leading-relaxed">
+            <p className="text-xs font-bold text-blue-400 leading-relaxed">
               Use this model to predict how population growth and changing lifestyle habits impact municipal water infrastructure.
             </p>
           </div>
 
           <div className="flex gap-4 no-print">
-            <button onClick={reset} className="flex-1 py-5 bg-white border border-slate-200 rounded-2xl text-slate-400 font-black text-[10px] uppercase tracking-widest hover:text-blue-600 transition-all flex items-center justify-center gap-2 cursor-pointer">
+            <button onClick={reset} className="flex-1 py-5 bg-white border border-slate-200 rounded-2xl text-blue-300 font-black text-[10px] uppercase tracking-widest hover:text-blue-600 transition-all flex items-center justify-center gap-2 cursor-pointer">
               <RotateCcw className="w-4 h-4" /> Reset
             </button>
             <button 

@@ -122,6 +122,24 @@ function WaterTable({ level }: { level: number }) {
   );
 }
 
+function SimulationManager({ simulating, intensity, activeTerrain, hasRWH, setStats }: any) {
+  useFrame((state, delta) => {
+    if (simulating) {
+      const rainForce = intensity / 100;
+      const absorptionRate = activeTerrain.absorption * delta * rainForce * 2;
+      const runoffRate = activeTerrain.runoff * delta * rainForce * 5;
+      const harvestRate = hasRWH ? runoffRate * 0.4 : 0;
+
+      setStats((prev: any) => ({
+        groundwater: Math.min(100, prev.groundwater + absorptionRate),
+        runoff: prev.runoff + (runoffRate - harvestRate),
+        harvested: prev.harvested + harvestRate
+      }));
+    }
+  });
+  return null;
+}
+
 export function MonsoonSimulator() {
   const [intensity, setIntensity] = useState(50);
   const [terrainId, setTerrainId] = useState('concrete');
@@ -131,23 +149,31 @@ export function MonsoonSimulator() {
 
   const activeTerrain = TERRAINS.find(t => t.id === terrainId)!;
 
-  useFrame((state, delta) => {
-    if (simulating) {
-      const rainForce = intensity / 100;
-      const absorptionRate = activeTerrain.absorption * delta * rainForce * 2;
-      const runoffRate = activeTerrain.runoff * delta * rainForce * 5;
-      const harvestRate = hasRWH ? runoffRate * 0.4 : 0;
+  const handleExport = () => {
+    const csvContent = [
+      ["Parameter", "Value"],
+      ["Timestamp", new Date().toLocaleString()],
+      ["Rain Intensity", `${intensity}%`],
+      ["Terrain Type", activeTerrain.name],
+      ["RWH Deployed", hasRWH ? "Yes" : "No"],
+      ["Groundwater Level", `${stats.groundwater.toFixed(2)}%`],
+      ["Surface Runoff", `${stats.runoff.toFixed(2)} kL`],
+      ["Water Harvested", `${stats.harvested.toFixed(2)} kL`]
+    ].map(e => e.join(",")).join("\n");
 
-      setStats(prev => ({
-        groundwater: Math.min(100, prev.groundwater + absorptionRate),
-        runoff: prev.runoff + (runoffRate - harvestRate),
-        harvested: prev.harvested + harvestRate
-      }));
-    }
-  });
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `monsoon_telemetry_${Date.now()}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
-    <div className="flex flex-col lg:flex-row w-full min-h-[850px] bg-white rounded-[4rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+    <div className="flex flex-col lg:flex-row w-full aspect-[16/9] min-h-[500px] max-h-[80vh] bg-white rounded-[4rem] overflow-hidden border border-slate-200 shadow-2xl relative">
       {/* LEFT: 3D CLIMATE PANEL */}
       <div className="relative flex-1 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 overflow-hidden min-h-[500px]">
         <Canvas shadows className="w-full h-full">
@@ -165,6 +191,13 @@ export function MonsoonSimulator() {
               {hasRWH && <RWHSystem position={[0, 0, 0]} />}
               <WaterTable level={stats.groundwater} />
             </group>
+            <SimulationManager 
+              simulating={simulating} 
+              intensity={intensity} 
+              activeTerrain={activeTerrain} 
+              hasRWH={hasRWH} 
+              setStats={setStats} 
+            />
             <Environment preset="night" />
           </Suspense>
         </Canvas>
@@ -189,7 +222,7 @@ export function MonsoonSimulator() {
               </div>
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Cumulative Runoff</span>
+                  <span className="text-[10px] font-black text-blue-200 uppercase tracking-widest">Cumulative Runoff</span>
                   <span className="text-rose-400 font-black text-sm">{stats.runoff.toFixed(0)} L</span>
                 </div>
                 <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
@@ -220,16 +253,16 @@ export function MonsoonSimulator() {
               </div>
               <div>
                 <h4 className="text-2xl font-black text-white uppercase tracking-tighter leading-none mb-1">{activeTerrain.name}</h4>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{activeTerrain.description}</p>
+                <p className="text-xs font-bold text-blue-200 uppercase tracking-widest">{activeTerrain.description}</p>
               </div>
             </div>
             <div className="flex gap-8">
               <div className="text-center">
-                <span className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Absorption</span>
+                <span className="block text-[10px] font-black text-blue-300 uppercase tracking-widest mb-1">Absorption</span>
                 <span className="text-2xl font-black text-emerald-400 italic">{(activeTerrain.absorption * 100).toFixed(0)}%</span>
               </div>
               <div className="text-center border-l border-white/10 pl-8">
-                <span className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Runoff</span>
+                <span className="block text-[10px] font-black text-blue-300 uppercase tracking-widest mb-1">Runoff</span>
                 <span className="text-2xl font-black text-rose-400 italic">{(activeTerrain.runoff * 100).toFixed(0)}%</span>
               </div>
             </div>
@@ -329,7 +362,8 @@ export function MonsoonSimulator() {
           
           <button 
             disabled={!simulating && stats.runoff === 0}
-            className="w-full py-6 rounded-[1.5rem] bg-slate-50 text-slate-400 font-black text-[10px] uppercase tracking-widest border border-slate-100 hover:bg-slate-100 transition-colors flex items-center justify-center gap-3"
+            onClick={handleExport}
+            className="w-full py-6 rounded-[1.5rem] bg-blue-50 text-blue-600 font-black text-[10px] uppercase tracking-widest border border-blue-100 hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Export Sensor Telemetry <ArrowRight size={16} />
           </button>

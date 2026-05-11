@@ -146,6 +146,12 @@ export function BucketLab() {
     return () => clearInterval(interval);
   }, [isRunning, activeFlowLMin]);
 
+  useEffect(() => {
+    if (level >= 1 && isRunning) {
+      setIsRunning(false);
+    }
+  }, [level, isRunning]);
+
   const flowRateDisplay = useMemo(() => activeFlowLMin.toFixed(1), [activeFlowLMin]);
 
   const handleCapture = () => {

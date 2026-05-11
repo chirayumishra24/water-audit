@@ -32,7 +32,8 @@ import {
   Zap,
   ChevronRight,
   TrendingDown,
-  BarChart3
+  BarChart3,
+  DollarSign
 } from "lucide-react";
 import * as THREE from "three";
 import { useRouter } from "next/navigation";
@@ -184,7 +185,7 @@ export function ImplementationSimulator() {
     setBudget(prev => prev - cost);
     setPlannedActions([...plannedActions, { 
       ...action, 
-      week: Math.floor(Math.random() * 8) + 2 
+      week: (plannedActions.length * 3) + 2 
     }]);
   };
 
@@ -244,7 +245,7 @@ export function ImplementationSimulator() {
                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Available Capital</span>
                 <DollarSign size={16} className="text-amber-400" />
               </div>
-              <div className="text-3xl font-black text-white leading-none">${budget.toLocaleString()}</div>
+              <div className="text-3xl font-black text-white leading-none">${budget.toLocaleString('en-US')}</div>
               <div className="mt-4 pt-4 border-t border-white/5">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Efficiency GAIN</span>
@@ -309,7 +310,7 @@ export function ImplementationSimulator() {
                       <div className="flex-1 text-left">
                         <div className="flex items-center justify-between">
                           <h4 className="text-xs font-black uppercase tracking-tight">{action.name}</h4>
-                          <span className="text-[10px] font-black text-amber-600">${COSTS[action.id as keyof typeof COSTS]?.toLocaleString()}</span>
+                          <span className="text-[10px] font-black text-amber-600">${COSTS[action.id as keyof typeof COSTS]?.toLocaleString('en-US')}</span>
                         </div>
                         <p className={`text-[10px] font-bold ${isPlanned ? 'text-white/60' : 'text-slate-400'}`}>{action.desc}</p>
                       </div>
@@ -355,7 +356,7 @@ export function ImplementationSimulator() {
               <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
                 <Info size={20} className="text-blue-400" />
               </div>
-              <p className="text-[11px] font-medium text-slate-400 leading-relaxed">
+              <p className="text-[11px] font-medium text-blue-200 leading-relaxed">
                 Design a 12-week implementation roadmap. Strategic sequencing allows you to reinvest quick-win savings into major capital projects.
               </p>
             </div>

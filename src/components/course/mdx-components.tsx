@@ -121,6 +121,22 @@ export const mdxComponents = {
   ShieldCheck,
   TopicCard,
 
+  TableInput: () => (
+    <input 
+      type="text" 
+      className="w-full bg-white/80 border border-blue-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all text-slate-800 placeholder:text-slate-400 font-medium"
+      placeholder="Enter data..."
+    />
+  ),
+
+  InteractiveBox: ({ className = "" }: { className?: string }) => (
+    <textarea 
+      className={`w-full bg-white/80 border-2 border-blue-100 rounded-2xl px-4 py-3 focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all text-slate-800 placeholder:text-slate-400 font-medium resize-none ${className}`}
+      placeholder="Type your response here..."
+      rows={3}
+    />
+  ),
+
   section: ({ children, ...props }: React.HTMLAttributes<HTMLElement>) => (
     <TopicCard {...props}>{children}</TopicCard>
   ),

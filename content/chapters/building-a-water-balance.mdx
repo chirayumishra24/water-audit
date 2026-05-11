@@ -53,31 +53,34 @@ When speaking with a water official or civil engineer, use these targeted questi
   <ol className="space-y-6 text-slate-700">
     <li>
       <strong>1. What is the source of water for our locality?</strong>
-      <div className="mt-2 h-16 bg-white border-2 border-sky-200 rounded-xl" />
+      <InteractiveBox className="mt-2" />
     </li>
     <li>
       <strong>2. How much water does each household receive per day? What is the amount of water allotted per day per person?</strong>
-      <div className="mt-2 h-16 bg-white border-2 border-sky-200 rounded-xl" />
+      <InteractiveBox className="mt-2" />
     </li>
     <li>
       <strong>3. Do you face any challenge in supplying sufficient water to all? What are those challenges?</strong>
-      <div className="mt-2 h-16 bg-white border-2 border-sky-200 rounded-xl" />
+      <InteractiveBox className="mt-2" />
     </li>
     <li>
       <strong>4. How does rainwater contribute to water availability in your area? What efforts have been made to store rainwater for later use?</strong>
-      <div className="mt-2 h-16 bg-white border-2 border-sky-200 rounded-xl" />
+      <InteractiveBox className="mt-2" />
     </li>
     <li>
       <strong>5. Are there any seasonal changes in water availability in the locality?</strong>
-      <div className="mt-2 h-16 bg-white border-2 border-sky-200 rounded-xl" />
+      <InteractiveBox className="mt-2" />
     </li>
     <li>
       <strong>6. Any suggestions for water management by individuals?</strong>
-      <div className="mt-2 h-16 bg-white border-2 border-sky-200 rounded-xl" />
+      <InteractiveBox className="mt-2" />
     </li>
     <li>
       <strong>7. Create a simple neighborhood map showing water sources, like wells, tanks, or water delivery points. Ask the official for help if needed.</strong>
-      <div className="mt-2 h-24 bg-white border-2 border-sky-200 rounded-xl" />
+      <div className="mt-2 p-4 bg-white/60 border-2 border-sky-200 rounded-2xl italic text-slate-500 text-sm">
+        Use the space below to describe your map or upload it in your final report.
+      </div>
+      <InteractiveBox className="mt-2" />
     </li>
   </ol>
   <DownloadForm />
@@ -113,9 +116,9 @@ You can use a table to organize this comparison and identify if the consumption 
 
 | Category | Data/Standard | Water available per person per day as per secondary data |
 | --- | --- | --- |
-| **Primary Data** | Average consumption per person per day (calculated from your family surveys) | |
-| **Secondary Data** | Water available per person per day (based on your geographical and rainfall calculations) | |
-| **Prescribed Standard** | 55 L for rural areas / 135 L for urban areas (Jal Jeevan Mission) | |
+| **Primary Data** | Average consumption per person per day (calculated from your family surveys) | <TableInput /> |
+| **Secondary Data** | Water available per person per day (based on your geographical and rainfall calculations) | <TableInput /> |
+| **Prescribed Standard** | 55 L for rural areas / 135 L for urban areas (Jal Jeevan Mission) | <TableInput /> |
 
 ### Key Considerations for Analysis
 
