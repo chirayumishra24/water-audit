@@ -30,7 +30,8 @@ import {
   Shield,
   Layout,
   MousePointer2,
-  Droplets
+  Droplets,
+  Pencil
 } from 'lucide-react';
 
 function MarkerModel({ position, type }: { position: [number, number, number], type: string }) {
