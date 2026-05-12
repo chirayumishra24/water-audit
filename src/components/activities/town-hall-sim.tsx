@@ -39,6 +39,7 @@ import {
 } from "lucide-react";
 import * as THREE from "three";
 import { useRouter } from "next/navigation";
+import confetti from 'canvas-confetti';
 
 // --- 3D Components ---
 
@@ -293,6 +294,7 @@ export function TownHallSim() {
   const [targetAudience, setTargetAudience] = useState(AUDIENCES[0]);
   const [selectedEvidenceIds, setSelectedEvidenceIds] = useState<number[]>([]);
   const [stats, setStats] = useState({ logic: 20, emotion: 20, budget: 20 });
+  const [showCelebration, setShowCelebration] = useState(false);
   
   // Calculate weighted engagement based on audience profile
   const engagement = useMemo(() => {
@@ -592,7 +594,19 @@ export function TownHallSim() {
             </div>
 
             <button
-              onClick={() => isSuccess ? router.push('/4-3') : reset()}
+              onClick={() => {
+                if (isSuccess) {
+                  setShowCelebration(true);
+                  confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#3b82f6', '#60a5fa', '#ffffff']
+                  });
+                } else {
+                  reset();
+                }
+              }}
               disabled={selectedEvidenceIds.length < 3}
               className={`w-full h-20 rounded-[2rem] flex items-center justify-center gap-4 font-black text-sm uppercase tracking-widest transition-all relative z-10 ${
                 selectedEvidenceIds.length === 3
@@ -656,6 +670,39 @@ export function TownHallSim() {
           </div>
         ))}
       </div>
+
+      {/* Celebration Overlay */}
+      {showCelebration && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 sm:p-12 animate-in fade-in duration-500">
+          <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-3xl" onClick={() => setShowCelebration(false)} />
+          <div className="relative w-full max-w-2xl bg-slate-900 rounded-[4rem] border border-white/10 p-12 text-center space-y-10 shadow-[0_0_100px_rgba(37,99,235,0.2)] animate-in zoom-in-95 duration-500">
+            <div className="w-32 h-32 bg-blue-600 rounded-[2.5rem] flex items-center justify-center mx-auto shadow-2xl shadow-blue-600/40 border-4 border-white/20">
+              <Award size={64} className="text-white" />
+            </div>
+            
+            <div className="space-y-4">
+              <span className="text-blue-400 font-black text-sm uppercase tracking-[0.4em]">Official Certification</span>
+              <h2 className="text-6xl font-black text-white uppercase tracking-tighter leading-none">Water Audit Master</h2>
+              <p className="text-slate-400 text-lg font-medium max-w-md mx-auto leading-relaxed">
+                Congratulations! You successfully convinced the <strong>{targetAudience.name}</strong> to implement water conservation measures. Your strategic advocacy has saved millions of liters for the future.
+              </p>
+            </div>
+
+            <div className="pt-6">
+              <button 
+                onClick={() => setShowCelebration(false)}
+                className="px-12 py-6 bg-white text-slate-950 rounded-[2rem] font-black text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-2xl"
+              >
+                Continue Exploration
+              </button>
+            </div>
+
+            {/* Decorative background effects */}
+            <div className="absolute -top-24 -left-24 w-64 h-64 bg-blue-600/20 rounded-full blur-[100px]" />
+            <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-indigo-600/20 rounded-full blur-[100px]" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
