@@ -34,8 +34,8 @@ export function WaterBalanceBuilder() {
   };
 
   return (
-    <div className="w-full flex flex-col gap-6">
-      <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-6 lg:aspect-[16/9]">
+      <div className="bg-white p-12 rounded-[3rem] border border-slate-200 shadow-2xl flex flex-col gap-8 h-full overflow-y-auto">
         <div>
           <h3 className="text-2xl font-black text-slate-900 tracking-tight">Mass Balance Calculator</h3>
           <p className="text-slate-500 font-medium mt-2">

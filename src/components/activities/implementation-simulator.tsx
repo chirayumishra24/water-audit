@@ -202,7 +202,7 @@ export function ImplementationSimulator() {
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[750px]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:aspect-[16/9]">
         
         {/* LEFT: 3D Visualization */}
         <div className="lg:col-span-8 bg-slate-900 rounded-[2.5rem] relative overflow-hidden shadow-2xl border border-slate-800">
@@ -234,7 +234,7 @@ export function ImplementationSimulator() {
                   <Calendar className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Deployment Timeline</span>
+                  <span className="text-[10px] font-black text-white/60 uppercase tracking-widest block mb-1">Deployment Timeline</span>
                   <h2 className="text-2xl font-black text-white uppercase tracking-tighter leading-none">Week {currentWeek} / {totalWeeks}</h2>
                 </div>
               </div>
@@ -242,16 +242,39 @@ export function ImplementationSimulator() {
 
             <div className="bg-black/40 backdrop-blur-xl p-6 rounded-[2rem] border border-white/10 shadow-2xl min-w-[200px]">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Available Capital</span>
+                <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">Available Capital</span>
                 <DollarSign size={16} className="text-amber-400" />
               </div>
               <div className="text-3xl font-black text-white leading-none">${budget.toLocaleString('en-US')}</div>
               <div className="mt-4 pt-4 border-t border-white/5">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Efficiency GAIN</span>
+                  <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">Efficiency GAIN</span>
                   <TrendingUp size={16} className="text-emerald-400" />
                 </div>
-                <div className="text-2xl font-black text-white leading-none">+{activeSavings}%</div>
+                <div className="text-4xl font-black text-white leading-none">+{activeSavings}%</div>
+              </div>
+            </div>
+          </div>
+
+          {/* HUD: Controls/Guide */}
+          <div className="absolute bottom-10 left-10 z-10 flex gap-4">
+            <div className="px-6 py-4 bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 flex items-center gap-4 group hover:bg-black/60 transition-all">
+              <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <RotateCcw size={20} className="text-white/80" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none mb-1">Navigation</span>
+                <span className="text-[8px] font-bold text-white uppercase tracking-widest leading-none">Rotate View</span>
+              </div>
+            </div>
+            
+            <div className="px-6 py-4 bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 flex items-center gap-4 group hover:bg-black/60 transition-all">
+              <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Info size={20} className="text-white/80" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none mb-1">Guide</span>
+                <span className="text-[8px] font-bold text-white uppercase tracking-widest leading-none">Select Tech to Upgrade</span>
               </div>
             </div>
           </div>

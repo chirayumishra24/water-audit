@@ -173,9 +173,9 @@ export function MonsoonSimulator() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row w-full aspect-[16/9] min-h-[500px] max-h-[80vh] bg-white rounded-[4rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+    <div className="flex flex-col lg:flex-row w-full lg:aspect-[16/9] bg-white rounded-[4rem] overflow-hidden border border-slate-200 shadow-2xl relative">
       {/* LEFT: 3D CLIMATE PANEL */}
-      <div className="relative flex-1 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 overflow-hidden min-h-[500px]">
+      <div className="relative flex-1 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 overflow-hidden">
         <Canvas shadows className="w-full h-full">
           <PerspectiveCamera makeDefault position={[15, 12, 15]} fov={35} />
           <OrbitControls makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 2.2} />
@@ -207,6 +207,29 @@ export function MonsoonSimulator() {
           <div className="bg-blue-600/20 backdrop-blur-md px-6 py-3 rounded-full border border-blue-500/30 flex items-center gap-3 w-fit">
             <CloudRain className="text-blue-400 animate-pulse" size={18} />
             <span className="text-white font-black text-[10px] tracking-widest uppercase">Climate Dynamics HUD</span>
+          </div>
+
+          {/* HUD: Controls/Guide */}
+          <div className="flex gap-4 no-print pointer-events-auto">
+            <div className="px-6 py-4 bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-white/10 flex items-center gap-4 group hover:bg-slate-900/60 transition-all">
+              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-blue-500/20">
+                <RotateCcw size={20} className="text-white" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none mb-1">Navigation</span>
+                <span className="text-[8px] font-bold text-white uppercase tracking-widest leading-none">Rotate View</span>
+              </div>
+            </div>
+            
+            <div className="px-6 py-4 bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-white/10 flex items-center gap-4 group hover:bg-slate-900/60 transition-all">
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                <PlayCircle size={20} className="text-blue-600" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none mb-1">Guide</span>
+                <span className="text-[8px] font-bold text-white uppercase tracking-widest leading-none">Simulate Rainfall</span>
+              </div>
+            </div>
           </div>
           
           <div className="bg-slate-900/80 backdrop-blur-xl p-8 rounded-[3rem] border border-white/10 shadow-2xl min-w-[280px]">

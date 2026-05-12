@@ -257,12 +257,22 @@ export function TapRepairSimulator() {
       return;
     }
 
-    if (step === 1 && part === "handle" && activeTool === "screwdriver") {
-      setStep(2);
-      setActiveTool(null);
-    } else if (step === 2 && part === "spindle" && activeTool === "spanner") {
-      setStep(3);
-      setActiveTool(null);
+    if (step === 1 && part === "handle") {
+      if (activeTool === "screwdriver") {
+        setStep(2);
+        setActiveTool(null);
+      } else {
+        setStatus("Incorrect Tool: Handle requires a Screwdriver");
+        setTimeout(() => setStatus("Objective: Remove Handle"), 2000);
+      }
+    } else if (step === 2 && part === "spindle") {
+      if (activeTool === "spanner") {
+        setStep(3);
+        setActiveTool(null);
+      } else {
+        setStatus("Incorrect Tool: Spindle requires a Spanner");
+        setTimeout(() => setStatus("Objective: Extract Spindle"), 2000);
+      }
     } else if (step === 3 && part === "washer") {
       setStep(4);
     }
@@ -272,6 +282,9 @@ export function TapRepairSimulator() {
     if (step === 0) {
       setStatus("Water Pressure: OFF");
       setStep(1);
+    } else {
+      setStatus("Water Pressure: ON");
+      setStep(0);
     }
   };
 
@@ -282,7 +295,7 @@ export function TapRepairSimulator() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row w-full min-h-[750px] bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+    <div className="flex flex-col lg:flex-row w-full lg:aspect-[16/9] bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
       {/* LEFT: 3D WORKBENCH PANEL */}
       <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[450px]">
         <Canvas shadows className="w-full h-full">
@@ -322,7 +335,7 @@ export function TapRepairSimulator() {
         </Canvas>
 
         {/* X-Ray Toggle */}
-        <div className="absolute top-10 right-10">
+        <div className="absolute top-10 right-10 flex flex-col items-end gap-4">
           <button 
             onClick={() => setXRay(!xRay)}
             className={`flex items-center gap-3 px-5 py-3 rounded-2xl border-2 transition-all font-black text-[10px] uppercase tracking-widest ${
@@ -332,6 +345,28 @@ export function TapRepairSimulator() {
             <Activity size={14} className={xRay ? "animate-pulse" : ""} />
             X-Ray View {xRay ? 'ON' : 'OFF'}
           </button>
+
+          {/* Instructions Overlay */}
+          <div className="bg-white/90 backdrop-blur-xl p-5 rounded-3xl border border-white shadow-2xl max-w-[180px] pointer-events-none">
+            <div className="flex items-center gap-2 mb-3 text-blue-600">
+              <Info size={14} className="animate-pulse" />
+              <span className="text-[10px] font-black uppercase tracking-widest">Controls</span>
+            </div>
+            <ul className="space-y-2">
+              <li className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">Drag to Rotate</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                <span className="text-[9px] font-black text-blue-600 uppercase tracking-tighter">Select Tool First</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                <span className="text-[9px] font-black text-blue-600 uppercase tracking-tighter">Click Tap Parts</span>
+              </li>
+            </ul>
+          </div>
         </div>
 
         {/* HUD Elements */}
@@ -342,8 +377,8 @@ export function TapRepairSimulator() {
                 <Wrench className="w-6 h-6 text-white" />
               </div>
               <div>
-                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">Repair Protocol</span>
-                <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Tactical Tap Repair</h2>
+                <span className="text-[8px] font-black text-white/60 uppercase tracking-widest block">Repair Protocol</span>
+                <h2 className="text-2xl font-black text-white uppercase tracking-tighter !text-white">Tactical Tap Repair</h2>
               </div>
             </div>
           </div>
@@ -408,8 +443,8 @@ export function TapRepairSimulator() {
 
             <div className="grid grid-cols-2 gap-4">
               <button 
-                onClick={() => setStep(step === 0 ? 1 : step)} // Simplified toggle water logic for now
-                disabled={step !== 0}
+                onClick={toggleWater}
+                disabled={step >= 2}
                 className={`p-6 rounded-[2rem] border transition-all flex flex-col items-center gap-4 group ${
                   status.includes("OFF") 
                     ? "bg-emerald-50 border-emerald-100 text-emerald-600" 
@@ -438,7 +473,7 @@ export function TapRepairSimulator() {
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm ${
                   activeTool === "screwdriver" ? "bg-white text-blue-600" : "bg-white text-slate-300 group-hover:scale-110 transition-transform"
                 }`}>
-                  <Wrench size={24} />
+                  <Settings size={24} />
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-tight">Screwdriver</span>
               </button>
@@ -455,7 +490,7 @@ export function TapRepairSimulator() {
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm ${
                   activeTool === "spanner" ? "bg-white text-blue-600" : "bg-white text-slate-300 group-hover:scale-110 transition-transform"
                 }`}>
-                  <Hammer size={24} />
+                  <Wrench size={24} />
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-tight">Spanner</span>
               </button>

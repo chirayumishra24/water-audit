@@ -111,7 +111,7 @@ export function WaterMapExplorer() {
   const globeRadius = 3;
 
   return (
-    <div className="w-full h-[750px] bg-[#020617] rounded-[3rem] overflow-hidden relative border-8 border-slate-900 shadow-2xl">
+    <div className="w-full lg:aspect-[16/9] bg-[#020617] rounded-[4rem] overflow-hidden relative border-8 border-slate-900 shadow-2xl">
       <Canvas shadows>
         <PerspectiveCamera makeDefault position={[0, 0, 8]} />
         <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
@@ -173,6 +173,29 @@ export function WaterMapExplorer() {
         <p className="text-slate-500 text-[10px] max-w-[250px] font-bold uppercase tracking-[0.2em] leading-relaxed">
           Predicting groundwater depletion using time-series growth models
         </p>
+      </div>
+
+      {/* HUD: Controls/Guide */}
+      <div className="absolute top-8 right-10 flex gap-4 no-print pointer-events-auto z-20">
+        <div className="px-6 py-4 bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-white/10 flex items-center gap-4 group hover:bg-slate-900/60 transition-all">
+          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-blue-500/20">
+            <Globe size={20} className="text-white" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none mb-1">Navigation</span>
+            <span className="text-[8px] font-bold text-white uppercase tracking-widest leading-none">Rotate Earth</span>
+          </div>
+        </div>
+        
+        <div className="px-6 py-4 bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-white/10 flex items-center gap-4 group hover:bg-slate-900/60 transition-all">
+          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+            <MapPin size={20} className="text-blue-600" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none mb-1">Guide</span>
+            <span className="text-[8px] font-bold text-white uppercase tracking-widest leading-none">Select City</span>
+          </div>
+        </div>
       </div>
 
       {/* Stats Panel */}

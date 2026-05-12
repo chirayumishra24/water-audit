@@ -10,7 +10,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata(
-  props: PageProps<"/modules/[moduleSlug]">,
+  props: { params: Promise<{ moduleSlug: string }> },
 ): Promise<Metadata> {
   const { moduleSlug } = await props.params;
   const courseModule = await getCourseModuleBySlug(moduleSlug);
@@ -25,7 +25,7 @@ export async function generateMetadata(
   };
 }
 
-export default async function ModulePage(props: PageProps<"/modules/[moduleSlug]">) {
+export default async function ModulePage(props: { params: Promise<{ moduleSlug: string }> }) {
   const { moduleSlug } = await props.params;
   const courseModule = await getCourseModuleBySlug(moduleSlug);
 

@@ -160,7 +160,7 @@ export function OpportunityRanking() {
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 min-h-[800px]">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 lg:aspect-[16/9]">
         
         {/* LEFT: 2D Interactive Matrix (Col 7) */}
         <div className="xl:col-span-7 flex flex-col gap-6">
@@ -257,9 +257,32 @@ export function OpportunityRanking() {
                   style={{ width: `${(totalImpact / 50) * 100}%` }}
                 />
               </div>
-              <div className="mt-2 text-right">
+            <div className="mt-2 text-right">
                 <span className="text-xl font-black text-white">{(totalImpact * 12.5).toFixed(0)}</span>
                 <span className="text-[10px] font-bold text-white/50 ml-1">KL/YR</span>
+              </div>
+            </div>
+
+            {/* HUD: Controls/Guide */}
+            <div className="absolute bottom-4 left-4 z-10 flex flex-col gap-2">
+              <div className="px-4 py-3 bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 flex items-center gap-3 group hover:bg-black/60 transition-all">
+                <div className="w-8 h-8 bg-white/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <RotateCcw size={16} className="text-white/80" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[9px] font-black text-white uppercase tracking-widest leading-none mb-1">Navigation</span>
+                  <span className="text-[7px] font-bold text-white uppercase tracking-widest leading-none">Rotate View</span>
+                </div>
+              </div>
+              
+              <div className="px-4 py-3 bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 flex items-center gap-3 group hover:bg-black/60 transition-all">
+                <div className="w-8 h-8 bg-blue-600/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Target size={16} className="text-blue-400" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[9px] font-black text-white uppercase tracking-widest leading-none mb-1">Goal</span>
+                  <span className="text-[7px] font-bold text-white uppercase tracking-widest leading-none">Rank all 6 findings</span>
+                </div>
               </div>
             </div>
           </div>

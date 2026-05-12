@@ -177,9 +177,9 @@ export function BoundarySandbox() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row w-full min-h-[750px] bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+    <div className="flex flex-col lg:flex-row w-full lg:aspect-[16/9] bg-white rounded-[4rem] overflow-hidden border border-slate-200 shadow-2xl relative">
       {/* LEFT: 3D DRAWING PANEL */}
-      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[450px]">
+      <div className="relative flex-1 bg-slate-100 border-b lg:border-b-0 lg:border-r border-slate-200 overflow-hidden min-h-[450px]">
         <Canvas shadows className="w-full h-full cursor-crosshair">
           <PerspectiveCamera makeDefault position={[12, 12, 12]} fov={35} />
           <OrbitControls 
@@ -235,10 +235,33 @@ export function BoundarySandbox() {
 
         {/* Interaction Hint */}
         {!confirmed && !isDrawing && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-8">
             <div className="bg-white/90 backdrop-blur-xl px-8 py-4 rounded-full border border-blue-100 shadow-2xl flex items-center gap-4 animate-bounce">
-              <MousePointer2 className="w-5 h-5 text-blue-600 animate-pulse" />
-              <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Click & Drag to Define Audit Area</span>
+              <MousePointer2 className="text-blue-600 animate-pulse" size={18} />
+              <span className="text-slate-900 font-black text-[10px] tracking-widest uppercase">Boundary Precision HUD</span>
+            </div>
+
+            {/* HUD: Controls/Guide */}
+            <div className="flex gap-4 no-print pointer-events-auto">
+              <div className="px-6 py-4 bg-white/40 backdrop-blur-xl rounded-2xl border border-slate-200 flex items-center gap-4 group hover:bg-white/60 transition-all">
+                <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-blue-500/20">
+                  <MousePointer2 size={20} className="text-white" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none mb-1">Interact</span>
+                  <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none">Click to Mark</span>
+                </div>
+              </div>
+              
+              <div className="px-6 py-4 bg-white/40 backdrop-blur-xl rounded-2xl border border-slate-200 flex items-center gap-4 group hover:bg-white/60 transition-all">
+                <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                  <Pencil size={20} className="text-white" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none mb-1">Guide</span>
+                  <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none">Close the Loop</span>
+                </div>
+              </div>
             </div>
           </div>
         )}

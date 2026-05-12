@@ -23,7 +23,8 @@ import {
   TrendingUp,
   Droplets,
   Calculator,
-  ChevronRight
+  ChevronRight,
+  Eye
 } from "lucide-react";
 import * as THREE from "three";
 import { useRouter } from "next/navigation";
@@ -169,10 +170,9 @@ export function MeterDetective() {
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[600px]">
-        
-        {/* 3D Meter Display */}
-        <div className="lg:col-span-8 bg-slate-900 rounded-[2.5rem] relative overflow-hidden shadow-2xl border border-slate-800">
+      <div className="flex flex-col lg:flex-row w-full lg:aspect-[16/9] bg-white rounded-[4rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+      {/* LEFT: 3D METER VIEW */}
+      <div className="relative flex-1 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 overflow-hidden">
           <Canvas>
             <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={35} />
             <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 1.5} minPolarAngle={Math.PI / 3} />
@@ -191,11 +191,38 @@ export function MeterDetective() {
 
           {/* HUD Overlay */}
           <div className="absolute top-6 left-6 flex flex-col gap-2">
-            <div className="px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/10 flex items-center gap-2 text-white/80">
+            <div className="px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/10 flex items-center gap-2 text-white">
+              <Eye className="text-blue-400 animate-pulse" size={18} />
+              <span className="text-white font-black text-[10px] tracking-widest uppercase">Digital Meter Audit</span>
+            </div>
+            <div className="px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/10 flex items-center gap-2 text-white">
               <Clock size={16} className="text-blue-400" />
               <span className="text-xs font-black uppercase tracking-widest">
                 {showResult ? 'Reading: Final' : 'Reading: Initial'}
               </span>
+            </div>
+          </div>
+
+          {/* HUD: Controls/Guide */}
+          <div className="absolute top-6 right-6 flex gap-4 no-print pointer-events-none">
+            <div className="px-6 py-4 bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-white/10 flex items-center gap-4 group hover:bg-slate-900/60 transition-all pointer-events-auto">
+              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-blue-500/20">
+                <RotateCcw size={20} className="text-white" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none mb-1">Navigation</span>
+                <span className="text-[8px] font-bold text-white uppercase tracking-widest leading-none">Rotate View</span>
+              </div>
+            </div>
+            
+            <div className="px-6 py-4 bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-white/10 flex items-center gap-4 group hover:bg-slate-900/60 transition-all pointer-events-auto">
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                <Search size={20} className="text-blue-600" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none mb-1">Guide</span>
+                <span className="text-[8px] font-bold text-white uppercase tracking-widest leading-none">Read the Serial</span>
+              </div>
             </div>
           </div>
 
@@ -206,8 +233,8 @@ export function MeterDetective() {
         </div>
 
         {/* Investigation Controls */}
-        <div className="lg:col-span-4 flex flex-col gap-4">
-          <div className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm flex flex-col gap-6">
+        <div className="lg:col-span-4 flex flex-col gap-4 max-h-[800px] lg:max-h-none overflow-y-auto custom-scrollbar p-1">
+          <div className="bg-white p-10 rounded-[3rem] border border-slate-200 shadow-xl flex flex-col gap-8">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-blue-100 text-blue-600">
                 <Search size={20} />

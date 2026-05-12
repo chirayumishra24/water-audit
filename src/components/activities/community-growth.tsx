@@ -132,16 +132,31 @@ export function CommunityGrowth() {
     setLifestyle("Balanced");
   };
 
+  const handlePrint = () => {
+    document.body.classList.add('printing-activity');
+    window.print();
+    document.body.classList.remove('printing-activity');
+  };
+
   return (
-    <div className="flex flex-col lg:flex-row w-full min-h-[750px] bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+    <div className="activity-print-target flex flex-col lg:flex-row w-full lg:aspect-[16/9] bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+      {/* Print Header - Only visible in PDF/Print */}
+      <div className="hidden print:block w-full mb-8 border-b-2 border-slate-900 pb-6">
+        <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter">Water Demand Report</h1>
+        <div className="flex justify-between mt-4 text-[10px] font-black uppercase tracking-widest text-slate-400">
+          <span>Module: Urban Water Management</span>
+          <span>Date: {new Date().toLocaleDateString()}</span>
+        </div>
+      </div>
+
       {/* LEFT: 3D CITY PANEL */}
-      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[450px]">
+      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden print:h-[400px]">
         {/* Dynamic Warning Overlay */}
         {isStressed && (
           <div className="absolute inset-0 bg-red-600/5 animate-pulse pointer-events-none z-10" />
         )}
 
-        <Canvas shadows className="w-full h-full">
+        <Canvas shadows className="w-full h-full" gl={{ preserveDrawingBuffer: true }}>
           <PerspectiveCamera makeDefault position={[12, 12, 12]} fov={45} />
           <OrbitControls 
             enablePan={true} 
@@ -168,9 +183,32 @@ export function CommunityGrowth() {
                 <Building className="w-6 h-6 text-white" />
               </div>
               <div>
-                <span className="text-[8px] font-black text-blue-400 uppercase tracking-widest block">Simulator</span>
+                <span className="text-[8px] font-black text-white/60 uppercase tracking-widest block">Simulator</span>
                 <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Urban Demand</h2>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* HUD: Controls/Guide */}
+        <div className="absolute bottom-10 left-10 z-10 flex gap-4 no-print">
+          <div className="px-6 py-4 bg-slate-900/10 backdrop-blur-xl rounded-2xl border border-slate-200 flex items-center gap-4 group hover:bg-slate-900/20 transition-all">
+            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-blue-500/20">
+              <RotateCcw size={20} className="text-white" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none mb-1">Navigation</span>
+              <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none">Rotate View</span>
+            </div>
+          </div>
+          
+          <div className="px-6 py-4 bg-slate-900/10 backdrop-blur-xl rounded-2xl border border-slate-200 flex items-center gap-4 group hover:bg-slate-900/20 transition-all">
+            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+              <Target size={20} className="text-blue-600" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none mb-1">Guide</span>
+              <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none">Balance Growth & Supply</span>
             </div>
           </div>
         </div>
@@ -188,11 +226,11 @@ export function CommunityGrowth() {
       </div>
 
       {/* RIGHT: CONFIGURATION PANEL */}
-      <div className="w-full lg:w-[450px] bg-white flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar">
+      <div className="w-full lg:w-[450px] bg-white flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar print:overflow-visible">
         <div className="space-y-10">
           <div className="flex items-center justify-between">
-            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Growth Engine</h3>
-            <div className="p-3 bg-slate-50 rounded-2xl">
+            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Simulation Summary</h3>
+            <div className="p-3 bg-slate-50 rounded-2xl no-print">
               <TrendingUp className="w-5 h-5 text-slate-300" />
             </div>
           </div>
@@ -205,7 +243,7 @@ export function CommunityGrowth() {
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Population Size</span>
                   <div className="text-3xl font-black text-slate-900 tracking-tighter">{population} <span className="text-xs uppercase text-slate-400">Residents</span></div>
                 </div>
-                <Users className="w-6 h-6 text-slate-200 mb-1" />
+                <Users className="w-6 h-6 text-slate-200 mb-1 no-print" />
               </div>
                 <input 
                   type="range" 
@@ -222,13 +260,12 @@ export function CommunityGrowth() {
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Lifestyle Profile</span>
               <div className="grid grid-cols-1 gap-2">
                 {["Conservative", "Balanced", "Luxury"].map((l) => (
-                  <button
+                  <div
                     key={l}
-                    onClick={() => setLifestyle(l)}
                     className={`flex items-center justify-between p-5 rounded-2xl border-2 transition-all ${
                       lifestyle === l 
-                        ? "bg-blue-600 border-blue-600 text-white shadow-xl translate-x-2" 
-                        : "bg-white border-slate-100 text-slate-500 hover:border-blue-100 hover:bg-slate-50"
+                        ? "bg-blue-600 border-blue-600 text-white shadow-xl lg:translate-x-2" 
+                        : "bg-white border-slate-100 text-slate-500 print:hidden"
                     }`}
                   >
                     <span className="text-xs font-black uppercase tracking-widest">{l}</span>
@@ -236,9 +273,9 @@ export function CommunityGrowth() {
                       <span className={`text-[10px] font-bold ${lifestyle === l ? 'text-blue-100' : 'text-slate-400'}`}>
                         {factors[l]} LPCD
                       </span>
-                      <ChevronRight className={`w-4 h-4 ${lifestyle === l ? 'text-white' : 'text-slate-200'}`} />
+                      <ChevronRight className={`w-4 h-4 no-print ${lifestyle === l ? 'text-white' : 'text-slate-200'}`} />
                     </div>
-                  </button>
+                  </div>
                 ))}
               </div>
             </div>
@@ -288,7 +325,7 @@ export function CommunityGrowth() {
               <RotateCcw className="w-4 h-4" /> Reset
             </button>
             <button 
-              onClick={() => window.print()}
+              onClick={handlePrint}
               className="flex-[2] py-5 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl flex items-center justify-center gap-3 cursor-pointer"
             >
               Generate Report <ArrowRight className="w-4 h-4" />

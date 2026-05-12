@@ -157,9 +157,9 @@ export function VirtualSchoolAudit() {
   const progress = (foundCount / AUDIT_POINTS.length) * 100;
 
   return (
-    <div className="flex flex-col lg:flex-row w-full aspect-[16/9] min-h-[500px] max-h-[80vh] bg-white rounded-[4rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+    <div className="flex flex-col lg:flex-row w-full lg:aspect-[16/9] bg-white rounded-[4rem] overflow-hidden border border-slate-200 shadow-2xl relative">
       {/* LEFT: 3D SITE PANEL */}
-      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[500px]">
+      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden">
         <Canvas shadows className="w-full h-full">
           <PerspectiveCamera makeDefault position={[12, 12, 12]} fov={35} />
           <OrbitControls enablePan={true} minDistance={8} maxDistance={25} maxPolarAngle={Math.PI / 2.1} />
@@ -204,6 +204,29 @@ export function VirtualSchoolAudit() {
             </div>
           </div>
         )}
+
+        {/* HUD: Controls/Guide */}
+        <div className="absolute bottom-10 left-10 z-10 flex gap-4">
+          <div className="px-6 py-4 bg-slate-900/10 backdrop-blur-xl rounded-2xl border border-slate-200 flex items-center gap-4 group hover:bg-slate-900/20 transition-all">
+            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-blue-500/20">
+              <RotateCcw size={20} className="text-white" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none mb-1">Navigation</span>
+              <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none">Rotate & Zoom</span>
+            </div>
+          </div>
+          
+          <div className="px-6 py-4 bg-slate-900/10 backdrop-blur-xl rounded-2xl border border-slate-200 flex items-center gap-4 group hover:bg-slate-900/20 transition-all">
+            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+              <MapPin size={20} className="text-blue-600" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none mb-1">Audit</span>
+              <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none">Click Red Hotspots</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="w-full lg:w-[480px] bg-white flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar">

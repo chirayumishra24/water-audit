@@ -172,11 +172,26 @@ export function BucketLab() {
     setElapsed(0);
   };
 
+  const handlePrint = () => {
+    document.body.classList.add('printing-activity');
+    window.print();
+    document.body.classList.remove('printing-activity');
+  };
+
   return (
-    <div className="flex flex-col lg:flex-row w-full min-h-[800px] bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
-      {/* LEFT: 3D SIMULATION PANEL */}
-      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[450px]">
-        <Canvas shadows className="w-full h-full">
+    <div className="activity-print-target flex flex-col lg:flex-row w-full lg:aspect-[16/9] bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+      {/* Print Header - Only visible in PDF/Print */}
+      <div className="hidden print:block w-full mb-8 border-b-2 border-slate-900 pb-6">
+        <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter">Water Flow Analysis Report</h1>
+        <div className="flex justify-between mt-4 text-[10px] font-black uppercase tracking-widest text-slate-400">
+          <span>Experiment: Bucket Lab Telemetry</span>
+          <span>Date: {new Date().toLocaleDateString()}</span>
+        </div>
+      </div>
+
+      {/* LEFT: 3D CITY PANEL */}
+      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden print:h-[400px]">
+        <Canvas shadows className="w-full h-full" gl={{ preserveDrawingBuffer: true }}>
           <PerspectiveCamera makeDefault position={[5, 4, 8]} fov={30} />
           <OrbitControls 
             makeDefault 
@@ -258,9 +273,32 @@ export function BucketLab() {
                 <Beaker className="w-6 h-6 text-white" />
               </div>
               <div>
-                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">Laboratory Environment</span>
-                <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Flow Measurement Lab</h2>
+                <span className="text-[8px] font-black text-white/60 uppercase tracking-widest block">Simulator</span>
+                <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Water Flow Lab</h2>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* HUD: Controls/Guide */}
+        <div className="absolute bottom-10 left-10 z-10 flex gap-4 no-print">
+          <div className="px-6 py-4 bg-slate-900/10 backdrop-blur-xl rounded-2xl border border-slate-200 flex items-center gap-4 group hover:bg-slate-900/20 transition-all">
+            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-blue-500/20">
+              <RotateCcw size={20} className="text-white" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none mb-1">Navigation</span>
+              <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none">Rotate View</span>
+            </div>
+          </div>
+          
+          <div className="px-6 py-4 bg-slate-900/10 backdrop-blur-xl rounded-2xl border border-slate-200 flex items-center gap-4 group hover:bg-slate-900/20 transition-all">
+            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+              <Timer size={20} className="text-blue-600" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none mb-1">Guide</span>
+              <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none">Adjust Valve & Log Data</span>
             </div>
           </div>
         </div>
@@ -288,16 +326,16 @@ export function BucketLab() {
       </div>
 
       {/* RIGHT: DATA & ANALYTICS PANEL */}
-      <div className="w-full lg:w-[480px] bg-white flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar">
+      <div className="w-full lg:w-[480px] bg-white flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar print:overflow-visible">
         <div className="space-y-10">
           <div className="flex items-center justify-between">
-            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Telemetry Control</h3>
-            <div className="p-3 bg-slate-50 rounded-2xl text-blue-600">
+            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Telemetry History</h3>
+            <div className="p-3 bg-slate-50 rounded-2xl text-blue-600 no-print">
               <Settings size={20} />
             </div>
           </div>
 
-            <div className="bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100">
+            <div className="bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100 no-print">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <Timer className="w-4 h-4 text-blue-600" />
@@ -357,12 +395,12 @@ export function BucketLab() {
 
           {/* History Panel */}
           <div className="space-y-6">
-            <div className="flex items-center justify-between px-2">
+            <div className="flex items-center justify-between px-2 no-print">
               <div className="flex items-center gap-2">
                 <Activity className="w-4 h-4 text-blue-600" />
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Telemetry History</span>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Logged Telemetry</span>
               </div>
-              <span className="text-[8px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-2 py-1 rounded-md">Live Sync</span>
+              <span className="text-[8px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-2 py-1 rounded-md">Verified</span>
             </div>
 
             <div className="space-y-3">
@@ -397,14 +435,14 @@ export function BucketLab() {
           <div className="p-8 bg-slate-900 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
             <div className="relative z-10 grid grid-cols-2 gap-8">
               <div>
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Instant Flow</p>
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Final Stream Flow</p>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl font-black text-blue-400 tracking-tighter">{flowRateDisplay}</span>
                   <span className="text-xs text-slate-500 font-black uppercase">L/MIN</span>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Eco Performance</p>
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Eco Efficiency</p>
                 <div className="flex items-baseline justify-end gap-2">
                   <span className="text-3xl font-black text-emerald-400 tracking-tighter">{((1 - pressure) * 100).toFixed(0)}</span>
                   <span className="text-xs text-slate-500 font-black uppercase">%</span>
@@ -415,7 +453,7 @@ export function BucketLab() {
           </div>
 
           <button 
-            onClick={() => window.print()}
+            onClick={handlePrint}
             disabled={history.length === 0}
             className={`w-full flex items-center justify-center gap-3 py-6 rounded-[2rem] font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl no-print cursor-pointer ${
               history.length > 0 
@@ -423,7 +461,7 @@ export function BucketLab() {
                 : 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none'
             }`}
           >
-            Submit Lab Report
+            Submit Final Lab Report
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

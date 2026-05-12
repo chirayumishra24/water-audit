@@ -220,23 +220,53 @@ select {
     color: black !important;
   }
 
+  /* Robust isolation for activity reports */
+  body.printing-activity {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body.printing-activity article > *:not(:has(.activity-print-target)),
+  body.printing-activity .prose-course > *:not(.activity-print-target),
+  body.printing-activity header,
+  body.printing-activity footer,
+  body.printing-activity .aquaman-container {
+    display: none !important;
+  }
+
+  /* Fallback for browsers with limited :has support */
+  body.printing-activity .activity-print-target {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    position: relative !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: white !important;
+    z-index: 9999 !important;
+  }
+
+  /* Force activities to take full page width in print */
+  .activity-print-target {
+    width: 100% !important;
+    max-width: 100% !important;
+    aspect-ratio: auto !important;
+  }
+
+  /* Capture 3D Canvas properly */
+  canvas {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
   .mx-auto {
     margin: 0 !important;
     padding: 0 !important;
     max-width: 100% !important;
   }
 
-  .bg-sky-50, .bg-white {
-    background: white !important;
-    border-color: #e2e8f0 !important;
-    box-shadow: none !important;
-  }
-
-  .text-sky-900 {
-    color: black !important;
-  }
-
-  /* Force background colors to print if needed */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;

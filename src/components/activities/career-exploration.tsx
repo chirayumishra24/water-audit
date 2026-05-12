@@ -226,7 +226,7 @@ export function CareerExploration() {
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[850px]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:aspect-[16/9]">
         
         {/* LEFT: 3D Career Galaxy (Col 8) */}
         <div className="lg:col-span-8 bg-[#020617] rounded-[3.5rem] relative overflow-hidden shadow-2xl border border-white/5">
@@ -262,14 +262,14 @@ export function CareerExploration() {
                   <Globe className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Career Map</span>
-                  <h2 className="text-3xl font-black text-white uppercase tracking-tighter leading-none">The Water Frontier</h2>
+                  <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none mb-1">Navigation</span>
+                  <span className="text-[8px] font-bold text-white uppercase tracking-widest leading-none">Orbit Earth</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-white/5 backdrop-blur-xl px-8 py-4 rounded-full border border-white/10 text-white/40 text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-6">
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-white/5 backdrop-blur-xl px-8 py-4 rounded-full border border-white/10 text-white text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-6">
             <div className="flex items-center gap-2">
               <div className={`w-2 h-2 rounded-full ${completedPortals.length >= 1 ? 'bg-blue-500 shadow-[0_0_10px_#3b82f6]' : 'bg-white/10'}`} />
               Phase I
@@ -288,17 +288,28 @@ export function CareerExploration() {
         </div>
 
         {/* RIGHT: Profile Explorer (Col 4) */}
-        <div className="lg:col-span-4 flex flex-col gap-4">
-          <div className="bg-white p-10 rounded-[3.5rem] border border-slate-200 shadow-sm flex-1 flex flex-col relative overflow-hidden">
+        <div className="lg:col-span-4 flex flex-col gap-4 max-h-[800px] lg:max-h-none">
+          <div className="bg-white p-10 rounded-[3.5rem] border border-slate-200 shadow-sm flex-1 flex flex-col relative overflow-y-auto custom-scrollbar">
             {!activePortal ? (
               <div className="flex-1 flex flex-col items-center justify-center text-center">
-                <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-8 animate-pulse">
-                  <Target size={40} className="text-slate-200" />
-                </div>
-                <h3 className="text-2xl font-black text-slate-300 uppercase tracking-tighter mb-4 leading-tight">Explore the<br />Galaxy</h3>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-relaxed max-w-[200px]">
-                  Select an orbital destination to unlock career insights and required skills.
+                <h3 className="text-2xl font-black text-slate-300 uppercase tracking-tighter mb-4 leading-tight">Career Orbit<br />Explorer</h3>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-relaxed max-w-[240px]">
+                  Welcome to the Career Galaxy. Select any orbiting career portal to investigate high-impact roles in water management.
                 </p>
+                <div className="mt-8 grid grid-cols-1 gap-4 w-full">
+                  <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-[10px]">1</div>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight text-left">Click a floating sphere to select a career path.</p>
+                  </div>
+                  <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-[10px]">2</div>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight text-left">Review required skills and advancement pathways.</p>
+                  </div>
+                  <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-[10px]">3</div>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight text-left">Explore all 4 careers to complete the module.</p>
+                  </div>
+                </div>
               </div>
             ) : (
               <div className="flex-1 flex flex-col animate-in slide-in-from-right-8 duration-500">

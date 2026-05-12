@@ -277,7 +277,7 @@ export function GroundwaterSandbox() {
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[750px]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:aspect-[16/9]">
         
         {/* LEFT: 3D Visualization */}
         <div className="lg:col-span-8 bg-slate-900 rounded-[2.5rem] relative overflow-hidden shadow-2xl border border-slate-800">
@@ -319,8 +319,8 @@ export function GroundwaterSandbox() {
           <div className="absolute top-8 left-8 flex flex-col gap-3">
             <div className="bg-white/10 backdrop-blur-xl p-5 rounded-[2rem] border border-white/10 shadow-2xl min-w-[200px]">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Aquifer Saturation</span>
-                <Activity size={14} className={isRaining ? "text-blue-400 animate-pulse" : "text-slate-600"} />
+                <span className="text-[10px] font-black text-white uppercase tracking-widest">Aquifer Saturation</span>
+                <Activity size={14} className={isRaining ? "text-blue-400 animate-pulse" : "text-white"} />
               </div>
               <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden mb-3">
                 <div 
@@ -330,7 +330,7 @@ export function GroundwaterSandbox() {
               </div>
               <div className="flex justify-between items-baseline">
                 <span className="text-3xl font-black text-white">{(saturation * 100).toFixed(0)}%</span>
-                <span className="text-[10px] font-bold text-slate-400 uppercase">Capacity</span>
+                <span className="text-[10px] font-bold text-white/80 uppercase">Capacity</span>
               </div>
             </div>
 
@@ -341,8 +341,8 @@ export function GroundwaterSandbox() {
               </div>
             )}
 
-            {/* Soil Type Selector */}
-            <div className="absolute top-8 right-8">
+            {/* Soil Type Selector & Instructions */}
+            <div className="absolute top-8 right-8 flex flex-col items-end gap-4">
               <div className="bg-slate-900/80 backdrop-blur-xl p-2 rounded-2xl border border-white/10 flex flex-col gap-1">
                 {['Sand', 'Loam', 'Clay'].map(type => (
                   <button
@@ -355,6 +355,28 @@ export function GroundwaterSandbox() {
                     {type}
                   </button>
                 ))}
+              </div>
+
+              {/* Instructions Overlay */}
+              <div className="bg-white/90 backdrop-blur-xl p-5 rounded-3xl border border-white shadow-2xl max-w-[180px] pointer-events-none">
+                <div className="flex items-center gap-2 mb-3 text-blue-600">
+                  <Info size={14} className="animate-pulse" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Guide</span>
+                </div>
+                <ul className="space-y-2">
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">Choose Soil Type</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                    <span className="text-[9px] font-black text-blue-600 uppercase tracking-tighter">Deploy Structures</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                    <span className="text-[9px] font-black text-blue-600 uppercase tracking-tighter">Start Rainfall</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
