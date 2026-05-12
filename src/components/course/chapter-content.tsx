@@ -32,14 +32,18 @@ export function ChapterContent({ chapter }: ChapterContentProps) {
   return (
     <article className="relative min-h-screen">
       
-      {/* Top right buttons (Motion, Expand) */}
-      <div className="absolute -top-4 right-0 flex gap-3 z-50 hidden md:flex">
+      {/* Floating Action Buttons */}
+      <div className="fixed bottom-8 right-8 flex flex-col gap-4 z-[100] no-print">
         <button 
           onClick={toggleFullscreen}
-          className="bg-white/90 backdrop-blur-md p-2 rounded-full text-slate-800 shadow-sm hover:bg-white transition-colors border border-white"
+          className="bg-slate-900/80 backdrop-blur-xl p-4 rounded-full text-white shadow-2xl hover:bg-slate-900 hover:scale-110 active:scale-95 transition-all border border-white/20 group"
           title="Toggle Fullscreen"
         >
-          {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+          {isFullscreen ? (
+            <Minimize2 className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+          ) : (
+            <Maximize2 className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+          )}
         </button>
       </div>
 
@@ -60,14 +64,14 @@ export function ChapterContent({ chapter }: ChapterContentProps) {
             </div>
 
             {/* Title with frosted background for readability */}
-            <div className="bg-white/40 backdrop-blur-2xl p-6 md:p-7 rounded-[1.75rem] border border-white/60 shadow-lg mb-6">
-              <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 leading-[1.08] tracking-tight mb-5">
+            <div className="bg-slate-900/60 backdrop-blur-2xl p-6 md:p-7 rounded-[1.75rem] border border-white/10 shadow-2xl mb-6">
+              <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-[1.08] tracking-tight mb-5">
                 Welcome to <br />
-                <span className="text-blue-600">{chapter.title}</span>
+                <span className="text-blue-400">{chapter.title}</span>
               </h1>
               
               {/* Summary Text (Fixed Legibility) */}
-              <div className="text-base md:text-lg text-slate-800 font-semibold leading-relaxed bg-white/60 p-3.5 md:p-4 rounded-xl border border-white/50">
+              <div className="text-base md:text-lg text-slate-200 font-semibold leading-relaxed bg-white/5 p-3.5 md:p-4 rounded-xl border border-white/10">
                 {chapter.summary}
               </div>
             </div>
@@ -83,7 +87,7 @@ export function ChapterContent({ chapter }: ChapterContentProps) {
 
         {/* Bottom Section: Main Course Content (No main card wrapper, relies on TopicCards) */}
         <div className="relative z-10 w-full mx-auto">
-          <div className="prose-course max-w-none prose-lg md:prose-xl text-slate-800 w-full">
+          <div className="prose-course max-w-none prose-lg md:prose-xl text-slate-300 w-full bg-slate-900/40 backdrop-blur-xl p-8 md:p-12 rounded-[3rem] border border-white/10 shadow-2xl">
             {chapter.content}
           </div>
         </div>

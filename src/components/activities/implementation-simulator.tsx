@@ -202,10 +202,10 @@ export function ImplementationSimulator() {
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:aspect-[16/9]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* LEFT: 3D Visualization */}
-        <div className="lg:col-span-8 bg-slate-900 rounded-[2.5rem] relative overflow-hidden shadow-2xl border border-slate-800">
+        <div className="lg:col-span-8 bg-slate-900 rounded-[2.5rem] relative overflow-hidden shadow-2xl border border-slate-800 min-h-[500px] lg:min-h-[650px]">
           <Canvas shadows>
             <PerspectiveCamera makeDefault position={[15, 15, 15]} fov={35} />
             <OrbitControls 

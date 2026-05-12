@@ -295,9 +295,9 @@ export function TapRepairSimulator() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row w-full lg:aspect-[16/9] bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+    <div className="flex flex-col lg:flex-row w-full bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
       {/* LEFT: 3D WORKBENCH PANEL */}
-      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[450px]">
+      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[500px] lg:min-h-[650px]">
         <Canvas shadows className="w-full h-full">
           <PerspectiveCamera makeDefault position={[5, 5, 5]} fov={35} />
           <OrbitControls 

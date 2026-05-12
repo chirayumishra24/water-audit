@@ -334,14 +334,14 @@ export function TownHallSim() {
 
   if (phase === 'setup') {
     return (
-      <div className="flex flex-col w-full lg:aspect-[16/9] bg-white rounded-[4rem] border border-slate-200 shadow-2xl relative overflow-hidden">
+      <div className="flex flex-col w-full lg:min-h-[650px] bg-slate-900 rounded-[4rem] border border-white/10 shadow-2xl relative overflow-hidden">
         {/* SCROLLABLE CONTENT AREA */}
-        <div className="flex-1 bg-slate-50 overflow-y-auto p-12 md:p-20 custom-scrollbar">
+        <div className="flex-1 bg-slate-900/50 overflow-y-auto p-12 md:p-20 custom-scrollbar">
           <div className="text-center space-y-8 mb-16">
             <div className="inline-flex items-center gap-3 px-8 py-3 bg-blue-600 text-white rounded-full text-[12px] font-black uppercase tracking-[0.3em] shadow-xl shadow-blue-600/20">
               <Sparkles size={16} /> Mission Briefing
             </div>
-            <h2 className="text-7xl font-black text-slate-900 tracking-tighter uppercase leading-none">Choose Your Audience</h2>
+            <h2 className="text-7xl font-black text-white tracking-tighter uppercase leading-none">Choose Your Audience</h2>
             <p className="text-2xl font-bold text-slate-400 max-w-3xl mx-auto leading-relaxed">
               Advocacy is about tailoring your findings to the person who can make the decision. Who are you presenting to today?
             </p>
@@ -354,8 +354,8 @@ export function TownHallSim() {
                 onClick={() => setTargetAudience(audience)}
                 className={`group relative p-10 rounded-[3rem] border-2 transition-all text-left overflow-hidden ${
                   targetAudience.id === audience.id 
-                    ? 'bg-white border-blue-600 shadow-2xl scale-105' 
-                    : 'bg-slate-100 border-transparent hover:bg-white hover:shadow-xl'
+                    ? 'bg-slate-800 border-blue-600 shadow-2xl scale-105' 
+                    : 'bg-slate-900/50 border-white/5 hover:bg-slate-800 hover:shadow-xl'
                 }`}
               >
                 {targetAudience.id === audience.id && (
@@ -364,15 +364,15 @@ export function TownHallSim() {
                   </div>
                 )}
                 <div className="space-y-6">
-                  <div className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-inner ${targetAudience.id === audience.id ? 'bg-blue-50 text-blue-600' : 'bg-white text-slate-300'}`}>
+                  <div className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-inner ${targetAudience.id === audience.id ? 'bg-blue-600/10 text-blue-400' : 'bg-slate-800 text-slate-500'}`}>
                     <Users size={32} />
                   </div>
                   <div>
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">{audience.difficulty} Mode</span>
-                    <h4 className="text-2xl font-black text-slate-900 tracking-tight">{audience.title}</h4>
-                    <p className="text-xs font-bold text-blue-500 uppercase mt-2 tracking-widest">{audience.focus}</p>
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">{audience.difficulty} Mode</span>
+                    <h4 className="text-2xl font-black text-white tracking-tight">{audience.title}</h4>
+                    <p className="text-xs font-bold text-blue-400 mt-2 tracking-widest uppercase">{audience.focus}</p>
                   </div>
-                  <p className="text-xs font-bold text-slate-400 leading-relaxed italic">"{audience.goal}"</p>
+                  <p className="text-xs font-bold text-slate-500 leading-relaxed italic">"{audience.goal}"</p>
                 </div>
               </button>
             ))}
@@ -394,28 +394,28 @@ export function TownHallSim() {
   return (
     <div className="w-full flex flex-col gap-6 max-w-7xl mx-auto">
       {/* Simulation Header */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-6 px-10 py-6 bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-100/50">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 px-10 py-6 bg-slate-900 rounded-[2.5rem] border border-white/10 shadow-xl">
         <div className="flex items-center gap-6">
           <div className="w-16 h-16 bg-blue-600 rounded-2xl flex flex-col items-center justify-center shadow-xl shadow-blue-600/20">
             <Users className="text-white animate-pulse" size={28} />
           </div>
           <div>
-            <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase leading-none mb-1">Town Hall Sim</h2>
+            <h2 className="text-3xl font-black text-white tracking-tighter uppercase leading-none mb-1">Town Hall Sim</h2>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live: {targetAudience.title}</span>
+              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Live: {targetAudience.title}</span>
             </div>
           </div>
         </div>
 
         {/* Header HUD: Approval & Controls */}
         <div className="flex items-center gap-4 no-print">
-          <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-2xl border border-slate-100">
+          <div className="flex items-center gap-2 bg-white/5 p-2 rounded-2xl border border-white/5">
              <div className={`px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all ${engagement > 70 ? 'bg-emerald-500 text-white' : engagement > 40 ? 'bg-blue-600 text-white' : 'bg-rose-500 text-white'}`}>
                 <Users size={16} />
                 <span className="text-xs font-black uppercase tracking-widest">{engagement.toFixed(0)}% Approval</span>
              </div>
-             <button onClick={reset} className="w-10 h-10 flex items-center justify-center text-slate-300 hover:text-rose-500 hover:bg-white hover:shadow-sm rounded-lg transition-all">
+             <button onClick={reset} className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-white hover:bg-white/10 rounded-lg transition-all">
                 <RotateCcw size={18} />
              </button>
           </div>
@@ -423,15 +423,15 @@ export function TownHallSim() {
           <div className="hidden lg:flex gap-3">
             {[
               { icon: RotateCcw, label: "View", sub: "Orbit", color: "bg-blue-600" },
-              { icon: Info, label: "Guide", sub: "Data", color: "bg-slate-900" }
+              { icon: Info, label: "Guide", sub: "Data", color: "bg-white/10" }
             ].map((hud, idx) => (
-              <div key={idx} className="px-4 py-2 bg-white rounded-xl border border-slate-100 flex items-center gap-3 group hover:shadow-md transition-all cursor-help">
+              <div key={idx} className="px-4 py-2 bg-slate-800 rounded-xl border border-white/5 flex items-center gap-3 group hover:shadow-md transition-all cursor-help">
                 <div className={`w-8 h-8 ${hud.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm`}>
                   <hud.icon size={14} className="text-white" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[9px] font-black text-slate-900 uppercase tracking-widest leading-none mb-0.5">{hud.label}</span>
-                  <span className="text-[7px] font-bold text-slate-400 uppercase tracking-widest leading-none">{hud.sub}</span>
+                  <span className="text-[9px] font-black text-white uppercase tracking-widest leading-none mb-0.5">{hud.label}</span>
+                  <span className="text-[7px] font-bold text-slate-500 uppercase tracking-widest leading-none">{hud.sub}</span>
                 </div>
               </div>
             ))}
@@ -513,33 +513,33 @@ export function TownHallSim() {
 
         {/* Deck Controls */}
         <div className="lg:col-span-4 flex flex-col gap-4 lg:max-h-[600px]">
-          <div className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-xl flex-1 overflow-y-auto custom-scrollbar relative">
+          <div className="bg-slate-900 p-8 rounded-[2.5rem] border border-white/10 shadow-xl flex-1 overflow-y-auto custom-scrollbar relative">
             <div className="flex items-center justify-between mb-6">
               <div className="space-y-1">
-                <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest block">Strategy Panel</span>
-                <h3 className="text-3xl font-black text-slate-900 tracking-tight">Select Evidence</h3>
+                <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest block">Strategy Panel</span>
+                <h3 className="text-3xl font-black text-white tracking-tight">Select Evidence</h3>
               </div>
-              <Target size={24} className="text-slate-200" />
+              <Target size={24} className="text-white/20" />
             </div>
 
             {/* Impact Gauges */}
             <div className="grid grid-cols-3 gap-3 mb-6">
               {[
-                { label: "Data", val: stats.logic, icon: Brain, color: "text-blue-600", bg: "bg-blue-50" },
-                { label: "Impact", val: stats.emotion, icon: Heart, color: "text-rose-500", bg: "bg-rose-50" },
-                { label: "Cost", val: stats.budget, icon: Coins, color: "text-amber-600", bg: "bg-amber-50" }
+                { label: "Data", val: stats.logic, icon: Brain, color: "text-blue-400", bg: "bg-blue-500/10" },
+                { label: "Impact", val: stats.emotion, icon: Heart, color: "text-rose-400", bg: "bg-rose-500/10" },
+                { label: "Cost", val: stats.budget, icon: Coins, color: "text-amber-400", bg: "bg-amber-500/10" }
               ].map(g => (
-                <div key={g.label} className={`p-4 ${g.bg} rounded-[2rem] border border-white/50 flex flex-col items-center gap-3`}>
-                  <div className="p-3 bg-white rounded-2xl shadow-sm">
+                <div key={g.label} className={`p-4 ${g.bg} rounded-[2rem] border border-white/5 flex flex-col items-center gap-3`}>
+                  <div className="p-3 bg-white/5 rounded-2xl shadow-sm border border-white/5">
                     <g.icon className={g.color} size={20} />
                   </div>
-                  <div className="h-20 w-2 bg-white/50 rounded-full overflow-hidden relative">
+                  <div className="h-20 w-2 bg-white/10 rounded-full overflow-hidden relative">
                     <div 
                       className={`absolute bottom-0 w-full ${g.color.replace('text-', 'bg-')} transition-all duration-1000 ease-out`}
                       style={{ height: `${g.val}%` }}
                     />
                   </div>
-                  <span className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-400">{g.label}</span>
+                  <span className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-500">{g.label}</span>
                 </div>
               ))}
             </div>
@@ -556,22 +556,22 @@ export function TownHallSim() {
                     disabled={isSelected || isFull}
                     className={`w-full p-6 rounded-3xl border-2 text-left transition-all group flex items-center gap-5 ${
                       isSelected 
-                        ? 'bg-slate-900 border-slate-900 text-white opacity-40 grayscale' 
+                        ? 'bg-blue-600 border-blue-600 text-white' 
                         : isFull
-                          ? 'bg-slate-50 border-slate-50 opacity-50 cursor-not-allowed'
-                          : 'bg-white border-slate-100 hover:border-blue-500 hover:translate-x-2'
+                          ? 'bg-white/5 border-white/5 opacity-50 cursor-not-allowed'
+                          : 'bg-white/5 border-white/5 hover:border-blue-500 hover:translate-x-2 text-white/70'
                     }`}
                   >
-                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${isSelected ? 'bg-white/10' : 'bg-slate-50 shadow-inner'}`}>
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${isSelected ? 'bg-white/20' : 'bg-white/5 shadow-inner'}`}>
                       {card.type === 'logic' ? <Brain size={24} /> : card.type === 'emotion' ? <Heart size={24} /> : <Coins size={24} />}
                     </div>
                     <div className="flex-1">
                       <h4 className="text-sm font-black uppercase tracking-tight">{card.title}</h4>
-                      <p className={`text-[10px] font-bold mt-1 line-clamp-1 ${isSelected ? 'text-white/60' : 'text-slate-400'}`}>
+                      <p className={`text-[10px] font-bold mt-1 line-clamp-1 ${isSelected ? 'text-white/80' : 'text-slate-500'}`}>
                         {card.content}
                       </p>
                     </div>
-                    {!isSelected && !isFull && <ChevronRight className="text-slate-200 group-hover:text-blue-500 transition-colors" />}
+                    {!isSelected && !isFull && <ChevronRight className="text-white/10 group-hover:text-blue-500 transition-colors" />}
                   </button>
                 )
               })}
@@ -617,41 +617,41 @@ export function TownHallSim() {
       </div>
 
       {/* Strategic Advocacy Guidelines */}
-      <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-10 shadow-xl relative overflow-hidden">
+      <div className="bg-slate-900 p-8 rounded-[2.5rem] border border-white/10 grid grid-cols-1 md:grid-cols-3 gap-10 shadow-xl relative overflow-hidden">
         {/* Background Patterns */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -mr-32 -mt-32" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-slate-50/50 rounded-full blur-3xl -ml-32 -mb-32" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl -mr-32 -mt-32" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl -ml-32 -mb-32" />
 
         {[
           { 
             icon: Mail, 
-            color: "text-blue-600", 
-            bg: "bg-blue-50", 
+            color: "text-blue-400", 
+            bg: "bg-blue-400/10", 
             title: "Audience Profiling", 
             desc: "Every stakeholder has a different 'Currency of Care'. A Municipal Officer values legal compliance, while a Parent values safety. Identify their main concern before picking your data." 
           },
           { 
             icon: BarChart3, 
-            color: "text-emerald-600", 
-            bg: "bg-emerald-50", 
+            color: "text-emerald-400", 
+            bg: "bg-emerald-400/10", 
             title: "Data Integrity", 
             desc: "Emotional stories get attention, but audited data builds trust. Always support your claims with specific volumes, cost-savings, and measured wastage from your actual field audit." 
           },
           { 
             icon: Award, 
-            color: "text-amber-600", 
-            bg: "bg-amber-50", 
+            color: "text-amber-400", 
+            bg: "bg-amber-400/10", 
             title: "Clear Call to Action", 
             desc: "Don't just present a problem. End every advocacy pitch with a clear, achievable solution—like installing 5 aerators or running a greywater pilot for a single garden bed." 
           }
         ].map((item, idx) => (
           <div key={idx} className="relative z-10 flex flex-col gap-6">
-            <div className={`w-16 h-16 ${item.bg} ${item.color} rounded-[1.8rem] flex items-center justify-center shadow-inner`}>
+            <div className={`w-16 h-16 ${item.bg} ${item.color} rounded-[1.8rem] flex items-center justify-center shadow-inner border border-white/5`}>
               <item.icon size={32} />
             </div>
             <div className="space-y-3">
-              <h4 className="text-2xl font-black text-slate-900 tracking-tight">{item.title}</h4>
-              <p className="text-sm text-slate-500 font-bold leading-relaxed">{item.desc}</p>
+              <h4 className="text-2xl font-black text-white tracking-tight">{item.title}</h4>
+              <p className="text-sm text-slate-400 font-bold leading-relaxed">{item.desc}</p>
             </div>
           </div>
         ))}

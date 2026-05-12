@@ -194,9 +194,9 @@ export function SiteWalkthrough() {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row w-full lg:aspect-[16/9] bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+      <div className="flex flex-col lg:flex-row w-full bg-slate-900 rounded-[3.5rem] overflow-hidden border border-white/10 shadow-2xl relative">
         {/* LEFT: 3D SITE PANEL */}
-        <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[400px]">
+        <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[500px] lg:min-h-[650px]">
           <Canvas shadows className="w-full h-full" gl={{ preserveDrawingBuffer: true }}>
             <PerspectiveCamera makeDefault position={[12, 12, 12]} fov={35} />
             <OrbitControls 
@@ -218,7 +218,7 @@ export function SiteWalkthrough() {
                 sectionSize={5}
                 sectionThickness={1}
                 sectionColor="#3b82f6"
-                cellColor="#e2e8f0"
+                cellColor="#1e293b"
               />
               
               <FaucetModel position={[-3, 0.05, 2]} />
@@ -257,23 +257,23 @@ export function SiteWalkthrough() {
 
           {/* Instructions Overlay */}
           <div className="absolute top-10 right-10 pointer-events-none z-10 print:hidden">
-            <div className="bg-white/90 backdrop-blur-xl p-5 rounded-3xl border border-white shadow-2xl max-w-[180px]">
-              <div className="flex items-center gap-2 mb-3 text-blue-600">
+            <div className="bg-slate-900/90 backdrop-blur-xl p-5 rounded-3xl border border-white/10 shadow-2xl max-w-[180px]">
+              <div className="flex items-center gap-2 mb-3 text-blue-400">
                 <Info size={14} className="animate-pulse" />
                 <span className="text-[10px] font-black uppercase tracking-widest">Controls</span>
               </div>
               <ul className="space-y-2">
                 <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-slate-300" />
-                  <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">Drag to Rotate</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-slate-700" />
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Drag to Rotate</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-slate-300" />
-                  <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">Scroll to Zoom</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-slate-700" />
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Scroll to Zoom</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-                  <span className="text-[9px] font-black text-blue-600 uppercase tracking-tighter">Click Blue Dots</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                  <span className="text-[9px] font-black text-blue-400 uppercase tracking-tighter">Click Blue Dots</span>
                 </li>
               </ul>
             </div>
@@ -290,23 +290,23 @@ export function SiteWalkthrough() {
         </div>
 
         {/* RIGHT: REGISTRY PANEL */}
-        <div className="w-full lg:w-[450px] bg-white flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar print:p-0 print:border-none print:w-full">
+        <div className="w-full lg:w-[450px] bg-slate-900 flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar print:p-0 print:border-none print:w-full border-l border-white/5">
           <div className="space-y-10">
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Issue Registry</h3>
-              <div className="p-3 bg-slate-50 rounded-2xl print:hidden">
-                <MapPin className="w-5 h-5 text-slate-300" />
+              <h3 className="text-2xl font-black text-white uppercase tracking-tighter">Issue Registry</h3>
+              <div className="p-3 bg-white/5 rounded-2xl print:hidden border border-white/5">
+                <MapPin className="w-5 h-5 text-blue-400" />
               </div>
             </div>
 
             <div className="flex-1 space-y-4 min-h-[300px]">
               {foundIds.length === 0 ? (
-                <div className="flex flex-col items-center justify-center text-center p-12 border-4 border-dashed border-slate-50 rounded-[3rem] h-full print:hidden">
-                  <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6">
-                    <Eye className="w-10 h-10 text-slate-200" />
+                <div className="flex flex-col items-center justify-center text-center p-12 border-4 border-dashed border-white/5 rounded-[3rem] h-full print:hidden">
+                  <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6 border border-white/5">
+                    <Eye className="w-10 h-10 text-slate-700" />
                   </div>
-                  <h4 className="text-sm font-black text-slate-300 uppercase tracking-widest mb-2">No Issues Detected</h4>
-                  <p className="text-[10px] font-bold text-slate-400 leading-relaxed uppercase tracking-widest">
+                  <h4 className="text-sm font-black text-slate-600 uppercase tracking-widest mb-2">No Issues Detected</h4>
+                  <p className="text-[10px] font-bold text-slate-500 leading-relaxed uppercase tracking-widest">
                     Rotate the 3D view and click on the markers to identify facility loss points.
                   </p>
                 </div>
@@ -315,22 +315,22 @@ export function SiteWalkthrough() {
                   {foundIds.map(id => {
                     const p = LOSS_POINTS.find(item => item.id === id)!;
                     return (
-                      <div key={id} className="p-6 bg-slate-50 rounded-[2.5rem] border border-slate-100 flex items-start gap-5 group hover:bg-white hover:shadow-xl transition-all print:bg-white print:border-slate-200">
-                        <div className="p-4 bg-white rounded-2xl shadow-sm group-hover:scale-110 transition-transform print:shadow-none print:border print:border-slate-100">
-                          <p.icon size={24} className="text-blue-600" />
+                      <div key={id} className="p-6 bg-white/5 rounded-[2.5rem] border border-white/5 flex items-start gap-5 group hover:bg-white/10 hover:shadow-xl transition-all print:bg-white print:border-slate-200">
+                        <div className="p-4 bg-slate-900 rounded-2xl shadow-sm group-hover:scale-110 transition-transform print:shadow-none print:border print:border-slate-100 border border-white/5">
+                          <p.icon size={24} className="text-blue-400" />
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-2">
-                            <h4 className="text-xs font-black uppercase tracking-tight text-slate-900">{p.name}</h4>
+                            <h4 className="text-xs font-black uppercase tracking-tight text-white">{p.name}</h4>
                             <span className={`text-[8px] font-black px-2 py-1 rounded-md uppercase ${
-                              p.severity === 'Critical' ? 'bg-rose-100 text-rose-600' :
-                              p.severity === 'High' ? 'bg-amber-100 text-amber-600' :
-                              'bg-blue-100 text-blue-600'
+                              p.severity === 'Critical' ? 'bg-rose-500/10 text-rose-400' :
+                              p.severity === 'High' ? 'bg-amber-500/10 text-amber-400' :
+                              'bg-blue-500/10 text-blue-400'
                             }`}>
                               {p.severity}
                             </span>
                           </div>
-                          <p className="text-[10px] font-bold text-slate-500 leading-relaxed">{p.description}</p>
+                          <p className="text-[10px] font-bold text-slate-400 leading-relaxed">{p.description}</p>
                         </div>
                       </div>
                     );
@@ -369,11 +369,11 @@ export function SiteWalkthrough() {
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             </div>
 
-            <div className="flex items-start gap-4 p-6 bg-slate-50 rounded-3xl border border-slate-100 print:hidden">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shrink-0 shadow-sm">
-                <Info className="w-5 h-5 text-blue-600" />
+            <div className="flex items-start gap-4 p-6 bg-white/5 rounded-3xl border border-white/5 print:hidden">
+              <div className="w-10 h-10 bg-blue-600/10 rounded-xl flex items-center justify-center shrink-0 border border-blue-500/20">
+                <Info className="w-5 h-5 text-blue-400" />
               </div>
-              <p className="text-xs font-bold text-slate-500 leading-relaxed">
+              <p className="text-xs font-bold text-blue-400 leading-relaxed">
                 Identify all critical leaks to generate the final site audit report.
               </p>
             </div>
@@ -383,8 +383,8 @@ export function SiteWalkthrough() {
               disabled={foundIds.length < LOSS_POINTS.length}
               className={`w-full py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl flex items-center justify-center gap-3 print:hidden ${
                 foundIds.length < LOSS_POINTS.length 
-                  ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
-                  : 'bg-slate-900 text-white hover:bg-slate-800 shadow-slate-200'
+                  ? 'bg-white/5 text-slate-600 cursor-not-allowed border border-white/5' 
+                  : 'bg-blue-600 text-white hover:bg-blue-500'
               }`}
             >
               Finalize Site Report <ArrowRight className="w-4 h-4" />

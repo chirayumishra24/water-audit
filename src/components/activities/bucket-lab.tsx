@@ -179,7 +179,7 @@ export function BucketLab() {
   };
 
   return (
-    <div className="activity-print-target flex flex-col lg:flex-row w-full lg:aspect-[16/9] bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+    <div className="activity-print-target flex flex-col lg:flex-row w-full bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
       {/* Print Header - Only visible in PDF/Print */}
       <div className="hidden print:block w-full mb-8 border-b-2 border-slate-900 pb-6">
         <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter">Water Flow Analysis Report</h1>
@@ -190,7 +190,7 @@ export function BucketLab() {
       </div>
 
       {/* LEFT: 3D CITY PANEL */}
-      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden print:h-[400px]">
+      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[500px] lg:min-h-[650px] print:h-[400px]">
         <Canvas shadows className="w-full h-full" gl={{ preserveDrawingBuffer: true }}>
           <PerspectiveCamera makeDefault position={[5, 4, 8]} fov={30} />
           <OrbitControls 

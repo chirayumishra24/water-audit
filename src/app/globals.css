@@ -86,7 +86,7 @@ select {
 .prose-course h2,
 .prose-course h3,
 .prose-course h4 {
-  color: #0f172a; /* slate-900 */
+  color: #eff1f6;
   letter-spacing: -0.02em; /* Tighter tracking for headings */
   font-weight: 900; /* Extra bold */
 }

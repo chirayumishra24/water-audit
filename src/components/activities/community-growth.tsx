@@ -139,7 +139,7 @@ export function CommunityGrowth() {
   };
 
   return (
-    <div className="activity-print-target flex flex-col lg:flex-row w-full lg:aspect-[16/9] bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+    <div className="activity-print-target flex flex-col lg:flex-row w-full bg-slate-900 rounded-[3.5rem] overflow-hidden border border-white/5 shadow-2xl relative">
       {/* Print Header - Only visible in PDF/Print */}
       <div className="hidden print:block w-full mb-8 border-b-2 border-slate-900 pb-6">
         <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter">Water Demand Report</h1>
@@ -150,7 +150,7 @@ export function CommunityGrowth() {
       </div>
 
       {/* LEFT: 3D CITY PANEL */}
-      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden print:h-[400px]">
+      <div className="relative flex-1 bg-slate-900/50 border-b lg:border-b-0 lg:border-r border-white/5 overflow-hidden min-h-[500px] lg:min-h-[650px] print:h-[400px]">
         {/* Dynamic Warning Overlay */}
         {isStressed && (
           <div className="absolute inset-0 bg-red-600/5 animate-pulse pointer-events-none z-10" />
@@ -192,22 +192,22 @@ export function CommunityGrowth() {
 
         {/* HUD: Controls/Guide */}
         <div className="absolute bottom-10 left-10 z-10 flex gap-4 no-print">
-          <div className="px-6 py-4 bg-slate-900/10 backdrop-blur-xl rounded-2xl border border-slate-200 flex items-center gap-4 group hover:bg-slate-900/20 transition-all">
+          <div className="px-6 py-4 bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-white/10 flex items-center gap-4 group hover:bg-slate-900/60 transition-all">
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-blue-500/20">
               <RotateCcw size={20} className="text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none mb-1">Navigation</span>
+              <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none mb-1">Navigation</span>
               <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none">Rotate View</span>
             </div>
           </div>
           
-          <div className="px-6 py-4 bg-slate-900/10 backdrop-blur-xl rounded-2xl border border-slate-200 flex items-center gap-4 group hover:bg-slate-900/20 transition-all">
-            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
-              <Target size={20} className="text-blue-600" />
+          <div className="px-6 py-4 bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-white/10 flex items-center gap-4 group hover:bg-slate-900/60 transition-all">
+            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform border border-white/10">
+              <Target size={20} className="text-blue-400" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest leading-none mb-1">Guide</span>
+              <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none mb-1">Guide</span>
               <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none">Balance Growth & Supply</span>
             </div>
           </div>
@@ -226,12 +226,12 @@ export function CommunityGrowth() {
       </div>
 
       {/* RIGHT: CONFIGURATION PANEL */}
-      <div className="w-full lg:w-[450px] bg-white flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar print:overflow-visible">
+      <div className="w-full lg:w-[450px] bg-slate-900 flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar print:overflow-visible">
         <div className="space-y-10">
           <div className="flex items-center justify-between">
-            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Simulation Summary</h3>
-            <div className="p-3 bg-slate-50 rounded-2xl no-print">
-              <TrendingUp className="w-5 h-5 text-slate-300" />
+            <h3 className="text-2xl font-black text-white uppercase tracking-tighter">Simulation Summary</h3>
+            <div className="p-3 bg-white/5 rounded-2xl no-print border border-white/5">
+              <TrendingUp className="w-5 h-5 text-blue-400" />
             </div>
           </div>
 
@@ -240,10 +240,10 @@ export function CommunityGrowth() {
             <div className="space-y-6">
               <div className="flex justify-between items-end">
                 <div>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Population Size</span>
-                  <div className="text-3xl font-black text-slate-900 tracking-tighter">{population} <span className="text-xs uppercase text-slate-400">Residents</span></div>
+                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Population Size</span>
+                  <div className="text-3xl font-black text-white tracking-tighter">{population} <span className="text-xs uppercase text-slate-500">Residents</span></div>
                 </div>
-                <Users className="w-6 h-6 text-slate-200 mb-1 no-print" />
+                <Users className="w-6 h-6 text-blue-500/20 mb-1 no-print" />
               </div>
                 <input 
                   type="range" 

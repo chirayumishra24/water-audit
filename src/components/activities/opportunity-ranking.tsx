@@ -361,21 +361,21 @@ export function OpportunityRanking() {
             <Zap size={24} />
           </div>
           <h4 className="text-lg font-black tracking-tight">Quick Wins</h4>
-          <p className="text-sm text-slate-400 font-medium leading-relaxed">Focus on "Low Effort, High Impact" first. These build organizational momentum and prove the audit's value within weeks.</p>
+          <p className="text-sm text-white/70 font-medium leading-relaxed">Focus on "Low Effort, High Impact" first. These build organizational momentum and prove the audit's value within weeks.</p>
         </div>
         <div className="flex flex-col gap-4">
           <div className="w-12 h-12 rounded-2xl bg-blue-500/20 text-blue-400 flex items-center justify-center border border-blue-500/20">
             <DollarSign size={24} />
           </div>
           <h4 className="text-lg font-black tracking-tight">Major Projects</h4>
-          <p className="text-sm text-slate-400 font-medium leading-relaxed">Strategic capital investments like recycling or borewell recharge. These require board-level approval and longer timelines.</p>
+          <p className="text-sm text-white/70 font-medium leading-relaxed">Strategic capital investments like recycling or borewell recharge. These require board-level approval and longer timelines.</p>
         </div>
         <div className="flex flex-col gap-4">
           <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/20">
             <Clock size={24} />
           </div>
           <h4 className="text-lg font-black tracking-tight">Maintenance Hygiene</h4>
-          <p className="text-sm text-slate-400 font-medium leading-relaxed">Never overlook the small stuff. Leaking restrooms and dripping taps often account for 5-10% of total site waste.</p>
+          <p className="text-sm text-white/70 font-medium leading-relaxed">Never overlook the small stuff. Leaking restrooms and dripping taps often account for 5-10% of total site waste.</p>
         </div>
       </div>
     </div>

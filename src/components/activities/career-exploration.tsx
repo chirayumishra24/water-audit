@@ -226,7 +226,7 @@ export function CareerExploration() {
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:aspect-[16/9]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:min-h-[650px]">
         
         {/* LEFT: 3D Career Galaxy (Col 8) */}
         <div className="lg:col-span-8 bg-[#020617] rounded-[3.5rem] relative overflow-hidden shadow-2xl border border-white/5">
@@ -289,82 +289,82 @@ export function CareerExploration() {
 
         {/* RIGHT: Profile Explorer (Col 4) */}
         <div className="lg:col-span-4 flex flex-col gap-4 max-h-[800px] lg:max-h-none">
-          <div className="bg-white p-10 rounded-[3.5rem] border border-slate-200 shadow-sm flex-1 flex flex-col relative overflow-y-auto custom-scrollbar">
+          <div className="bg-slate-900 p-10 rounded-[3.5rem] border border-white/10 shadow-2xl flex-1 flex flex-col relative overflow-y-auto custom-scrollbar">
             {!activePortal ? (
               <div className="flex-1 flex flex-col items-center justify-center text-center">
-                <h3 className="text-2xl font-black text-slate-300 uppercase tracking-tighter mb-4 leading-tight">Career Orbit<br />Explorer</h3>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-relaxed max-w-[240px]">
+                <h3 className="text-2xl font-black text-slate-700 uppercase tracking-tighter mb-4 leading-tight">Career Orbit<br />Explorer</h3>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest leading-relaxed max-w-[240px]">
                   Welcome to the Career Galaxy. Select any orbiting career portal to investigate high-impact roles in water management.
                 </p>
                 <div className="mt-8 grid grid-cols-1 gap-4 w-full">
-                  <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                  <div className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-[10px]">1</div>
                     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight text-left">Click a floating sphere to select a career path.</p>
                   </div>
-                  <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-[10px]">2</div>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight text-left">Review required skills and advancement pathways.</p>
+                  <div className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
+                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-[10px]">2</div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight text-left">Review required skills and advancement pathways.</p>
                   </div>
-                  <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-[10px]">3</div>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight text-left">Explore all 4 careers to complete the module.</p>
+                  <div className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
+                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-[10px]">3</div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight text-left">Explore all 4 careers to complete the module.</p>
                   </div>
                 </div>
               </div>
             ) : (
               <div className="flex-1 flex flex-col animate-in slide-in-from-right-8 duration-500">
                 <div className="flex items-start justify-between mb-10">
-                  <div className="p-5 rounded-[2rem] bg-slate-50" style={{ color: activeCareer?.color }}>
+                  <div className="p-5 rounded-[2rem] bg-white/5 border border-white/10" style={{ color: activeCareer?.color }}>
                     {activeCareer && React.createElement(activeCareer.icon, { size: 32 })}
                   </div>
-                  <div className="bg-blue-50 px-4 py-2 rounded-full">
-                    <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Level 10</span>
+                  <div className="bg-blue-600/10 px-4 py-2 rounded-full border border-blue-500/20">
+                    <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Level 10</span>
                   </div>
                 </div>
 
                 <div className="mb-10">
-                  <h3 className="text-3xl font-black text-slate-900 uppercase tracking-tighter leading-none mb-4">{activeCareer?.label}</h3>
-                  <p className="text-sm font-bold text-slate-500 leading-relaxed italic border-l-4 border-slate-100 pl-4">
+                  <h3 className="text-3xl font-black text-white uppercase tracking-tighter leading-none mb-4">{activeCareer?.label}</h3>
+                  <p className="text-sm font-bold text-slate-400 leading-relaxed italic border-l-4 border-white/5 pl-4">
                     "{activeCareer?.mission}"
                   </p>
                 </div>
 
                 <div className="space-y-8 flex-1">
                   <div>
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-4">Mastery Domains</span>
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-4">Mastery Domains</span>
                     <div className="flex flex-col gap-3">
                       {activeCareer?.skills.map(skill => (
                         <div key={skill} className="flex items-center gap-4 group">
                           <div className="w-2 h-2 rounded-full bg-blue-500 group-hover:scale-150 transition-all" />
-                          <span className="text-xs font-black text-slate-700 uppercase tracking-tight">{skill}</span>
+                          <span className="text-xs font-black text-white uppercase tracking-tight">{skill}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Advancement Pathway</span>
-                    <div className="text-[11px] font-black text-slate-600 uppercase tracking-widest flex items-center gap-3">
+                  <div className="p-6 bg-white/5 rounded-3xl border border-white/5">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Advancement Pathway</span>
+                    <div className="text-[11px] font-black text-white uppercase tracking-widest flex items-center gap-3">
                       {activeCareer?.pathway.split(' -> ').map((step, i, arr) => (
                         <React.Fragment key={step}>
                           <span>{step}</span>
-                          {i < arr.length - 1 && <ChevronRight size={12} className="text-slate-300" />}
+                          {i < arr.length - 1 && <ChevronRight size={12} className="text-white/20" />}
                         </React.Fragment>
                       ))}
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-10 pt-8 border-t border-slate-100 flex items-center justify-between">
+                <div className="mt-10 pt-8 border-t border-white/5 flex items-center justify-between">
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Portal Sync</span>
-                    <span className={`text-[10px] font-black uppercase ${completedPortals.includes(activePortal) ? 'text-emerald-500' : 'text-blue-600 animate-pulse'}`}>
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Portal Sync</span>
+                    <span className={`text-[10px] font-black uppercase ${completedPortals.includes(activePortal) ? 'text-emerald-500' : 'text-blue-400 animate-pulse'}`}>
                       {completedPortals.includes(activePortal) ? 'Verified' : 'Processing...'}
                     </span>
                   </div>
                   <div className="flex gap-2">
                     {CAREERS.map(c => (
-                      <div key={c.id} className={`w-2 h-2 rounded-full ${completedPortals.includes(c.id) ? 'bg-blue-500' : 'bg-slate-200'}`} />
+                      <div key={c.id} className={`w-2 h-2 rounded-full ${completedPortals.includes(c.id) ? 'bg-blue-500' : 'bg-white/10'}`} />
                     ))}
                   </div>
                 </div>
@@ -378,9 +378,9 @@ export function CareerExploration() {
                 <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
                   <Award size={20} className="text-white" />
                 </div>
-                <h4 className="text-lg font-black tracking-tight uppercase">Audit Legacy</h4>
+                <h4 className="text-xl font-black tracking-tight uppercase text-white leading-none">Audit Legacy</h4>
               </div>
-              <p className="text-[11px] font-medium text-slate-400 leading-relaxed">
+              <p className="text-sm font-medium text-white/80 leading-relaxed">
                 Your journey through the Water Audit Project is nearing its conclusion. These career paths represent the impact you can scale by applying your data skills to global challenges.
               </p>
             </div>
@@ -391,7 +391,7 @@ export function CareerExploration() {
               className={`w-full h-16 rounded-2xl flex items-center justify-center gap-3 font-black transition-all group ${
                 isComplete
                   ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)]'
-                  : 'bg-white/5 text-white/20 cursor-not-allowed border border-white/5'
+                  : 'bg-white/5 text-white/50 cursor-not-allowed border border-white/5'
               }`}
             >
               {isComplete ? 'Complete Full Course' : `Explore ${CAREERS.length - completedPortals.length} More Portals`}
