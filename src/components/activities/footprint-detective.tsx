@@ -137,6 +137,8 @@ export function FootprintDetective() {
     document.body.classList.remove('printing-activity');
   };
 
+  const status = getStatus();
+
   return (
     <div className="w-full flex flex-col gap-6 activity-print-target">
       {/* Print-only Header */}
