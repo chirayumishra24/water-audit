@@ -277,11 +277,11 @@ export function GroundwaterSandbox() {
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:aspect-[16/9]">
+      <div className="flex flex-col lg:flex-row w-full bg-slate-900 rounded-[3.5rem] overflow-hidden border border-slate-800 shadow-2xl relative lg:aspect-[16/9]">
         
         {/* LEFT: 3D Visualization */}
-        <div className="lg:col-span-8 bg-slate-900 rounded-[2.5rem] relative overflow-hidden shadow-2xl border border-slate-800">
-          <Canvas shadows>
+        <div className="relative flex-1 min-h-[400px] lg:min-h-0 lg:h-full overflow-hidden">
+          <Canvas shadows className="w-full h-full">
             <PerspectiveCamera makeDefault position={[12, 10, 12]} fov={35} />
             <OrbitControls 
               enablePan={false}
@@ -417,16 +417,16 @@ export function GroundwaterSandbox() {
         </div>
 
         {/* RIGHT: Control Panel */}
-        <div className="lg:col-span-4 flex flex-col gap-4">
-          <div className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm flex-1 flex flex-col overflow-y-auto no-scrollbar">
-            <div className="flex items-center gap-3 mb-8">
+        <div className="w-full lg:w-[400px] lg:h-full flex flex-col bg-white shrink-0 border-t lg:border-t-0 lg:border-l border-slate-200 overflow-hidden">
+          <div className="flex-1 p-8 overflow-y-auto no-scrollbar flex flex-col gap-6">
+            <div className="flex items-center gap-3">
               <div className="p-2.5 bg-blue-50 rounded-xl text-blue-600 shadow-sm">
                 <Layers size={20} />
               </div>
               <h3 className="text-xl font-black text-slate-900 tracking-tight">Intervention Sandbox</h3>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4">
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Passive Augmentation</span>
               <div className="grid grid-cols-1 gap-3">
                 {STRUCTURES.map(s => {
@@ -435,18 +435,18 @@ export function GroundwaterSandbox() {
                     <button
                       key={s.id}
                       onClick={() => toggleStructure(s.id)}
-                      className={`flex items-center gap-4 p-5 rounded-2xl border-2 transition-all group ${
+                      className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all group ${
                         isActive 
                           ? 'bg-blue-600 border-blue-600 text-white shadow-xl shadow-blue-100 scale-[1.02]' 
                           : 'bg-slate-50 border-slate-100 hover:border-blue-300 hover:bg-white'
                       }`}
                     >
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${isActive ? 'bg-white/20' : 'bg-white shadow-sm'}`}>
-                        <s.icon className={isActive ? 'text-white' : s.color} size={24} />
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isActive ? 'bg-white/20' : 'bg-white shadow-sm'}`}>
+                        <s.icon className={isActive ? 'text-white' : s.color} size={20} />
                       </div>
                       <div className="flex-1 text-left">
-                        <h4 className="text-xs font-black uppercase tracking-tight">{s.name}</h4>
-                        <p className={`text-[10px] font-bold leading-tight mt-1 ${isActive ? 'text-blue-100' : 'text-slate-400'}`}>
+                        <h4 className="text-[10px] font-black uppercase tracking-tight">{s.name}</h4>
+                        <p className={`text-[9px] font-bold leading-tight mt-1 ${isActive ? 'text-blue-100' : 'text-slate-400'}`}>
                           {s.desc}
                         </p>
                       </div>
@@ -457,28 +457,28 @@ export function GroundwaterSandbox() {
             </div>
 
             {isComplete && (
-              <div className="mt-8 p-6 bg-emerald-50 border border-emerald-100 rounded-3xl animate-in zoom-in duration-500">
-                <div className="flex items-center gap-3 mb-3">
-                  <CheckCircle2 className="text-emerald-500" />
-                  <span className="text-xs font-black text-emerald-900 uppercase">Aquifer Restored</span>
+              <div className="p-5 bg-emerald-50 border border-emerald-100 rounded-3xl animate-in zoom-in duration-500">
+                <div className="flex items-center gap-3 mb-2">
+                  <CheckCircle2 className="text-emerald-500" size={16} />
+                  <span className="text-[10px] font-black text-emerald-900 uppercase">Aquifer Restored</span>
                 </div>
-                <p className="text-[11px] font-medium text-emerald-800 leading-relaxed">
+                <p className="text-[10px] font-medium text-emerald-800 leading-relaxed">
                   Excellent work. By combining surface runoff management with direct recharge, you have stabilized the local water table even during intense monsoon cycles.
                 </p>
               </div>
             )}
-          </div>
 
-          <div className="bg-slate-900 p-8 rounded-[2.5rem] text-white flex flex-col gap-6">
-            <div className="flex items-start gap-4">
+            <div className="bg-slate-900 p-6 rounded-3xl text-white flex items-start gap-4 shadow-md">
               <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
                 <Trees size={20} className="text-emerald-400" />
               </div>
               <p className="text-[11px] font-medium text-blue-200 leading-relaxed">
-                Groundwater is a "shared bank account." Augmentation structures allow us to "deposit" rainwater that would otherwise be lost to surface evaporation or runoff.
+                Groundwater is a &quot;shared bank account.&quot; Augmentation structures allow us to &quot;deposit&quot; rainwater that would otherwise be lost to surface evaporation or runoff.
               </p>
             </div>
+          </div>
 
+          <div className="p-6 bg-slate-50 border-t border-slate-100">
             <button
               onClick={() => isComplete ? router.push('/4-1') : setIsRaining(true)}
               className={`w-full h-16 rounded-2xl flex items-center justify-center gap-3 font-black transition-all ${

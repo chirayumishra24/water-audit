@@ -226,11 +226,11 @@ export function CareerExploration() {
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:aspect-[16/9] w-full">
+      <div className="flex flex-col lg:flex-row w-full bg-[#020617] rounded-[3.5rem] overflow-hidden border border-white/5 shadow-2xl relative lg:aspect-[16/9]">
         
-        {/* LEFT: 3D Career Galaxy (Col 8) */}
-        <div className="lg:col-span-8 bg-[#020617] rounded-[3.5rem] relative overflow-hidden shadow-2xl border border-white/5">
-          <Canvas shadows>
+        {/* LEFT: 3D Career Galaxy */}
+        <div className="relative flex-1 min-h-[400px] lg:min-h-0 lg:h-full overflow-hidden">
+          <Canvas shadows className="w-full h-full">
             <PerspectiveCamera makeDefault position={[0, 5, 18]} fov={40} />
             <OrbitControls 
               autoRotate={!activePortal}
@@ -287,104 +287,108 @@ export function CareerExploration() {
           </div>
         </div>
 
-        {/* RIGHT: Profile Explorer (Col 4) */}
-        <div className="lg:col-span-4 flex flex-col gap-4 max-h-[800px] lg:max-h-none">
-          <div className="bg-slate-900 p-10 rounded-[3.5rem] border border-white/10 shadow-2xl flex-1 flex flex-col relative overflow-y-auto custom-scrollbar">
+        {/* RIGHT: Profile Explorer */}
+        <div className="w-full lg:w-[400px] lg:h-full flex flex-col bg-slate-900 shrink-0 border-t lg:border-t-0 lg:border-l border-white/10 overflow-hidden">
+          <div className="flex-1 p-8 overflow-y-auto no-scrollbar flex flex-col gap-6">
             {!activePortal ? (
               <div className="flex-1 flex flex-col items-center justify-center text-center">
-                <h3 className="text-2xl font-black text-slate-700 uppercase tracking-tighter mb-4 leading-tight">Career Orbit<br />Explorer</h3>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest leading-relaxed max-w-[240px]">
+                <h3 className="text-2xl font-black text-slate-200 uppercase tracking-tighter mb-4 leading-tight">Career Orbit<br />Explorer</h3>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-relaxed max-w-[240px]">
                   Welcome to the Career Galaxy. Select any orbiting career portal to investigate high-impact roles in water management.
                 </p>
-                <div className="mt-8 grid grid-cols-1 gap-4 w-full">
-                  <div className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-[10px]">1</div>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight text-left">Click a floating sphere to select a career path.</p>
+                <div className="mt-6 grid grid-cols-1 gap-3 w-full">
+                  <div className="flex items-center gap-3 p-3 bg-white/5 rounded-2xl border border-white/5">
+                    <div className="w-6 h-6 rounded-full bg-blue-100/10 flex items-center justify-center text-blue-400 font-bold text-[10px]">1</div>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tight text-left">Click a floating sphere to select a career path.</p>
                   </div>
-                  <div className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
-                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-[10px]">2</div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight text-left">Review required skills and advancement pathways.</p>
+                  <div className="flex items-center gap-3 p-3 bg-white/5 rounded-2xl border border-white/5">
+                    <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-[10px]">2</div>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tight text-left">Review required skills and advancement pathways.</p>
                   </div>
-                  <div className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
-                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-[10px]">3</div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight text-left">Explore all 4 careers to complete the module.</p>
+                  <div className="flex items-center gap-3 p-3 bg-white/5 rounded-2xl border border-white/5">
+                    <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-[10px]">3</div>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tight text-left">Explore all 4 careers to complete the module.</p>
                   </div>
                 </div>
               </div>
             ) : (
               <div className="flex-1 flex flex-col animate-in slide-in-from-right-8 duration-500">
-                <div className="flex items-start justify-between mb-10">
-                  <div className="p-5 rounded-[2rem] bg-white/5 border border-white/10" style={{ color: activeCareer?.color }}>
-                    {activeCareer && React.createElement(activeCareer.icon, { size: 32 })}
+                <div className="flex items-start justify-between mb-8">
+                  <div className="p-4 rounded-[1.5rem] bg-white/5 border border-white/10" style={{ color: activeCareer?.color }}>
+                    {activeCareer && React.createElement(activeCareer.icon, { size: 24 })}
                   </div>
-                  <div className="bg-blue-600/10 px-4 py-2 rounded-full border border-blue-500/20">
-                    <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Level 10</span>
+                  <div className="bg-blue-600/10 px-3 py-1 rounded-full border border-blue-500/20">
+                    <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">Level 10</span>
                   </div>
                 </div>
 
-                <div className="mb-10">
-                  <h3 className="text-3xl font-black text-white uppercase tracking-tighter leading-none mb-4">{activeCareer?.label}</h3>
-                  <p className="text-sm font-bold text-slate-400 leading-relaxed italic border-l-4 border-white/5 pl-4">
-                    "{activeCareer?.mission}"
+                <div className="mb-8">
+                  <h3 className="text-2xl font-black text-white uppercase tracking-tighter leading-none mb-3">{activeCareer?.label}</h3>
+                  <p className="text-xs font-bold text-slate-400 leading-relaxed italic border-l-4 border-white/5 pl-4">
+                    &quot;{activeCareer?.mission}&quot;
                   </p>
                 </div>
 
-                <div className="space-y-8 flex-1">
+                <div className="space-y-6 flex-1">
                   <div>
-                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-4">Mastery Domains</span>
-                    <div className="flex flex-col gap-3">
+                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-3">Mastery Domains</span>
+                    <div className="flex flex-col gap-2">
                       {activeCareer?.skills.map(skill => (
-                        <div key={skill} className="flex items-center gap-4 group">
-                          <div className="w-2 h-2 rounded-full bg-blue-500 group-hover:scale-150 transition-all" />
-                          <span className="text-xs font-black text-white uppercase tracking-tight">{skill}</span>
+                        <div key={skill} className="flex items-center gap-3 group">
+                          <div className="w-1.5 h-1.5 rounded-full bg-blue-500 group-hover:scale-150 transition-all" />
+                          <span className="text-[10px] font-black text-white uppercase tracking-tight">{skill}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className="p-6 bg-white/5 rounded-3xl border border-white/5">
-                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Advancement Pathway</span>
-                    <div className="text-[11px] font-black text-white uppercase tracking-widest flex items-center gap-3">
+                  <div className="p-5 bg-white/5 rounded-2xl border border-white/5">
+                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2">Advancement Pathway</span>
+                    <div className="text-[10px] font-black text-white uppercase tracking-widest flex items-center gap-2">
                       {activeCareer?.pathway.split(' -> ').map((step, i, arr) => (
                         <React.Fragment key={step}>
                           <span>{step}</span>
-                          {i < arr.length - 1 && <ChevronRight size={12} className="text-white/20" />}
+                          {i < arr.length - 1 && <ChevronRight size={10} className="text-white/20" />}
                         </React.Fragment>
                       ))}
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-10 pt-8 border-t border-white/5 flex items-center justify-between">
+                <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Portal Sync</span>
-                    <span className={`text-[10px] font-black uppercase ${completedPortals.includes(activePortal) ? 'text-emerald-500' : 'text-blue-400 animate-pulse'}`}>
+                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1">Portal Sync</span>
+                    <span className={`text-[9px] font-black uppercase ${completedPortals.includes(activePortal) ? 'text-emerald-500' : 'text-blue-400 animate-pulse'}`}>
                       {completedPortals.includes(activePortal) ? 'Verified' : 'Processing...'}
                     </span>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-1.5">
                     {CAREERS.map(c => (
-                      <div key={c.id} className={`w-2 h-2 rounded-full ${completedPortals.includes(c.id) ? 'bg-blue-500' : 'bg-white/10'}`} />
+                      <div key={c.id} className={`w-1.5 h-1.5 rounded-full ${completedPortals.includes(c.id) ? 'bg-blue-500' : 'bg-white/10'}`} />
                     ))}
                   </div>
                 </div>
               </div>
             )}
-          </div>
 
-          <div className="bg-slate-900 p-10 rounded-[3.5rem] text-white flex flex-col gap-8 relative overflow-hidden shadow-2xl">
-            <div className="relative z-10">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+            {/* Audit Legacy always in panel */}
+            <div className="mt-auto pt-6 border-t border-white/5 relative overflow-hidden">
+              <div className="relative z-10 flex items-start gap-4">
+                <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0">
                   <Award size={20} className="text-white" />
                 </div>
-                <h4 className="text-xl font-black tracking-tight uppercase text-white leading-none">Audit Legacy</h4>
+                <div>
+                  <h4 className="text-sm font-black tracking-tight uppercase text-white mb-1">Audit Legacy</h4>
+                  <p className="text-[10px] font-medium text-white/75 leading-normal">
+                    These career paths represent the impact you can scale by applying your data skills to global challenges.
+                  </p>
+                </div>
               </div>
-              <p className="text-sm font-medium text-white/80 leading-relaxed">
-                Your journey through the Water Audit Project is nearing its conclusion. These career paths represent the impact you can scale by applying your data skills to global challenges.
-              </p>
+              <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl pointer-events-none" />
             </div>
-            
+          </div>
+
+          <div className="p-6 bg-slate-950/40 border-t border-white/5">
             <button
               onClick={() => isComplete ? router.push('/') : null}
               disabled={!isComplete}
@@ -397,8 +401,6 @@ export function CareerExploration() {
               {isComplete ? 'Complete Full Course' : `Explore ${CAREERS.length - completedPortals.length} More Portals`}
               <ArrowRight size={20} className={isComplete ? "group-hover:translate-x-1 transition-transform" : ""} />
             </button>
-
-            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl" />
           </div>
         </div>
       </div>

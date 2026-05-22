@@ -175,7 +175,7 @@ export function MonsoonSimulator() {
   return (
     <div className="flex flex-col lg:flex-row w-full bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative lg:aspect-[16/9]">
       {/* LEFT: 3D CLIMATE PANEL */}
-      <div className="relative flex-1 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 overflow-hidden">
+      <div className="relative flex-1 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 overflow-hidden lg:h-full">
         <Canvas shadows className="w-full h-full">
           <PerspectiveCamera makeDefault position={[15, 12, 15]} fov={35} />
           <OrbitControls makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 2.2} />
@@ -294,8 +294,8 @@ export function MonsoonSimulator() {
       </div>
 
       {/* RIGHT: CLIMATE CONTROL PANEL */}
-      <div className="w-full lg:w-[500px] bg-white flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar">
-        <div className="space-y-12">
+      <div className="w-full lg:w-[500px] bg-white flex flex-col p-12 gap-10 lg:h-full overflow-hidden">
+        <div className="flex-1 overflow-y-auto no-scrollbar space-y-12">
           <div className="flex items-center justify-between">
             <h3 className="text-3xl font-black text-slate-900 uppercase tracking-tighter italic">Simulation Controller</h3>
             <div className="p-4 bg-slate-50 rounded-2xl text-blue-600 shadow-sm"><Settings size={24} /></div>
@@ -365,7 +365,7 @@ export function MonsoonSimulator() {
           </div>
         </div>
 
-        <div className="mt-auto pt-12 space-y-6">
+        <div className="pt-6 border-t border-slate-100 space-y-6">
           <div className="flex gap-4">
             <button 
               onClick={() => setSimulating(!simulating)}

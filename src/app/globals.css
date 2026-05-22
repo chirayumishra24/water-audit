@@ -83,6 +83,11 @@ select {
   line-height: 1.78;
 }
 
+.text-slate-700 {
+  color: lab(0 0 0);
+}
+
+
 .prose-course h2,
 .prose-course h3,
 .prose-course h4 {

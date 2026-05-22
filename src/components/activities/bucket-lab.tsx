@@ -185,7 +185,7 @@ export function BucketLab() {
       </div>
 
       {/* LEFT: 3D CITY PANEL */}
-      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden print:h-[400px]">
+      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden lg:h-full print:h-[400px]">
         <Canvas shadows className="w-full h-full" gl={{ preserveDrawingBuffer: true }}>
           <PerspectiveCamera makeDefault position={[5, 4, 8]} fov={30} />
           <OrbitControls 
@@ -321,8 +321,8 @@ export function BucketLab() {
       </div>
 
       {/* RIGHT: DATA & ANALYTICS PANEL */}
-      <div className="w-full lg:w-[480px] bg-white flex flex-col p-12 gap-10 overflow-y-auto no-scrollbar print:overflow-visible">
-        <div className="space-y-10">
+      <div className="w-full lg:w-[480px] lg:h-full bg-white flex flex-col p-12 gap-10 overflow-hidden print:overflow-visible">
+        <div className="flex-1 overflow-y-auto no-scrollbar space-y-10">
           <div className="flex items-center justify-between">
             <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Telemetry History</h3>
             <div className="p-3 bg-slate-50 rounded-2xl text-blue-600 no-print">
@@ -426,7 +426,7 @@ export function BucketLab() {
         </div>
 
         {/* Summary Dashboard */}
-        <div className="mt-auto space-y-6">
+        <div className="pt-6 border-t border-slate-100 space-y-6">
           <div className="p-8 bg-slate-900 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
             <div className="relative z-10 grid grid-cols-2 gap-8">
               <div>
