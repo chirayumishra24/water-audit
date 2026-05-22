@@ -24,6 +24,7 @@ import { PresentationSimulator } from "../activities/presentation-simulator";
 import { TechChallengePicker } from "../activities/tech-challenge-picker";
 import { RainwaterDataForm } from "../activities/rainwater-data-form";
 import { AquaInsightWizard } from "../activities/aqua-insight-wizard";
+import { WaterHeroChallenge } from "../activities/water-hero-challenge";
 import { Search, TrendingUp, Zap, ShieldCheck } from "lucide-react";
 import { DownloadForm } from "./download-form";
 
@@ -117,6 +118,7 @@ export const mdxComponents = {
   TechChallengePicker,
   RainwaterDataForm,
   AquaInsightWizard,
+  WaterHeroChallenge,
   Search,
   TrendingUp,
   Zap,
