@@ -74,8 +74,8 @@ export function Message({ speaker, children }: { speaker: string; children: Reac
         <span className="text-xs font-black text-slate-400 mb-2 px-3 uppercase tracking-[0.2em]">{speaker}</span>
         <div className={`px-8 py-6 rounded-[2rem] shadow-xl text-xl md:text-2xl leading-relaxed max-w-[85%] font-medium transition-all duration-300 [&_*]:text-inherit [&_p]:m-0 [&_strong]:text-inherit [&_em]:text-inherit
           ${isTeacher 
-            ? 'bg-white text-slate-800 border border-slate-100 rounded-tl-sm hover:shadow-2xl' 
-            : 'bg-slate-900 text-white rounded-tr-sm hover:bg-slate-800 shadow-slate-200'}
+            ? 'bg-white text-slate-700 border border-slate-100 rounded-tl-sm hover:shadow-2xl' 
+            : 'bg-slate-900 text-slate-700 rounded-tr-sm hover:bg-slate-800 shadow-slate-200'}
         `}>
           {children}
         </div>
