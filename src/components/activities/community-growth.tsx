@@ -139,7 +139,7 @@ export function CommunityGrowth() {
   };
 
   return (
-    <div className="activity-print-target flex flex-col lg:flex-row w-full bg-slate-900 rounded-[3.5rem] overflow-hidden border border-white/5 shadow-2xl relative">
+    <div className="activity-print-target flex flex-col lg:flex-row w-full bg-slate-900 rounded-[3.5rem] overflow-hidden border border-white/5 shadow-2xl relative lg:aspect-[16/9]">
       {/* Print Header - Only visible in PDF/Print */}
       <div className="hidden print:block w-full mb-8 border-b-2 border-slate-900 pb-6">
         <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter">Water Demand Report</h1>
@@ -150,7 +150,7 @@ export function CommunityGrowth() {
       </div>
 
       {/* LEFT: 3D CITY PANEL */}
-      <div className="relative flex-1 bg-slate-900/50 border-b lg:border-b-0 lg:border-r border-white/5 overflow-hidden min-h-[500px] lg:min-h-[650px] print:h-[400px]">
+      <div className="relative flex-1 bg-slate-900/50 border-b lg:border-b-0 lg:border-r border-white/5 overflow-hidden print:h-[400px]">
         {/* Dynamic Warning Overlay */}
         {isStressed && (
           <div className="absolute inset-0 bg-red-600/5 animate-pulse pointer-events-none z-10" />

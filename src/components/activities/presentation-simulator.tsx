@@ -72,7 +72,7 @@ export function PresentationSimulator() {
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[500px]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:aspect-[16/9]">
         
         {/* Virtual Presentation Stage */}
         <div className="lg:col-span-8 bg-slate-900 rounded-[2.5rem] relative overflow-hidden shadow-2xl border border-slate-800 flex flex-col items-center justify-center p-12">

@@ -226,7 +226,7 @@ export function CareerExploration() {
 
   return (
     <div className="w-full flex flex-col gap-6">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:min-h-[650px]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:aspect-[16/9] w-full">
         
         {/* LEFT: 3D Career Galaxy (Col 8) */}
         <div className="lg:col-span-8 bg-[#020617] rounded-[3.5rem] relative overflow-hidden shadow-2xl border border-white/5">

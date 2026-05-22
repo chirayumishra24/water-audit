@@ -86,9 +86,9 @@ select {
 .prose-course h2,
 .prose-course h3,
 .prose-course h4 {
-  color: #eff1f6;
-  letter-spacing: -0.02em; /* Tighter tracking for headings */
-  font-weight: 900; /* Extra bold */
+  color: #3366e8;
+  letter-spacing: -0.02em;
+  font-weight: 900;
 }
 
 .prose-course h2 {
@@ -103,7 +103,6 @@ select {
   margin-bottom: 0.85rem;
   font-size: clamp(1.35rem, 1.12rem + 0.8vw, 1.8rem);
   line-height: 1.24;
-  color: #1d4ed8; /* blue-700 */
 }
 
 .prose-course p,

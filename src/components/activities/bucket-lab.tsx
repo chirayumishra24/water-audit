@@ -51,7 +51,7 @@ function WaterLevel({ height }: { height: number }) {
 
   return (
     <mesh ref={mesh} position={[0, -1, 0]}>
-      <cylinderGeometry args={[1, 1, 2, 64]} />
+      <cylinderGeometry args={[0.97, 0.97, 2, 64]} />
       <meshStandardMaterial 
         color="#3b82f6" 
         transparent 
@@ -68,9 +68,9 @@ function WaterLevel({ height }: { height: number }) {
 function Bucket() {
   return (
     <group>
-      {/* Outer Shell - Tapered for realism */}
+      {/* Outer Shell - Cylinder */}
       <mesh>
-        <cylinderGeometry args={[1.05, 0.85, 2.1, 64]} />
+        <cylinderGeometry args={[1.0, 1.0, 2.1, 64]} />
         <meshStandardMaterial 
           color="#ffffff" 
           transparent 
@@ -82,7 +82,7 @@ function Bucket() {
       </mesh>
       {/* Inner Wall */}
       <mesh scale={[0.98, 1, 0.98]}>
-        <cylinderGeometry args={[1.05, 0.85, 2.05, 64]} />
+        <cylinderGeometry args={[1.0, 1.0, 2.05, 64]} />
         <meshStandardMaterial 
           color="#f8fafc" 
           transparent 
@@ -91,19 +91,14 @@ function Bucket() {
           roughness={0.8} 
         />
       </mesh>
-      {/* Handle */}
-      <mesh position={[0, 1.05, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <torusGeometry args={[1.05, 0.04, 16, 64, Math.PI]} />
-        <meshStandardMaterial color="#334155" metalness={0.8} roughness={0.2} />
-      </mesh>
       {/* Base */}
-      <Cylinder args={[0.86, 0.86, 0.1]} position={[0, -1.05, 0]}>
+      <Cylinder args={[1.0, 1.0, 0.1]} position={[0, -1.05, 0]}>
         <meshStandardMaterial color="#334155" metalness={0.8} roughness={0.2} />
       </Cylinder>
       {/* Measurement Markers */}
       {[-0.8, -0.4, 0, 0.4, 0.8].map((y, i) => (
         <group key={i} position={[0, y, 0]}>
-          <mesh rotation={[0, (i * Math.PI) / 2, 0]} position={[0.9, 0, 0]}>
+          <mesh rotation={[0, (i * Math.PI) / 2, 0]} position={[0.98, 0, 0]}>
             <boxGeometry args={[0.2, 0.01, 0.05]} />
             <meshStandardMaterial color="#3b82f6" emissive="#3b82f6" emissiveIntensity={0.5} />
           </mesh>
@@ -179,7 +174,7 @@ export function BucketLab() {
   };
 
   return (
-    <div className="activity-print-target flex flex-col lg:flex-row w-full bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+    <div className="activity-print-target flex flex-col lg:flex-row w-full bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative lg:aspect-[16/9]">
       {/* Print Header - Only visible in PDF/Print */}
       <div className="hidden print:block w-full mb-8 border-b-2 border-slate-900 pb-6">
         <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tighter">Water Flow Analysis Report</h1>
@@ -190,7 +185,7 @@ export function BucketLab() {
       </div>
 
       {/* LEFT: 3D CITY PANEL */}
-      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[500px] lg:min-h-[650px] print:h-[400px]">
+      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden print:h-[400px]">
         <Canvas shadows className="w-full h-full" gl={{ preserveDrawingBuffer: true }}>
           <PerspectiveCamera makeDefault position={[5, 4, 8]} fov={30} />
           <OrbitControls 

@@ -173,9 +173,9 @@ export function MonsoonSimulator() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row w-full bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+    <div className="flex flex-col lg:flex-row w-full bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative lg:aspect-[16/9]">
       {/* LEFT: 3D CLIMATE PANEL */}
-      <div className="relative flex-1 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 overflow-hidden min-h-[500px] lg:min-h-[650px]">
+      <div className="relative flex-1 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 overflow-hidden">
         <Canvas shadows className="w-full h-full">
           <PerspectiveCamera makeDefault position={[15, 12, 15]} fov={35} />
           <OrbitControls makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 2.2} />

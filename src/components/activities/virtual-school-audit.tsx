@@ -157,9 +157,9 @@ export function VirtualSchoolAudit() {
   const progress = (foundCount / AUDIT_POINTS.length) * 100;
 
   return (
-    <div className="flex flex-col lg:flex-row w-full bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative">
+    <div className="flex flex-col lg:flex-row w-full bg-white rounded-[3.5rem] overflow-hidden border border-slate-200 shadow-2xl relative lg:aspect-[16/9]">
       {/* LEFT: 3D SITE PANEL */}
-      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[500px] lg:min-h-[650px]">
+      <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden">
         <Canvas shadows className="w-full h-full">
           <PerspectiveCamera makeDefault position={[12, 12, 12]} fov={35} />
           <OrbitControls enablePan={true} minDistance={8} maxDistance={25} maxPolarAngle={Math.PI / 2.1} />

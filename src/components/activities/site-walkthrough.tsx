@@ -194,9 +194,9 @@ export function SiteWalkthrough() {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row w-full bg-slate-900 rounded-[3.5rem] overflow-hidden border border-white/10 shadow-2xl relative">
+      <div className="flex flex-col lg:flex-row w-full bg-slate-900 rounded-[3.5rem] overflow-hidden border border-white/10 shadow-2xl relative lg:aspect-[16/9]">
         {/* LEFT: 3D SITE PANEL */}
-        <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden min-h-[500px] lg:min-h-[650px]">
+        <div className="relative flex-1 bg-slate-50 border-b lg:border-b-0 lg:border-r border-slate-100 overflow-hidden">
           <Canvas shadows className="w-full h-full" gl={{ preserveDrawingBuffer: true }}>
             <PerspectiveCamera makeDefault position={[12, 12, 12]} fov={35} />
             <OrbitControls 
