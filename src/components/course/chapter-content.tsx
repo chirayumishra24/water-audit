@@ -21,6 +21,29 @@ export function ChapterContent({ chapter }: ChapterContentProps) {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        const progress = (window.scrollY / totalHeight) * 100;
+        setScrollProgress(progress);
+      } else {
+        setScrollProgress(0);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, []);
+
   const toggleFullscreen = async () => {
     if (!document.fullscreenElement) {
       await document.documentElement.requestFullscreen().catch(console.error);
@@ -31,9 +54,16 @@ export function ChapterContent({ chapter }: ChapterContentProps) {
 
   return (
     <article className="relative min-h-screen">
+      {/* Scroll Progress Bar */}
+      <div className="fixed right-5 top-1/2 -translate-y-1/2 h-[33vh] w-2.5 bg-slate-900/10 backdrop-blur-md rounded-full border border-white/40 shadow-inner z-[100] no-print">
+        <div 
+          className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#2156da] to-blue-400 rounded-full shadow-[0_0_10px_rgba(33,86,218,0.3)] transition-all duration-75 ease-out"
+          style={{ height: `${scrollProgress}%` }}
+        />
+      </div>
       
       {/* Floating Action Buttons */}
-      <div className="fixed bottom-8 right-8 flex flex-col gap-4 z-[100] no-print">
+      <div className="fixed top-6 right-6 flex flex-col gap-4 z-[100] no-print">
         <button 
           onClick={toggleFullscreen}
           className="bg-slate-900/80 backdrop-blur-xl p-4 rounded-full text-white shadow-2xl hover:bg-slate-900 hover:scale-110 active:scale-95 transition-all border border-white/20 group"
