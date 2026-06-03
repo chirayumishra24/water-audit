@@ -27,6 +27,7 @@ import { AquaInsightWizard } from "../activities/aqua-insight-wizard";
 import { WaterHeroChallenge } from "../activities/water-hero-challenge";
 import { Search, TrendingUp, Zap, ShieldCheck } from "lucide-react";
 import { DownloadForm } from "./download-form";
+import { CustomVideoPlayer } from "./custom-video-player";
 
 
 
@@ -124,6 +125,7 @@ export const mdxComponents = {
   Zap,
   ShieldCheck,
   TopicCard,
+  CustomVideoPlayer,
 
   TableInput: () => (
     <input 
