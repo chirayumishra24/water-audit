@@ -67,6 +67,13 @@ const courseStructure = [
   }
 ];
 
+const colorMap: Record<string, { bg: string; shadow: string; text: string }> = {
+  blue: { bg: "bg-blue-600", shadow: "shadow-blue-200", text: "text-blue-600" },
+  indigo: { bg: "bg-indigo-600", shadow: "shadow-indigo-200", text: "text-indigo-600" },
+  amber: { bg: "bg-amber-600", shadow: "shadow-amber-200", text: "text-amber-600" },
+  emerald: { bg: "bg-emerald-600", shadow: "shadow-emerald-200", text: "text-emerald-600" },
+};
+
 export function CourseTimeline() {
   return (
     <div className="relative py-12 px-6 bg-slate-50 rounded-[3rem] border-2 border-white shadow-inner overflow-hidden">
@@ -80,18 +87,20 @@ export function CourseTimeline() {
         </h3>
 
         <div className="space-y-12">
-          {courseStructure.map((mod, idx) => (
-            <div key={idx} className="relative pl-12 border-l-4 border-slate-200 ml-4 pb-4">
-              {/* Module Indicator */}
-              <div className={`absolute -left-[1.75rem] top-0 w-12 h-12 rounded-2xl bg-${mod.color}-600 flex items-center justify-center shadow-xl shadow-${mod.color}-200 border-4 border-white`}>
-                <span className="text-white">{mod.icon}</span>
-              </div>
+          {courseStructure.map((mod, idx) => {
+            const colors = colorMap[mod.color] || colorMap.blue;
+            return (
+              <div key={idx} className="relative pl-12 border-l-4 border-slate-200 ml-4 pb-4">
+                {/* Module Indicator */}
+                <div className={`absolute -left-[1.75rem] top-0 w-12 h-12 rounded-2xl ${colors.bg} flex items-center justify-center shadow-xl ${colors.shadow} border-4 border-white`}>
+                  <span className="text-white">{mod.icon}</span>
+                </div>
 
-              <div className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 hover:scale-[1.02] transition-all duration-500">
-                <div className="flex items-center justify-between mb-6">
-                  <h4 className={`text-xl font-black text-${mod.color}-600 uppercase tracking-tighter`}>
-                    Module {idx + 1}: {mod.module}
-                  </h4>
+                <div className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 hover:scale-[1.02] transition-all duration-500">
+                  <div className="flex items-center justify-between mb-6">
+                    <h4 className={`text-xl font-black ${colors.text} uppercase tracking-tighter`}>
+                      Module {idx + 1}: {mod.module}
+                    </h4>
                   <div className="flex gap-2">
                     <div className="w-2 h-2 rounded-full bg-slate-200" />
                     <div className="w-2 h-2 rounded-full bg-slate-200" />
@@ -111,7 +120,8 @@ export function CourseTimeline() {
                 </div>
               </div>
             </div>
-          ))}
+          );
+        })}
 
           {/* Graduation Indicator */}
           <div className="relative pl-12 ml-4">

@@ -87,7 +87,7 @@ export function ChapterContent({ chapter }: ChapterContentProps) {
 
         {/* Bottom Section: Main Course Content (No main card wrapper, relies on TopicCards) */}
         <div className="relative z-10 w-full mx-auto">
-          <div className="prose-course max-w-none prose-lg md:prose-xl text-slate-300 w-full bg-slate-900/40 backdrop-blur-xl p-8 md:p-12 rounded-[3rem] border border-white/10 shadow-2xl">
+          <div className="prose-course max-w-none prose-lg md:prose-xl text-slate-300 w-full bg-slate-200/40 backdrop-blur-xl p-8 md:p-12 rounded-[3rem] border border-white/10 shadow-2xl">
             {chapter.content}
           </div>
         </div>
